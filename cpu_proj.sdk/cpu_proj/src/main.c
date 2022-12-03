@@ -6,6 +6,7 @@
 #include "init_ov9655.h"
 #include "init_xclk.h"
 #include "cojt.h"
+#include "mycpu.h"
 
 int main() {
 	// デバイス初期化
@@ -13,7 +14,7 @@ int main() {
 	init_xclk(XCLK24MHz);
 	init_ov9655(OV9655_SXGA);
 
-	while (0) { }
+	while (1) { }
 
 	return 0;
 }

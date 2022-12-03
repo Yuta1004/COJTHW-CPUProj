@@ -12,5 +12,4 @@ rst -processor
 targets -set -nocase -filter {name =~ "ARM*#0" && jtag_cable_name =~ "Digilent JTAG-SMT1 210203346072A"} -index 0
 dow C:/Users/COJTHW110/COJT/cpu_proj/cpu_proj.sdk/cpu_proj/Debug/cpu_proj.elf
 configparams force-mem-access 0
-targets -set -nocase -filter {name =~ "ARM*#0" && jtag_cable_name =~ "Digilent JTAG-SMT1 210203346072A"} -index 0
-con
+bpadd -addr &main

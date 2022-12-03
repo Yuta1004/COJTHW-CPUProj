@@ -127,9 +127,6 @@ module cpu_core_controller_v1_0_S_AXI #
     //------------------------------------------------
     //-- Number of Slave Registers 4
     reg [C_S_AXI_DATA_WIDTH-1:0]    slv_reg0;
-    reg [C_S_AXI_DATA_WIDTH-1:0]    slv_reg1;
-    reg [C_S_AXI_DATA_WIDTH-1:0]    slv_reg2;
-    reg [C_S_AXI_DATA_WIDTH-1:0]    slv_reg3;
     wire    slv_reg_rden;
     wire    slv_reg_wren;
     reg [C_S_AXI_DATA_WIDTH-1:0]    reg_data_out;
@@ -240,54 +237,18 @@ module cpu_core_controller_v1_0_S_AXI #
 
     always @( posedge S_AXI_ACLK )
     begin
-      if ( S_AXI_ARESETN == 1'b0 )
-        begin
-          slv_reg0 <= 0;
-          slv_reg1 <= 0;
-          slv_reg2 <= 0;
-          slv_reg3 <= 0;
+        if ( S_AXI_ARESETN == 1'b0 )
+            slv_reg0 <= 32'b0;
+        else begin
+            if ( slv_reg_wren && axi_awaddr[15:12] == 4'h0 ) begin
+                case ( axi_awaddr[7:0] )
+                    8'h0:     slv_reg0 <= S_AXI_WDATA;
+                    default:  slv_reg0 <= slv_reg0;
+                endcase
+            end
+            else
+                slv_reg0 <= 32'b0;
         end
-      else begin
-        if (slv_reg_wren)
-          begin
-            case ( axi_awaddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
-              2'h0:
-                for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
-                  if ( S_AXI_WSTRB[byte_index] == 1 ) begin
-                    // Respective byte enables are asserted as per write strobes
-                    // Slave register 0
-                    slv_reg0[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
-                  end
-              2'h1:
-                for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
-                  if ( S_AXI_WSTRB[byte_index] == 1 ) begin
-                    // Respective byte enables are asserted as per write strobes
-                    // Slave register 1
-                    slv_reg1[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
-                  end
-              2'h2:
-                for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
-                  if ( S_AXI_WSTRB[byte_index] == 1 ) begin
-                    // Respective byte enables are asserted as per write strobes
-                    // Slave register 2
-                    slv_reg2[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
-                  end
-              2'h3:
-                for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
-                  if ( S_AXI_WSTRB[byte_index] == 1 ) begin
-                    // Respective byte enables are asserted as per write strobes
-                    // Slave register 3
-                    slv_reg3[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
-                  end
-              default : begin
-                          slv_reg0 <= slv_reg0;
-                          slv_reg1 <= slv_reg1;
-                          slv_reg2 <= slv_reg2;
-                          slv_reg3 <= slv_reg3;
-                        end
-            endcase
-          end
-      end
     end
 
     // Implement write response logic generation
@@ -390,14 +351,44 @@ module cpu_core_controller_v1_0_S_AXI #
     assign slv_reg_rden = axi_arready & S_AXI_ARVALID & ~axi_rvalid;
     always @(*)
     begin
-          // Address decoding for reading registers
-          case ( axi_araddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
-            2'h0   : reg_data_out <= slv_reg0;
-            2'h1   : reg_data_out <= slv_reg1;
-            2'h2   : reg_data_out <= slv_reg2;
-            2'h3   : reg_data_out <= slv_reg3;
-            default : reg_data_out <= 0;
-          endcase
+        if ( axi_araddr[15:12] == 4'h1 ) begin
+            case ( axi_araddr[9:2] )
+                8'd0   : reg_data_out <= REG00;
+                8'd1   : reg_data_out <= REG01;
+                8'd2   : reg_data_out <= REG02;
+                8'd3   : reg_data_out <= REG03;
+                8'd4   : reg_data_out <= REG04;
+                8'd5   : reg_data_out <= REG05;
+                8'd6   : reg_data_out <= REG06;
+                8'd7   : reg_data_out <= REG07;
+                8'd8   : reg_data_out <= REG08;
+                8'd9   : reg_data_out <= REG09;
+                8'd10  : reg_data_out <= REG10;
+                8'd11  : reg_data_out <= REG11;
+                8'd12  : reg_data_out <= REG12;
+                8'd13  : reg_data_out <= REG13;
+                8'd14  : reg_data_out <= REG14;
+                8'd15  : reg_data_out <= REG15;
+                8'd16  : reg_data_out <= REG16;
+                8'd17  : reg_data_out <= REG17;
+                8'd18  : reg_data_out <= REG18;
+                8'd19  : reg_data_out <= REG19;
+                8'd20  : reg_data_out <= REG20;
+                8'd21  : reg_data_out <= REG21;
+                8'd22  : reg_data_out <= REG22;
+                8'd23  : reg_data_out <= REG23;
+                8'd24  : reg_data_out <= REG24;
+                8'd25  : reg_data_out <= REG25;
+                8'd26  : reg_data_out <= REG26;
+                8'd27  : reg_data_out <= REG27;
+                8'd28  : reg_data_out <= REG28;
+                8'd29  : reg_data_out <= REG29;
+                8'd30  : reg_data_out <= REG30;
+                8'd31  : reg_data_out <= REG31;
+                8'd32  : reg_data_out <= REGPC;
+                default : reg_data_out <= 0;
+            endcase
+        end
     end
 
     // Output register or memory read data
@@ -420,12 +411,22 @@ module cpu_core_controller_v1_0_S_AXI #
     end
 
     /* ----- COREへのリセット信号 ----- */
-    // TODO
-    always @* begin
-        CRST <= 1'b0;
+    reg cache_slv_reg0;
+
+    always @ (posedge S_AXI_ACLK) begin
+        if (S_AXI_ARESETN == 1'b0)
+            cache_slv_reg0 <= 1'b0;
+        else if (slv_reg0 > 32'b0)
+            cache_slv_reg0 <= 1'b1;
+        else if (CRST)
+            cache_slv_reg0 <= 1'b0;
     end
 
-    /* ----- レジスタ取得 ----- */
-    // TODO
+    always @ (posedge CCLK) begin
+        if (cache_slv_reg0)
+            CRST <= 1'b1;
+        else
+            CRST <= 1'b0;
+    end
 
 endmodule

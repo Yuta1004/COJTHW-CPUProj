@@ -99,7 +99,7 @@ module cpu_core_controller_v1_0 #
         .REG26(REG26),
         .REG27(REG27),
         .REG28(REG28),
-        .REG29(REG229),
+        .REG29(REG29),
         .REG30(REG30),
         .REG31(REG31),
         .REGPC(REGPC),
