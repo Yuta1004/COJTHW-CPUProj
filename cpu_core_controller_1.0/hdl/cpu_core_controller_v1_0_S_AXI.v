@@ -128,6 +128,8 @@ module cpu_core_controller_v1_0_S_AXI #
     //------------------------------------------------
     //-- Number of Slave Registers 4
     reg [C_S_AXI_DATA_WIDTH-1:0]    slv_reg0;
+    reg [C_S_AXI_DATA_WIDTH-1:0]    slv_reg1;
+    reg [C_S_AXI_DATA_WIDTH-1:0]    slv_reg2;
     wire    slv_reg_rden;
     wire    slv_reg_wren;
     reg [C_S_AXI_DATA_WIDTH-1:0]    reg_data_out;
@@ -236,19 +238,25 @@ module cpu_core_controller_v1_0_S_AXI #
     // and the slave is ready to accept the write address and write data.
     assign slv_reg_wren = axi_wready && S_AXI_WVALID && axi_awready && S_AXI_AWVALID;
 
-    always @( posedge S_AXI_ACLK )
-    begin
-        if ( S_AXI_ARESETN == 1'b0 )
+    always @(posedge S_AXI_ACLK) begin
+        if (S_AXI_ARESETN == 1'b0) begin
             slv_reg0 <= 32'b0;
+            slv_reg1 <= 32'b0;
+            slv_reg2 <= 32'b0;
+        end
         else begin
-            if ( slv_reg_wren && axi_awaddr[15:12] == 4'h0 ) begin
-                case ( axi_awaddr[7:0] )
-                    8'h0:     slv_reg0 <= S_AXI_WDATA;
-                    default:  slv_reg0 <= slv_reg0;
+            if (slv_reg_wren) begin
+                case (axi_awaddr)
+                    16'h0000:   slv_reg0 <= S_AXI_WDATA;
+                    16'h0004:   slv_reg1 <= S_AXI_WDATA;
+                    16'h0008:   slv_reg2 <= S_AXI_WDATA;
                 endcase
             end
-            else
+            else begin
                 slv_reg0 <= 32'b0;
+                slv_reg1 <= slv_reg1;
+                slv_reg2 <= 32'b0;
+            end
         end
     end
 
@@ -350,46 +358,44 @@ module cpu_core_controller_v1_0_S_AXI #
     // Slave register read enable is asserted when valid address is available
     // and the slave is ready to accept the read address.
     assign slv_reg_rden = axi_arready & S_AXI_ARVALID & ~axi_rvalid;
-    always @(*)
-    begin
-        if ( axi_araddr[15:12] == 4'h1 ) begin
-            case ( axi_araddr[9:2] )
-                8'd0   : reg_data_out <= REG00;
-                8'd1   : reg_data_out <= REG01;
-                8'd2   : reg_data_out <= REG02;
-                8'd3   : reg_data_out <= REG03;
-                8'd4   : reg_data_out <= REG04;
-                8'd5   : reg_data_out <= REG05;
-                8'd6   : reg_data_out <= REG06;
-                8'd7   : reg_data_out <= REG07;
-                8'd8   : reg_data_out <= REG08;
-                8'd9   : reg_data_out <= REG09;
-                8'd10  : reg_data_out <= REG10;
-                8'd11  : reg_data_out <= REG11;
-                8'd12  : reg_data_out <= REG12;
-                8'd13  : reg_data_out <= REG13;
-                8'd14  : reg_data_out <= REG14;
-                8'd15  : reg_data_out <= REG15;
-                8'd16  : reg_data_out <= REG16;
-                8'd17  : reg_data_out <= REG17;
-                8'd18  : reg_data_out <= REG18;
-                8'd19  : reg_data_out <= REG19;
-                8'd20  : reg_data_out <= REG20;
-                8'd21  : reg_data_out <= REG21;
-                8'd22  : reg_data_out <= REG22;
-                8'd23  : reg_data_out <= REG23;
-                8'd24  : reg_data_out <= REG24;
-                8'd25  : reg_data_out <= REG25;
-                8'd26  : reg_data_out <= REG26;
-                8'd27  : reg_data_out <= REG27;
-                8'd28  : reg_data_out <= REG28;
-                8'd29  : reg_data_out <= REG29;
-                8'd30  : reg_data_out <= REG30;
-                8'd31  : reg_data_out <= REG31;
-                8'd32  : reg_data_out <= REGPC;
-                default : reg_data_out <= 0;
-            endcase
-        end
+    always @* begin
+        case (axi_araddr)
+            16'h0004    : reg_data_out <= slv_reg1;
+            16'h1000    : reg_data_out <= REG00;
+            16'h1004    : reg_data_out <= REG01;
+            16'h1008    : reg_data_out <= REG02;
+            16'h100C    : reg_data_out <= REG03;
+            16'h1010    : reg_data_out <= REG04;
+            16'h1014    : reg_data_out <= REG05;
+            16'h1018    : reg_data_out <= REG06;
+            16'h101C    : reg_data_out <= REG07;
+            16'h1020    : reg_data_out <= REG08;
+            16'h1024    : reg_data_out <= REG09;
+            16'h1028    : reg_data_out <= REG10;
+            16'h102C    : reg_data_out <= REG11;
+            16'h1030    : reg_data_out <= REG12;
+            16'h1034    : reg_data_out <= REG13;
+            16'h1038    : reg_data_out <= REG14;
+            16'h103C    : reg_data_out <= REG15;
+            16'h1040    : reg_data_out <= REG16;
+            16'h1044    : reg_data_out <= REG17;
+            16'h1048    : reg_data_out <= REG18;
+            16'h104C    : reg_data_out <= REG19;
+            16'h1050    : reg_data_out <= REG20;
+            16'h1054    : reg_data_out <= REG21;
+            16'h1058    : reg_data_out <= REG22;
+            16'h105C    : reg_data_out <= REG23;
+            16'h1060    : reg_data_out <= REG24;
+            16'h1064    : reg_data_out <= REG25;
+            16'h1068    : reg_data_out <= REG26;
+            16'h106C    : reg_data_out <= REG27;
+            16'h1070    : reg_data_out <= REG28;
+            16'h1074    : reg_data_out <= REG29;
+            16'h1078    : reg_data_out <= REG30;
+            16'h107C    : reg_data_out <= REG31;
+            16'h1080    : reg_data_out <= REGPC;
+            default : reg_data_out <= 0;
+        endcase
     end
 
     // Output register or memory read data
@@ -412,27 +418,67 @@ module cpu_core_controller_v1_0_S_AXI #
     end
 
     /* ----- CRST ----- */
-    reg cache_slv_reg0;
+    reg         cache_arst, cache_slv_reg0;
+    reg [1:0]   acrst;
+
+    always @ (posedge S_AXI_ACLK) begin
+        acrst <= { acrst[0], CRST };
+    end
+
+    always @ (posedge S_AXI_ACLK) begin
+        if (S_AXI_ARESETN == 1'b0)
+            cache_arst <= 1'b1;
+        else if (acrst[1])
+            cache_arst <= 1'b0;
+    end
 
     always @ (posedge S_AXI_ACLK) begin
         if (S_AXI_ARESETN == 1'b0)
             cache_slv_reg0 <= 1'b0;
         else if (slv_reg0 > 32'b0)
             cache_slv_reg0 <= 1'b1;
-        else if (CRST)
+        else if (acrst[1])
             cache_slv_reg0 <= 1'b0;
     end
 
-    always @ (posedge CCLK) begin
-        if (cache_slv_reg0)
+    always @ (posedge cache_arst, posedge cache_slv_reg0, posedge CCLK) begin
+        if (cache_arst || cache_slv_reg0)
             CRST <= 1'b1;
         else
             CRST <= 1'b0;
     end
 
     /* ----- CEXEC ----- */
-    always @ (posedge CCLK) begin
-        CEXEC <= 1'b0;
+    reg         cache_slv_reg1, cache_slv_reg2;
+    reg [1:0]   acexec;
+
+    always @ (posedge S_AXI_ACLK) begin
+        acexec <= { acexec[0], CEXEC };
+    end
+
+    always @ (posedge S_AXI_ACLK) begin
+        if (S_AXI_ARESETN == 1'b0)
+            cache_slv_reg1 <= 1'b0;
+        else if (slv_reg1 > 32'b0)
+            cache_slv_reg1 <= 1'b1;
+        else if (acexec[1])
+            cache_slv_reg1 <= 1'b0;
+    end
+
+    always @ (posedge S_AXI_ACLK) begin
+        if (S_AXI_ARESETN == 1'b0)
+            cache_slv_reg2 <= 1'b0;
+        else if (slv_reg2 > 32'b0)
+            cache_slv_reg2 <= 1'b1;
+        else if (acexec[1])
+            cache_slv_reg2 <= 1'b0;
+    end
+
+    always @ (posedge cache_slv_reg1, posedge cache_slv_reg2, posedge CCLK) begin
+        if (cache_slv_reg1 || cache_slv_reg2)
+            CEXEC <= 1'b1;
+        else
+            CEXEC <= 1'b0;
     end
 
 endmodule

@@ -14,7 +14,8 @@ int main() {
 	init_xclk(XCLK24MHz);
 	init_ov9655(OV9655_SXGA);
 
-	while (1) { }
+	// é¿çsäJén
+	CEXEC = 1;
 
 	return 0;
 }
