@@ -74,6 +74,7 @@ module core #
         // CPU§ŒäM†
         input wire          CCLK,
         input wire          CRST,
+        input wire          CEXEC,
 
         // CPUó‘Ô
         output wire [7:0]   STAT,

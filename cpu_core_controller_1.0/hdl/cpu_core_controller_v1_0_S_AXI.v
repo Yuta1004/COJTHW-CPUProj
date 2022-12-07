@@ -7,6 +7,7 @@ module cpu_core_controller_v1_0_S_AXI #
         // COREとの接続ポート
         input wire          CCLK,
         output reg          CRST,
+        output reg          CEXEC,
         input wire [31:0]   REG00,
         input wire [31:0]   REG01,
         input wire [31:0]   REG02,
@@ -410,7 +411,7 @@ module cpu_core_controller_v1_0_S_AXI #
         end
     end
 
-    /* ----- COREへのリセット信号 ----- */
+    /* ----- CRST ----- */
     reg cache_slv_reg0;
 
     always @ (posedge S_AXI_ACLK) begin
@@ -427,6 +428,11 @@ module cpu_core_controller_v1_0_S_AXI #
             CRST <= 1'b1;
         else
             CRST <= 1'b0;
+    end
+
+    /* ----- CEXEC ----- */
+    always @ (posedge CCLK) begin
+        CEXEC <= 1'b0;
     end
 
 endmodule
