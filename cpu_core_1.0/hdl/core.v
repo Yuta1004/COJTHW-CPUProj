@@ -177,7 +177,7 @@ module core #
         output wire [31:0]  REG29,
         output wire [31:0]  REG30,
         output wire [31:0]  REG31,
-        output wire [31:0]  REGPC
+        output reg  [31:0]  REGPC
     );
 
     /* ----- AXIバス設定(命令用) ----- */
@@ -260,9 +260,6 @@ module core #
     // Rチャンネル
     assign M_DATA_AXI_RREADY    = 1'b0;    // *
 
-    /* ----- CPU状態 ----- */
-    assign STAT = 8'b10101010;
-
     /* ----- デバッグ用 ----- */
     assign REG00    = 32'b0;
     assign REG01    = 32'b0;
@@ -296,6 +293,51 @@ module core #
     assign REG29    = 32'b0;
     assign REG30    = 32'b0;
     assign REG31    = 32'b0;
-    assign REGPC    = 32'b0;
+
+    /* ----- 全体制御用ステートマシン ----- */
+    parameter S_IDLE    = 2'b00;
+    parameter S_EXEC    = 2'b01;
+    parameter S_WAIT    = 2'b11;
+
+    reg [1:0] state, next_state;
+
+    assign STAT = { 6'b0, state };
+
+    always @ (posedge CCLK) begin
+        if (CRST)
+            state <= S_IDLE;
+        else
+            state <= next_state;
+    end
+
+    always @* begin
+        case (state)
+            S_IDLE:
+                if (CEXEC)
+                    next_state <= S_EXEC;
+                else
+                    next_state <= S_IDLE;
+
+            S_EXEC:
+                if (!CEXEC)
+                    next_state <= S_IDLE;
+                else
+                    next_state <= S_EXEC;
+
+            S_WAIT:
+                next_state <= S_WAIT;
+
+            default:
+                next_state <= S_IDLE;
+        endcase
+    end
+
+    /* ----- プログラムカウンタ ----- */
+    always @ (posedge CCLK) begin
+        if (CRST)
+            REGPC <= 32'b0;
+        else if (next_state == S_EXEC)
+            REGPC <= REGPC + 32'd4;
+    end
 
 endmodule
