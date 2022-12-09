@@ -180,46 +180,6 @@ module core #
         output reg  [31:0]  REGPC
     );
 
-    /* ----- AXIバス設定(命令用) ----- */
-    // AWチャンネル
-    assign M_INST_AXI_AWID      = 'b0;
-    assign M_INST_AXI_AWADDR    = 32'b0;   // *
-    assign M_INST_AXI_AWLEN     = 8'b0;    // *
-    assign M_INST_AXI_AWSIZE    = 3'b010;
-    assign M_INST_AXI_AWBURST   = 2'b01;
-    assign M_INST_AXI_AWLOCK    = 2'b00;
-    assign M_INST_AXI_AWCACHE   = 4'b0011;
-    assign M_INST_AXI_AWPROT    = 3'h0;
-    assign M_INST_AXI_AWQOS     = 4'h0;
-    assign M_INST_AXI_AWUSER    = 'b0;
-    assign M_INST_AXI_AWVALID   = 1'b0;    // *
-
-    // Wチャンネル
-    assign M_INST_AXI_WDATA     = 32'b0;   // *
-    assign M_INST_AXI_WSTRB     = 4'b1111;
-    assign M_INST_AXI_WLAST     = 1'b0;    // *
-    assign M_INST_AXI_WUSER     = 'b0;
-    assign M_INST_AXI_WVALID    = 1'b0;     // *
-
-    // Bチャンネル
-    assign M_INST_AXI_BREADY    = 1'b0;     // *
-
-    // ARチャンネル
-    assign M_INST_AXI_ARID      = 'b0;
-    assign M_INST_AXI_ARADDR    = 32'b0;   // *
-    assign M_INST_AXI_ARLEN     = 8'b0;    // *
-    assign M_INST_AXI_ARSIZE    = 3'b010;
-    assign M_INST_AXI_ARBURST   = 2'b01;
-    assign M_INST_AXI_ARLOCK    = 1'b0;
-    assign M_INST_AXI_ARCACHE   = 4'b0011;
-    assign M_INST_AXI_ARPROT    = 3'h0;
-    assign M_INST_AXI_ARQOS     = 4'h0;
-    assign M_INST_AXI_ARUSER    = 'b0;
-    assign M_INST_AXI_ARVALID   = 1'b0;    // *
-
-    // Rチャンネル
-    assign M_INST_AXI_RREADY    = 1'b0;    // *
-
     /* ----- AXIバス設定(データ用) ----- */
     // AWチャンネル
     assign M_DATA_AXI_AWID      = 'b0;
@@ -338,6 +298,87 @@ module core #
             REGPC <= 32'b0;
         else if (next_state == S_EXEC)
             REGPC <= REGPC + 32'd4;
+    end
+
+    /* ----- 命令フェッチ部 ----- */
+    reg         pc_valid;
+
+    wire        inst_valid;
+    wire [31:0] inst;
+    wire        mem_wait;
+
+    inst_fetch #
+        (
+            .C_M_AXI_THREAD_ID_WIDTH(C_M_AXI_THREAD_ID_WIDTH),
+            .C_M_AXI_BURST_LEN      (C_M_AXI_BURST_LEN),
+            .C_M_AXI_ID_WIDTH       (C_M_AXI_ID_WIDTH),
+            .C_M_AXI_ADDR_WIDTH     (C_M_AXI_ADDR_WIDTH),
+            .C_M_AXI_DATA_WIDTH     (C_M_AXI_DATA_WIDTH),
+            .C_M_AXI_AWUSER_WIDTH   (C_M_AXI_AWUSER_WIDTH),
+            .C_M_AXI_ARUSER_WIDTH   (C_M_AXI_ARUSER_WIDTH),
+            .C_M_AXI_WUSER_WIDTH    (C_M_AXI_WUSER_WIDTH),
+            .C_M_AXI_RUSER_WIDTH    (C_M_AXI_RUSER_WIDTH),
+            .C_M_AXI_BUSER_WIDTH    (C_M_AXI_BUSER_WIDTH)
+        )
+        inst_fetch
+        (
+        .ACLK           (ACLK),
+        .ARESETN        (ARESETN),
+
+        .M_AXI_AWID     (M_INST_AXI_AWID),
+        .M_AXI_AWADDR   (M_INST_AXI_AWADDR),
+        .M_AXI_AWLEN    (M_INST_AXI_AWLEN),
+        .M_AXI_AWSIZE   (M_INST_AXI_AWSIZE),
+        .M_AXI_AWBURST  (M_INST_AXI_AWBURST),
+        .M_AXI_AWLOCK   (M_INST_AXI_AWLOCK),
+        .M_AXI_AWCACHE  (M_INST_AXI_AWCACHE),
+        .M_AXI_AWPROT   (M_INST_AXI_AWPROT),
+        .M_AXI_AWQOS    (M_INST_AXI_AWQOS),
+        .M_AXI_AWUSER   (M_INST_AXI_AWUSER),
+        .M_AXI_AWVALID  (M_INST_AXI_AWVALID),
+        .M_AXI_AWREADY  (M_INST_AXI_AWREADY),
+        .M_AXI_WDATA    (M_INST_AXI_WDATA),
+        .M_AXI_WSTRB    (M_INST_AXI_WSTRB),
+        .M_AXI_WLAST    (M_INST_AXI_WLAST),
+        .M_AXI_WUSER    (M_INST_AXI_WUSER),
+        .M_AXI_WVALID   (M_INST_AXI_WVALID),
+        .M_AXI_WREADY   (M_INST_AXI_WREADY),
+        .M_AXI_BID      (M_INST_AXI_BID),
+        .M_AXI_BRESP    (M_INST_AXI_BRESP),
+        .M_AXI_BUSER    (M_INST_AXI_BUSER),
+        .M_AXI_BVALID   (M_INST_AXI_BVALID),
+        .M_AXI_BREADY   (M_INST_AXI_BREADY),
+        .M_AXI_ARID     (M_INST_AXI_ARID),
+        .M_AXI_ARADDR   (M_INST_AXI_ARADDR),
+        .M_AXI_ARLEN    (M_INST_AXI_ARLEN),
+        .M_AXI_ARSIZE   (M_INST_AXI_ARSIZE),
+        .M_AXI_ARBURST  (M_INST_AXI_ARBURST),
+        .M_AXI_ARLOCK   (M_INST_AXI_ARLOCK),
+        .M_AXI_ARCACHE  (M_INST_AXI_ARCACHE),
+        .M_AXI_ARPROT   (M_INST_AXI_ARPROT),
+        .M_AXI_ARQOS    (M_INST_AXI_ARQOS),
+        .M_AXI_ARUSER   (M_INST_AXI_ARUSER),
+        .M_AXI_ARVALID  (M_INST_AXI_ARVALID),
+        .M_AXI_ARREADY  (M_INST_AXI_ARREADY),
+        .M_AXI_RID      (M_INST_AXI_RID),
+        .M_AXI_RDATA    (M_INST_AXI_RDATA),
+        .M_AXI_RRESP    (M_INST_AXI_RRESP),
+        .M_AXI_RLAST    (M_INST_AXI_RLAST),
+        .M_AXI_RUSER    (M_INST_AXI_RUSER),
+        .M_AXI_RVALID   (M_INST_AXI_RVALID),
+        .M_AXI_RREADY   (M_INST_AXI_RREADY),
+
+        .PC_VALID       (pc_valid),
+        .PC             (REGPC),
+
+        .INST_VALID     (inst_valid),
+        .INST           (inst),
+        .MEM_WAIT       (mem_wait)
+    );
+
+    always @ (posedge CCLK) begin
+        if (CRST)
+            pc_valid <= 1'b0;
     end
 
 endmodule
