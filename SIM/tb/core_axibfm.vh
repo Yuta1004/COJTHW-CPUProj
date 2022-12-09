@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------------
 
 /* ----- AXIバス用リセット信号 ----- */
-wire                            CRSTN = ~CRST;
+wire                            RSTN = ~RST;
 
 /* ----- AXIバス(命令)接続用 ----- */
 // AWチャンネル
@@ -131,8 +131,8 @@ core #
     (
         /*----- CPU制御信号 ----- */
         // クロック
-        .CCLK   (CCLK),
-        .CRST   (CRST),
+        .CLK    (CLK),
+        .RST    (RST),
 
         // CPU状態
         .CEXEC  (CEXEC),
@@ -293,8 +293,8 @@ axi_slave_bfm #
     axi_slave_bfm_inst
     (
         // クロック
-        .ACLK           (CCLK),
-        .ARESETN        (CRSTN),
+        .ACLK           (CLK),
+        .ARESETN        (RSTN),
 
         // AWチャンネル
         .S_AXI_AWID     (M_INST_AXI_AWID),
@@ -362,8 +362,8 @@ axi_slave_bfm #
     )
     axi_slave_bfm_data
     (
-        .ACLK           (CCLK),
-        .ARESETN        (CRSTN),
+        .ACLK           (CLK),
+        .ARESETN        (RSTN),
 
         // AWチャンネル
         .S_AXI_AWID     (M_DATA_AXI_AWID),

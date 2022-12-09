@@ -26,8 +26,8 @@ module inst_fetch #
     )
     (
         /* ----- クロック&リセット信号 ----- */
-        input wire          CCLK,
-        input wire          CRST,
+        input wire          CLK,
+        input wire          RST,
 
         /* ----- 上位との接続用 ----- */
         input wire          STALL,
@@ -135,8 +135,8 @@ module inst_fetch #
 
     wire loaded = loaded_page_addr == PC[31:12];
 
-    always @ (posedge CCLK) begin
-        if (CRST)
+    always @ (posedge CLK) begin
+        if (RST)
             loaded_page_addr <= 20'b1111_1111_1111_1111_1111;
         else if (M_AXI_RVALID && M_AXI_RLAST && M_AXI_ARADDR[11:0] == 12'b0)
             loaded_page_addr <= PC[31:12];
@@ -154,8 +154,8 @@ module inst_fetch #
 
     reg [1:0] ar_state, ar_next_state;
 
-    always @ (posedge CCLK) begin
-        if (CRST)
+    always @ (posedge CLK) begin
+        if (RST)
             ar_state <= S_AR_IDLE;
         else
             ar_state <= ar_next_state;
@@ -190,8 +190,8 @@ module inst_fetch #
         endcase
     end
 
-    always @ (posedge CCLK) begin
-        if (CRST)
+    always @ (posedge CLK) begin
+        if (RST)
             M_AXI_ARADDR <= 32'h2000_0000;
         else if (ar_state == S_AR_IDLE && ar_next_state == S_AR_ADDR)
             M_AXI_ARADDR <= { PC[31:12], 12'b0 };
@@ -199,8 +199,8 @@ module inst_fetch #
             M_AXI_ARADDR <= M_AXI_ARADDR + 32'd128;
     end
 
-    always @ (posedge CCLK) begin
-        if (CRST)
+    always @ (posedge CLK) begin
+        if (RST)
             M_AXI_ARVALID <= 1'b0;
         else if (ar_next_state == S_AR_ADDR)
             M_AXI_ARVALID <= 1'b1;
@@ -208,11 +208,11 @@ module inst_fetch #
             M_AXI_ARVALID <= 1'b0;
     end
 
-    always @ (posedge CCLK) begin
+    always @ (posedge CLK) begin
         // RDATA
     end
 
-    always @ (posedge CCLK) begin
+    always @ (posedge CLK) begin
         // RVALID
     end
 

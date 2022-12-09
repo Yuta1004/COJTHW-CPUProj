@@ -60,12 +60,12 @@ wire [31:0]     REG31;
 wire [31:0]     REGPC;
 
 /* ----- クロック&リセット信号 ----- */
-reg CCLK;
-reg CRST;
+reg CLK;
+reg RST;
 
 always begin
-    CCLK = 0; #(STEP/2);
-    CCLK = 1; #(STEP/2);
+    CLK = 0; #(STEP/2);
+    CLK = 1; #(STEP/2);
 end
 
 /* ----- 共通化した接続部分の記述を読み込む ----- */
@@ -104,7 +104,7 @@ endtask
 
 /* ----- テストベンチ本体 ----- */
 initial begin
-    CRST = 0;
+    RST = 0;
     CEXEC = 0;
     #(STEP*10)
 
@@ -113,9 +113,9 @@ initial begin
     write_data;
 
     // リセット
-    CRST = 1;
+    RST = 1;
     #(STEP*10);
-    CRST = 0;
+    RST = 0;
 
     // 実行
     #(STEP*5);

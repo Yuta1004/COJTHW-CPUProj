@@ -26,8 +26,48 @@ module core #
     )
     (
         /* ----- クロック&リセット信号 ----- */
-        input wire CCLK,
-        input wire CRST,
+        input wire CLK,
+        input wire RST,
+
+        /*----- CPU制御信号 ----- */
+        // CPU状態
+        input wire          CEXEC,
+        output wire [7:0]   STAT,
+
+        // デバッグ用
+        output wire [31:0]  REG00,
+        output wire [31:0]  REG01,
+        output wire [31:0]  REG02,
+        output wire [31:0]  REG03,
+        output wire [31:0]  REG04,
+        output wire [31:0]  REG05,
+        output wire [31:0]  REG06,
+        output wire [31:0]  REG07,
+        output wire [31:0]  REG08,
+        output wire [31:0]  REG09,
+        output wire [31:0]  REG10,
+        output wire [31:0]  REG11,
+        output wire [31:0]  REG12,
+        output wire [31:0]  REG13,
+        output wire [31:0]  REG14,
+        output wire [31:0]  REG15,
+        output wire [31:0]  REG16,
+        output wire [31:0]  REG17,
+        output wire [31:0]  REG18,
+        output wire [31:0]  REG19,
+        output wire [31:0]  REG20,
+        output wire [31:0]  REG21,
+        output wire [31:0]  REG22,
+        output wire [31:0]  REG23,
+        output wire [31:0]  REG24,
+        output wire [31:0]  REG25,
+        output wire [31:0]  REG26,
+        output wire [31:0]  REG27,
+        output wire [31:0]  REG28,
+        output wire [31:0]  REG29,
+        output wire [31:0]  REG30,
+        output wire [31:0]  REG31,
+        output reg  [31:0]  REGPC,
 
         /* ----- AXIバス信号(命令用) ----- */
         // AWチャンネル
@@ -133,47 +173,7 @@ module core #
         input  wire                                 M_DATA_AXI_RLAST,
         input  wire [C_M_AXI_RUSER_WIDTH-1:0]       M_DATA_AXI_RUSER,
         input  wire                                 M_DATA_AXI_RVALID,
-        output wire                                 M_DATA_AXI_RREADY,
-
-        /*----- CPU制御信号 ----- */
-        // CPU状態
-        input wire          CEXEC,
-        output wire [7:0]   STAT,
-
-        // デバッグ用
-        output wire [31:0]  REG00,
-        output wire [31:0]  REG01,
-        output wire [31:0]  REG02,
-        output wire [31:0]  REG03,
-        output wire [31:0]  REG04,
-        output wire [31:0]  REG05,
-        output wire [31:0]  REG06,
-        output wire [31:0]  REG07,
-        output wire [31:0]  REG08,
-        output wire [31:0]  REG09,
-        output wire [31:0]  REG10,
-        output wire [31:0]  REG11,
-        output wire [31:0]  REG12,
-        output wire [31:0]  REG13,
-        output wire [31:0]  REG14,
-        output wire [31:0]  REG15,
-        output wire [31:0]  REG16,
-        output wire [31:0]  REG17,
-        output wire [31:0]  REG18,
-        output wire [31:0]  REG19,
-        output wire [31:0]  REG20,
-        output wire [31:0]  REG21,
-        output wire [31:0]  REG22,
-        output wire [31:0]  REG23,
-        output wire [31:0]  REG24,
-        output wire [31:0]  REG25,
-        output wire [31:0]  REG26,
-        output wire [31:0]  REG27,
-        output wire [31:0]  REG28,
-        output wire [31:0]  REG29,
-        output wire [31:0]  REG30,
-        output wire [31:0]  REG31,
-        output reg  [31:0]  REGPC
+        output wire                                 M_DATA_AXI_RREADY
     );
 
     /* ----- AXIバス設定(データ用) ----- */
@@ -257,12 +257,12 @@ module core #
     reg delayed_cexec;
     reg pc_valid;
 
-    always @ (posedge CCLK) begin
+    always @ (posedge CLK) begin
         delayed_cexec <= CEXEC;
     end
 
-    always @ (posedge CCLK) begin
-        if (CRST)
+    always @ (posedge CLK) begin
+        if (RST)
             pc_valid <= 1'b0;
         else if (CEXEC && !stall)
             pc_valid <= 1'b1;
@@ -270,8 +270,8 @@ module core #
             pc_valid <= 1'b0;
     end
 
-    always @ (posedge CCLK) begin
-        if (CRST)
+    always @ (posedge CLK) begin
+        if (RST)
             REGPC <= 32'h2000_0000;
         else if (CEXEC && delayed_cexec && !stall)
             REGPC <= REGPC + 32'd4;
@@ -297,8 +297,8 @@ module core #
         )
         inst_fetch
         (
-            .CCLK           (CCLK),
-            .CRST           (CRST),
+            .CLK            (CLK),
+            .RST            (RST),
 
             .STALL          (stall),
             .MEM_WAIT       (inst_mem_wait),
