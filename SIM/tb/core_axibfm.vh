@@ -290,7 +290,7 @@ axi_slave_bfm #
         .C_S_AXI_DATA_WIDTH     (C_AXI_DATA_WIDTH),
         .READ_DATA_IS_INCREMENT (0),
         .C_OFFSET_WIDTH         (C_OFFSET_WIDTH),
-        .ARREADY_IS_USUALLY_HIGH(0)
+        .ARREADY_IS_USUALLY_HIGH(1)
     )
     axi_slave_bfm_inst
     (
@@ -360,7 +360,7 @@ axi_slave_bfm #
         .C_S_AXI_DATA_WIDTH     (C_AXI_DATA_WIDTH),
         .READ_DATA_IS_INCREMENT (0),
         .C_OFFSET_WIDTH         (C_OFFSET_WIDTH),
-        .ARREADY_IS_USUALLY_HIGH(0)
+        .ARREADY_IS_USUALLY_HIGH(1)
     )
     axi_slave_bfm_data
     (

@@ -84,22 +84,26 @@ end
 `include "core_axibfm.vh"
 
 /* ----- 監視対象信号 ----- */
-wire            PC_VALID    = core.pc_valid;
-wire            INST_VALID  = core.inst_valid;
-wire [31:0]     INST        = core.inst;
-wire            MEM_WAIT    = core.mem_wait;
+wire            PC_VALID        = core.pc_valid;
+wire            INST_VALID      = core.inst_valid;
+wire [31:0]     INST            = core.inst;
+wire            INST_MEM_WAIT   = core.inst_mem_wait;
 
 /* ----- メモリ(命令)書き込み ----- */
 task write_inst;
+integer i;
 begin
-    axi_slave_bfm_inst.ram_array[0] = 32'h0000_0000;
+    for (i = 0; i < 1024; i = i + 1)
+        axi_slave_bfm_inst.ram_array[i] = i;
 end
 endtask
 
 /* ----- メモリ(データ)書き込み ----- */
 task write_data;
+integer i;
 begin
-    axi_slave_bfm_data.ram_array[0] = 32'h0000_0000;
+    for (i = 0; i < 1024; i = i + 1)
+        axi_slave_bfm_data.ram_array[i] = i;
 end
 endtask
 

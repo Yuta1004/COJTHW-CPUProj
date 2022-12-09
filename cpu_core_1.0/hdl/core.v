@@ -180,6 +180,9 @@ module core #
         output reg  [31:0]  REGPC
     );
 
+    /* ----- AXIバス用クロック ----- */
+    wire ARST = ~ARESETN;
+
     /* ----- AXIバス設定(データ用) ----- */
     // AWチャンネル
     assign M_DATA_AXI_AWID      = 'b0;
@@ -255,9 +258,9 @@ module core #
     assign REG31    = 32'b0;
 
     /* ----- 全体制御用ステートマシン ----- */
-    parameter S_IDLE    = 2'b00;
-    parameter S_EXEC    = 2'b01;
-    parameter S_WAIT    = 2'b11;
+    parameter S_IDLE        = 2'b00;
+    parameter S_EXEC        = 2'b01;
+    parameter S_MEM_WAIT    = 2'b11;
 
     reg [1:0] state, next_state;
 
@@ -279,10 +282,16 @@ module core #
                     next_state <= S_IDLE;
 
             S_EXEC:
-                next_state <= S_WAIT;
+                if (inst_mem_wait)
+                    next_state <= S_MEM_WAIT;
+                else
+                    next_state <= S_EXEC;
 
-            S_WAIT:
-                next_state <= S_WAIT;
+            S_MEM_WAIT:
+                if (!inst_mem_wait)
+                    next_state <= S_EXEC;
+                else
+                    next_state <= S_MEM_WAIT;
 
             default:
                 next_state <= S_IDLE;
@@ -290,19 +299,32 @@ module core #
     end
 
     /* ----- プログラムカウンタ ----- */
+    reg pc_valid;
+
     always @ (posedge CCLK) begin
         if (CRST)
-            REGPC <= 32'b0;
+            REGPC <= 32'h2000_0000;
+        else if (state == S_EXEC) begin
+            if (next_state == S_EXEC)
+                REGPC <= REGPC + 32'd4;
+            else if (next_state == S_MEM_WAIT)
+                REGPC <= REGPC - 32'd4;
+        end
+    end
+
+    always @ (posedge CCLK) begin
+        if (CRST)
+            pc_valid <= 1'b0;
         else if (next_state == S_EXEC)
-            REGPC <= REGPC + 32'd4;
+            pc_valid <= 1'b1;
+        else
+            pc_valid <= 1'b0;
     end
 
     /* ----- 命令フェッチ部 ----- */
-    wire        pc_valid = next_state == S_EXEC;
-
     wire        inst_valid;
     wire [31:0] inst;
-    wire        mem_wait;
+    wire        inst_mem_wait;
 
     inst_fetch #
         (
@@ -320,7 +342,7 @@ module core #
         inst_fetch
         (
         .ACLK           (ACLK),
-        .ARESETN        (ARESETN),
+        .ARST           (ARST),
 
         .M_AXI_AWID     (M_INST_AXI_AWID),
         .M_AXI_AWADDR   (M_INST_AXI_AWADDR),
@@ -373,7 +395,7 @@ module core #
 
         .INST_VALID     (inst_valid),
         .INST           (inst),
-        .MEM_WAIT       (mem_wait)
+        .MEM_WAIT       (inst_mem_wait)
     );
 
 endmodule
