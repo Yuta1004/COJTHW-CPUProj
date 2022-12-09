@@ -25,9 +25,18 @@ module inst_fetch #
         parameter integer C_M_AXI_BUSER_WIDTH     = 1
     )
     (
-        /* ----- AXIバス用クロック ----- */
-        input wire          ACLK,
-        input wire          ARST,
+        /* ----- クロック&リセット信号 ----- */
+        input wire          CCLK,
+        input wire          CRST,
+
+        /* ----- 上位との接続用 ----- */
+        input wire          STALL,
+        output wire         MEM_WAIT,
+
+        input wire          PC_VALID,
+        input wire  [31:0]  PC,
+        output wire         INST_VALID,
+        output wire [31:0]  INST,
 
         /* ----- AXIバス信号 ----- */
         // AWチャンネル
@@ -80,19 +89,7 @@ module inst_fetch #
         input  wire                                 M_AXI_RLAST,
         input  wire [C_M_AXI_RUSER_WIDTH-1:0]       M_AXI_RUSER,
         input  wire                                 M_AXI_RVALID,
-        output wire                                 M_AXI_RREADY,
-
-        /* ----- クロック&リセット(CCLK系) ----- */
-        input wire          CCLK,
-        input wire          CRST,
-
-        /* ----- 上位との接続用 ----- */
-        input wire          PC_VALID,
-        input wire [31:0]   PC,
-
-        output reg          INST_VALID,
-        output reg [31:0]   INST,
-        output reg          MEM_WAIT
+        output wire                                 M_AXI_RREADY
     );
 
     /* ----- AXIバス設定 ----- */
@@ -141,60 +138,14 @@ module inst_fetch #
     always @ (posedge CCLK) begin
         if (CRST)
             loaded_page_addr <= 20'b1111_1111_1111_1111_1111;
-        else if (dram_access_finished)
+        else if (M_AXI_RVALID && M_AXI_RLAST && M_AXI_ARADDR[11:0] == 12'b0)
             loaded_page_addr <= PC[31:12];
     end
 
-    /* ----- 命令出力 ----- */
-    always @ (posedge CCLK) begin
-        if (CRST)
-            INST_VALID <= 1'b0;
-        else
-            INST_VALID <= PC_VALID && loaded;
-    end
-
-    always @ (posedge CCLK) begin
-        if (CRST)
-            INST <= 32'b0;
-        else if (PC_VALID && loaded)
-            INST <= PC;
-        else
-            INST <= 32'b0;
-    end
-
-    always @ (posedge CCLK) begin
-        if (CRST)
-            MEM_WAIT <= 1'b0;
-        else if (PC_VALID && !loaded)
-            MEM_WAIT <= 1'b1;
-        else if (dram_access_finished)
-            MEM_WAIT <= 1'b0;
-    end
-
-    /* ----- DRAMアクセスチェック用信号(ACLKで同期化) ----- */
-    reg  [31:0] cache_pc [0:1];
-    reg  [1:0]  cache_pc_valid_and_loaded;
-
-    wire [31:0] draw_startaddr = { cache_pc[1][31:12], 12'b0 };
-    wire        do_access_dram = cache_pc_valid_and_loaded[1];
-
-    always @ (posedge ACLK) begin
-        cache_pc[0] <= PC;
-        cache_pc[1] <= cache_pc[0];
-        cache_pc_valid_and_loaded <= { cache_pc_valid_and_loaded[0], PC_VALID && !loaded };
-    end
-
-    /* ----- DRAMアクセス状態共有(ACLK & CCLK) ----- */
-    reg dram_access_finished;
-
-    always @ (posedge ACLK) begin
-        if (ARST)
-            dram_access_finished <= 1'b0;
-        else if (M_AXI_RVALID && M_AXI_RLAST && M_AXI_ARADDR[11:0] == 12'b0)
-            dram_access_finished <= 1'b1;
-        else if (dram_access_finished && !MEM_WAIT)
-            dram_access_finished <= 1'b0;
-    end
+    /* ----- 出力 ----- */
+    assign INST_VALID = PC_VALID;
+    assign INST = PC;
+    assign MEM_WAIT = PC_VALID && !loaded;
 
     /* ----- DRAMアクセス(AR&R)用ステートマシン ----- */
     parameter S_AR_IDLE = 2'b00;
@@ -203,8 +154,8 @@ module inst_fetch #
 
     reg [1:0] ar_state, ar_next_state;
 
-    always @ (posedge ACLK) begin
-        if (ARST)
+    always @ (posedge CCLK) begin
+        if (CRST)
             ar_state <= S_AR_IDLE;
         else
             ar_state <= ar_next_state;
@@ -213,7 +164,7 @@ module inst_fetch #
     always @* begin
         case (ar_state)
             S_AR_IDLE:
-                if (do_access_dram)
+                if (PC_VALID && !loaded)
                     ar_next_state <= S_AR_ADDR;
                 else
                     ar_next_state <= S_AR_IDLE;
@@ -239,17 +190,17 @@ module inst_fetch #
         endcase
     end
 
-    always @ (posedge ACLK) begin
-        if (ARST)
+    always @ (posedge CCLK) begin
+        if (CRST)
             M_AXI_ARADDR <= 32'h2000_0000;
         else if (ar_state == S_AR_IDLE && ar_next_state == S_AR_ADDR)
-            M_AXI_ARADDR <= draw_startaddr;
+            M_AXI_ARADDR <= { PC[31:12], 12'b0 };
         else if (ar_state == S_AR_ADDR && M_AXI_ARREADY)
             M_AXI_ARADDR <= M_AXI_ARADDR + 32'd128;
     end
 
-    always @ (posedge ACLK) begin
-        if (ARST)
+    always @ (posedge CCLK) begin
+        if (CRST)
             M_AXI_ARVALID <= 1'b0;
         else if (ar_next_state == S_AR_ADDR)
             M_AXI_ARVALID <= 1'b1;
@@ -257,11 +208,11 @@ module inst_fetch #
             M_AXI_ARVALID <= 1'b0;
     end
 
-    always @ (posedge ACLK) begin
+    always @ (posedge CCLK) begin
         // RDATA
     end
 
-    always @ (posedge ACLK) begin
+    always @ (posedge CCLK) begin
         // RVALID
     end
 

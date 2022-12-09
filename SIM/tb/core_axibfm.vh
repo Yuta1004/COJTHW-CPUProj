@@ -11,6 +11,8 @@
 // 2022/12/09  1.00     Y.Nakagami   Created
 //-----------------------------------------------------------------------------
 
+/* ----- AXIバス用リセット信号 ----- */
+wire                            CRSTN = ~CRST;
 
 /* ----- AXIバス(命令)接続用 ----- */
 // AWチャンネル
@@ -127,9 +129,49 @@ core #
     )
     core
     (
-        /* ----- AXIバス用クロック ----- */
-        .ACLK           (ACLK),
-        .ARESETN        (ARESETN),
+        /*----- CPU制御信号 ----- */
+        // クロック
+        .CCLK   (CCLK),
+        .CRST   (CRST),
+
+        // CPU状態
+        .CEXEC  (CEXEC),
+        .STAT   (STAT),
+
+        // デバッグ用
+        .REG00  (REG00),
+        .REG01  (REG01),
+        .REG02  (REG02),
+        .REG03  (REG03),
+        .REG04  (REG04),
+        .REG05  (REG05),
+        .REG06  (REG06),
+        .REG07  (REG07),
+        .REG08  (REG08),
+        .REG09  (REG09),
+        .REG10  (REG10),
+        .REG11  (REG11),
+        .REG12  (REG12),
+        .REG13  (REG13),
+        .REG14  (REG14),
+        .REG15  (REG15),
+        .REG16  (REG16),
+        .REG17  (REG17),
+        .REG18  (REG18),
+        .REG19  (REG19),
+        .REG20  (REG20),
+        .REG21  (REG21),
+        .REG22  (REG22),
+        .REG23  (REG23),
+        .REG24  (REG24),
+        .REG25  (REG25),
+        .REG26  (REG26),
+        .REG27  (REG27),
+        .REG28  (REG28),
+        .REG29  (REG29),
+        .REG30  (REG30),
+        .REG31  (REG31),
+        .REGPC  (REGPC),
 
         /* ----- AXIバス信号(命令用) ----- */
         // AWチャンネル
@@ -235,51 +277,7 @@ core #
         .M_DATA_AXI_RLAST    (M_DATA_AXI_RLAST),
         .M_DATA_AXI_RUSER    (M_DATA_AXI_RUSER),
         .M_DATA_AXI_RVALID   (M_DATA_AXI_RVALID),
-        .M_DATA_AXI_RREADY   (M_DATA_AXI_RREADY),
-
-        /*----- CPU制御信号 ----- */
-        // クロック
-        .CCLK   (CCLK),
-        .CRST   (CRST),
-        .CEXEC  (CEXEC),
-
-        // CPU状態
-        .STAT   (STAT),
-
-        // デバッグ用
-        .REG00  (REG00),
-        .REG01  (REG01),
-        .REG02  (REG02),
-        .REG03  (REG03),
-        .REG04  (REG04),
-        .REG05  (REG05),
-        .REG06  (REG06),
-        .REG07  (REG07),
-        .REG08  (REG08),
-        .REG09  (REG09),
-        .REG10  (REG10),
-        .REG11  (REG11),
-        .REG12  (REG12),
-        .REG13  (REG13),
-        .REG14  (REG14),
-        .REG15  (REG15),
-        .REG16  (REG16),
-        .REG17  (REG17),
-        .REG18  (REG18),
-        .REG19  (REG19),
-        .REG20  (REG20),
-        .REG21  (REG21),
-        .REG22  (REG22),
-        .REG23  (REG23),
-        .REG24  (REG24),
-        .REG25  (REG25),
-        .REG26  (REG26),
-        .REG27  (REG27),
-        .REG28  (REG28),
-        .REG29  (REG29),
-        .REG30  (REG30),
-        .REG31  (REG31),
-        .REGPC  (REGPC)
+        .M_DATA_AXI_RREADY   (M_DATA_AXI_RREADY)
 );
 
 
@@ -295,8 +293,8 @@ axi_slave_bfm #
     axi_slave_bfm_inst
     (
         // クロック
-        .ACLK           (ACLK),
-        .ARESETN        (ARESETN),
+        .ACLK           (CCLK),
+        .ARESETN        (CRSTN),
 
         // AWチャンネル
         .S_AXI_AWID     (M_INST_AXI_AWID),
@@ -364,9 +362,8 @@ axi_slave_bfm #
     )
     axi_slave_bfm_data
     (
-        // クロック
-        .ACLK           (ACLK),
-        .ARESETN        (ARESETN),
+        .ACLK           (CCLK),
+        .ARESETN        (CRSTN),
 
         // AWチャンネル
         .S_AXI_AWID     (M_DATA_AXI_AWID),

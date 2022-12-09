@@ -19,13 +19,10 @@ module core_tb;
 /* ----- 各種定数 ----- */
 localparam integer C_AXI_DATA_WIDTH = 32;
 localparam integer C_OFFSET_WIDTH = 28;
-
-localparam integer ASTEP  = 1000 / 125; // 125MHz
-localparam integer CSTEP  = 1000 / 1;   // 1Mhz
+localparam integer STEP  = 1000 / 50;   // 50Mhz
 
 /* ----- Coreとの接続用 ----- */
 reg             CEXEC;
-
 wire [7:0]      STAT;
 
 wire [31:0]     REG00;
@@ -62,29 +59,27 @@ wire [31:0]     REG30;
 wire [31:0]     REG31;
 wire [31:0]     REGPC;
 
-/* ----- システムクロックおよびリセット ----- */
-reg ACLK;
-reg ARESETN;
-
-always begin
-    ACLK = 0; #(ASTEP/2);
-    ACLK = 1; #(ASTEP/2);
-end
-
-/* ----- Core用クロックおよびリセット ----- */
+/* ----- クロック&リセット信号 ----- */
 reg CCLK;
 reg CRST;
 
 always begin
-    CCLK = 0; #(CSTEP/2);
-    CCLK = 1; #(CSTEP/2);
+    CCLK = 0; #(STEP/2);
+    CCLK = 1; #(STEP/2);
 end
 
 /* ----- 共通化した接続部分の記述を読み込む ----- */
 `include "core_axibfm.vh"
 
 /* ----- 監視対象信号 ----- */
+// 全体制御
+wire            STALL           = core.stall;
+
+// プログラムカウンタ
 wire            PC_VALID        = core.pc_valid;
+wire [31:0]     PC              = REGPC;
+
+// 命令フェッチ
 wire            INST_VALID      = core.inst_valid;
 wire [31:0]     INST            = core.inst;
 wire            INST_MEM_WAIT   = core.inst_mem_wait;
@@ -93,8 +88,8 @@ wire            INST_MEM_WAIT   = core.inst_mem_wait;
 task write_inst;
 integer i;
 begin
-    for (i = 0; i < 1024; i = i + 1)
-        axi_slave_bfm_inst.ram_array[i] = i;
+    for (i = 0; i < 1024*2; i = i + 1)
+        axi_slave_bfm_inst.ram_array[i] = 0;
 end
 endtask
 
@@ -102,39 +97,30 @@ endtask
 task write_data;
 integer i;
 begin
-    for (i = 0; i < 1024; i = i + 1)
-        axi_slave_bfm_data.ram_array[i] = i;
+    for (i = 0; i < 1024*2; i = i + 1)
+        axi_slave_bfm_data.ram_array[i] = 0;
 end
 endtask
 
 /* ----- テストベンチ本体 ----- */
 initial begin
-    ARESETN = 1;
     CRST = 0;
     CEXEC = 0;
+    #(STEP*10)
 
     // メモリ初期化
     write_inst;
     write_data;
 
-    // リセット(ACLK系)
-    #ASTEP;
-    ARESETN = 0;
-    #(ASTEP*10);
-    ARESETN = 1;
-
-    // リセット(CCLK系)
-    #(CSTEP - ASTEP*11)
-    #(CSTEP/2);
+    // リセット
     CRST = 1;
-    #CSTEP;
+    #(STEP*10);
     CRST = 0;
 
     // 実行
-    #(CSTEP*2);
+    #(STEP*5);
     CEXEC = 1;
-    #(CSTEP*10);
-    CEXEC = 0;
+    #(STEP*4500);
 
     $stop;
 end
