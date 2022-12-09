@@ -83,6 +83,12 @@ end
 /* ----- ‹¤’Ê‰»‚µ‚½Ú‘±•”•ª‚Ì‹Lq‚ğ“Ç‚İ‚Ş ----- */
 `include "core_axibfm.vh"
 
+/* ----- ŠÄ‹‘ÎÛM† ----- */
+wire            PC_VALID    = core.pc_valid;
+wire            INST_VALID  = core.inst_valid;
+wire [31:0]     INST        = core.inst;
+wire            MEM_WAIT    = core.mem_wait;
+
 /* ----- ƒƒ‚ƒŠ(–½—ß)‘‚«‚İ ----- */
 task write_inst;
 begin

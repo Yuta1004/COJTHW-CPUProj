@@ -279,10 +279,7 @@ module core #
                     next_state <= S_IDLE;
 
             S_EXEC:
-                if (!CEXEC)
-                    next_state <= S_IDLE;
-                else
-                    next_state <= S_EXEC;
+                next_state <= S_WAIT;
 
             S_WAIT:
                 next_state <= S_WAIT;
@@ -301,7 +298,7 @@ module core #
     end
 
     /* ----- 命令フェッチ部 ----- */
-    reg         pc_valid;
+    wire        pc_valid = next_state == S_EXEC;
 
     wire        inst_valid;
     wire [31:0] inst;
@@ -368,6 +365,9 @@ module core #
         .M_AXI_RVALID   (M_INST_AXI_RVALID),
         .M_AXI_RREADY   (M_INST_AXI_RREADY),
 
+        .CCLK           (CCLK),
+        .CRST           (CRST),
+
         .PC_VALID       (pc_valid),
         .PC             (REGPC),
 
@@ -375,10 +375,5 @@ module core #
         .INST           (inst),
         .MEM_WAIT       (mem_wait)
     );
-
-    always @ (posedge CCLK) begin
-        if (CRST)
-            pc_valid <= 1'b0;
-    end
 
 endmodule
