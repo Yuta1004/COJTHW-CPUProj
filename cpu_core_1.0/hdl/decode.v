@@ -23,11 +23,12 @@ module decode
 
         // ì¸óÕ
         input wire  [31:0]  I_PC,
-        input wire          I_VALID,
         input wire  [31:0]  I_INST,
+        input wire          I_VALID,
 
         // èoóÕ
         output wire [31:0]  D_PC,
+        output wire [31:0]  D_INST,
         output wire         D_VALID,
         output wire [6:0]   D_OPCODE,
         output wire [2:0]   D_FUNCT3,
@@ -46,13 +47,14 @@ module decode
 
     always @ (posedge CLK) begin
         i_pc <= I_PC;
-        i_valid <= I_VALID;
         i_inst <= I_INST;
+        i_valid <= I_VALID;
     end
 
     /* ----- èoóÕ ----- */
-    // PC, INST
+    // PC, INST, VALID
     assign D_PC     = i_pc;
+    assign D_INST   = i_inst;
     assign D_VALID  = i_valid;
 
     // opcode, funct3, funct7

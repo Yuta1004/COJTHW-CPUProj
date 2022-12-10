@@ -34,8 +34,8 @@ module inst_fetch #
 
         // 出力
         output wire [31:0]  I_PC,
-        output wire         I_VALID,
         output wire [31:0]  I_INST,
+        output wire         I_VALID,
 
         /* ----- AXIバス信号 ----- */
         // ARチャンネル

@@ -298,8 +298,8 @@ module core #
         .EXEC           (EXEC),
 
         .I_PC           (i_pc),
-        .I_VALID        (i_valid),
         .I_INST         (i_inst),
+        .I_VALID        (i_valid),
 
         .M_AXI_ARID     (M_INST_AXI_ARID),
         .M_AXI_ARADDR   (M_INST_AXI_ARADDR),
@@ -323,7 +323,7 @@ module core #
     );
 
     /* ----- デコード部 ----- */
-    wire [31:0] d_pc, imm;
+    wire [31:0] d_pc, d_inst, imm;
     wire        d_valid;
     wire [6:0]  d_opcode;
     wire [2:0]  d_funct3;
@@ -338,10 +338,11 @@ module core #
         .STALL      (stall),
 
         .I_PC       (i_pc),
-        .I_VALID    (i_valid),
         .I_INST     (i_inst),
+        .I_VALID    (i_valid),
 
         .D_PC       (d_pc),
+        .D_INST     (d_inst),
         .D_VALID    (d_valid),
         .D_OPCODE   (d_opcode),
         .D_FUNCT3   (d_funct3),

@@ -80,10 +80,11 @@ wire            INST_MEM_WAIT   = core.inst_fetch.MEM_WAIT;
 wire            EXEC_           = EXEC;
 
 wire [31:0]     I_PC            = core.inst_fetch.I_PC;
-wire            I_VALID         = core.inst_fetch.I_VALID;
 wire [31:0]     I_INST          = core.inst_fetch.I_INST;
+wire            I_VALID         = core.inst_fetch.I_VALID;
 
 wire [31:0]     D_PC            = core.decode.D_PC;
+wire [31:0]     D_INST          = core.decode.D_INST;
 wire            D_VALID         = core.decode.D_VALID;
 wire [6:0]      D_OPCODE        = core.decode.D_OPCODE;
 wire [2:0]      D_FUNCT3        = core.decode.D_FUNCT3;
