@@ -289,7 +289,7 @@ module core #
     );
 
     /* ----- デコード部 ----- */
-    wire [31:0] d_pc, d_inst, imm;
+    wire [31:0] d_pc, d_inst, d_imm;
     wire        d_valid;
     wire [6:0]  d_opcode;
     wire [2:0]  d_funct3;
@@ -351,6 +351,38 @@ module core #
         .REG29      (REG29),
         .REG30      (REG30),
         .REG31      (REG31)
+    );
+
+    /* ----- ALU ----- */
+    wire [31:0] a_pc, a_inst;
+    wire        a_valid;
+    wire [4:0]  a_reg_d;
+    wire [31:0] a_reg_d_v;
+
+    alu alu (
+        .CLK        (CLK),
+        .RST        (RST),
+
+        .STALL      (stall),
+
+        .D_PC       (d_pc),
+        .D_INST     (d_inst),
+        .D_VALID    (d_valid),
+        .D_OPCODE   (d_opcode),
+        .D_FUNCT3   (d_funct3),
+        .D_FUNCT7   (d_funct7),
+        .D_IMM      (d_imm),
+        .D_REG_D    (d_reg_d),
+        .D_REG_S1   (d_reg_s1),
+        .D_REG_S1_V (d_reg_s1_v),
+        .D_REG_S2   (d_reg_s2),
+        .D_REG_S2_V (d_reg_s2_v),
+
+        .A_PC       (a_pc),
+        .A_INST     (a_inst),
+        .A_VALID    (a_valid),
+        .A_REG_D    (a_reg_d),
+        .A_REG_D_V  (a_reg_d_v)
     );
 
     /* ----- デバッグ用 ----- */
