@@ -151,6 +151,18 @@ begin
     // axi_slave_bfm_inst.ram_array[18] = 32'b00000110010001001000010010010011;    // addi x9, x9, 100     -> 150
 
     // 2. beq
+    // axi_slave_bfm_inst.ram_array[0] = 32'b00000000000000000000000110010011; // addi x3, x0, 0
+    // axi_slave_bfm_inst.ram_array[1] = 32'b00000000101000000000000010010011; // addi x1, x0, 10
+    // axi_slave_bfm_inst.ram_array[2] = 32'b00000001010000000000000100010011; // addi x2, x0, 20
+    // axi_slave_bfm_inst.ram_array[3] = 32'b00000000001000001000010001100011; // beq x1, x2, 8
+    // axi_slave_bfm_inst.ram_array[4] = 32'b00000000101000011000000110010011; // addi x3, x3, 10
+    // axi_slave_bfm_inst.ram_array[5] = 32'b00000001010000011000000110010011; // addi x3, x3, 20  -> x3 = 30
+    // axi_slave_bfm_inst.ram_array[6] = 32'b00000001010000000000000010010011; // addi x1, x0, 20
+    // axi_slave_bfm_inst.ram_array[7] = 32'b00000000001000001000010001100011; // beq x1, x2, 8
+    // axi_slave_bfm_inst.ram_array[8] = 32'b00000000101000011000000110010011; // addi x3, x3, 10
+    // axi_slave_bfm_inst.ram_array[9] = 32'b00000001010000011000000110010011; // addi x3, x3, 20  -> x3 = 50
+
+    // 3. 多段beq + ストール
     axi_slave_bfm_inst.ram_array[0] = 32'b00000000000000000000000110010011; // addi x3, x0, 0
     axi_slave_bfm_inst.ram_array[1] = 32'b00000000101000000000000010010011; // addi x1, x0, 10
     axi_slave_bfm_inst.ram_array[2] = 32'b00000001010000000000000100010011; // addi x2, x0, 20
@@ -158,9 +170,12 @@ begin
     axi_slave_bfm_inst.ram_array[4] = 32'b00000000101000011000000110010011; // addi x3, x3, 10
     axi_slave_bfm_inst.ram_array[5] = 32'b00000001010000011000000110010011; // addi x3, x3, 20  -> x3 = 30
     axi_slave_bfm_inst.ram_array[6] = 32'b00000001010000000000000010010011; // addi x1, x0, 20
-    axi_slave_bfm_inst.ram_array[7] = 32'b00000000001000001000010001100011; // beq x1, x2, 8
-    axi_slave_bfm_inst.ram_array[8] = 32'b00000000101000011000000110010011; // addi x3, x3, 10
-    axi_slave_bfm_inst.ram_array[9] = 32'b00000001010000011000000110010011; // addi x3, x3, 20  -> x3 = 50
+    axi_slave_bfm_inst.ram_array[7] = 32'b00111110001000001000000001100011;    // beq x1, x2, 992
+    axi_slave_bfm_inst.ram_array[255] = 32'b00000000000000000000000000010011;  // nop
+    axi_slave_bfm_inst.ram_array[256] = 32'b01000000001000001000000001100011;  // beq x1, x2, 1024
+    axi_slave_bfm_inst.ram_array[512] = 32'b01000000001000001000000001100011;  // beq x1, x2, 1024
+    axi_slave_bfm_inst.ram_array[768] = 32'b01000000001000001000000001100011;  // beq x1, x2, 1024
+    axi_slave_bfm_inst.ram_array[1024] = 32'b00000001010000011000000110010011; // addi x3, x3, 20  -> x3 = 50
 end
 endtask
 

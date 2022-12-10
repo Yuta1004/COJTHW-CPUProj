@@ -84,12 +84,14 @@ module decode
     reg         i_valid;
 
     always @ (posedge CLK) begin
-        if (FLUSH) begin
+        if (STALL)
+            ;
+        else if (FLUSH) begin
             i_pc <= 32'b0;
             i_inst <= 32'b0;
             i_valid <= 1'b0;
         end
-        else if (!STALL) begin
+        else begin
             i_pc <= I_PC;
             i_inst <= I_INST;
             i_valid <= I_VALID;

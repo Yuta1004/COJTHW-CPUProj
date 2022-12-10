@@ -70,7 +70,9 @@ module alu
     reg [31:0] reg_s1_v, reg_s2_v;
 
     always @ (posedge CLK) begin
-        if (FLUSH) begin
+        if (STALL)
+            ;
+        else if (FLUSH) begin
             pc <= 32'b0;
             inst <= 32'b0;
             valid <= 1'b0;
@@ -84,7 +86,7 @@ module alu
             reg_s2 <= 5'b0;
             reg_s2_v <= 32'b0;
         end
-        else if (!STALL) begin
+        else begin
             pc <= D_PC;
             inst <= D_INST;
             valid <= D_VALID;

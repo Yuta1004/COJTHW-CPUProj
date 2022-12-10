@@ -60,7 +60,9 @@ module mem_rd
     reg [31:0]  reg_d_v;
 
     always @ (posedge CLK) begin
-        if (FLUSH) begin
+        if (STALL)
+            ;
+        else if (FLUSH) begin
             pc <= 32'b0;
             inst <= 32'b0;
             valid <= 1'b0;
@@ -69,7 +71,7 @@ module mem_rd
             reg_d <= 5'b0;
             reg_d_v <= 32'b0;
         end
-        else if (!STALL) begin
+        else begin
             pc <= A_PC;
             inst <= A_INST;
             valid <= A_VALID;
