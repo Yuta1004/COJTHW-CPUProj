@@ -25,8 +25,12 @@ module cachemem_rd #
         input               RST,
 
         /* ----- メモリアクセス用信号 ----- */
+        // アドレス指定
         input wire  [31:0]  ADDR,
         input wire          RDEN,
+
+        // データ出力 (1クロック遅れ)
+        output reg  [31:0]  OADDR,
         output wire [31:0]  DOUT,
         output reg          VALID,
 
@@ -103,6 +107,7 @@ module cachemem_rd #
 
     /* ----- 出力 ------ */
     always @ (posedge CLK) begin
+        OADDR <= ADDR;
         VALID <= RDEN && loaded;
     end
 

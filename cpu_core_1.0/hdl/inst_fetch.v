@@ -25,11 +25,15 @@ module inst_fetch #
         input wire          RST,
 
         /* ----- 上位との接続用 ----- */
+        // 制御
         input wire          STALL,
         output wire         MEM_WAIT,
 
-        input wire          PC_VALID,
-        input wire  [31:0]  PC,
+        // 入力
+        input               EXEC,
+
+        // 出力
+        output wire [31:0]  PC,
         output wire         INST_VALID,
         output wire [31:0]  INST,
 
@@ -58,6 +62,30 @@ module inst_fetch #
         output wire                                 M_AXI_RREADY
     );
 
+    /* ----- プログラムカウンタ ----- */
+    reg         delayed_exec, pc_valid;
+    reg [31:0]  pc;
+
+    always @ (posedge CLK) begin
+        delayed_exec <= EXEC;
+    end
+
+    always @ (posedge CLK) begin
+        if (RST)
+            pc_valid <= 1'b0;
+        else if (EXEC && !STALL)
+            pc_valid <= 1'b1;
+        else if (!EXEC)
+            pc_valid <= 1'b0;
+    end
+
+    always @ (posedge CLK) begin
+        if (RST)
+            pc <= 32'h2000_0000;
+        else if (EXEC && delayed_exec && !STALL)
+            pc <= pc + 32'd4;
+    end
+
     /* ----- キャッシュメモリ ----- */
     cachemem_rd # (
         .C_M_AXI_THREAD_ID_WIDTH(C_M_AXI_THREAD_ID_WIDTH),
@@ -69,8 +97,9 @@ module inst_fetch #
         .CLK            (CLK),
         .RST            (RST),
 
-        .ADDR           (PC),
-        .RDEN           (PC_VALID),
+        .ADDR           (pc),
+        .RDEN           (pc_valid),
+        .OADDR          (PC),
         .DOUT           (INST),
         .VALID          (INST_VALID),
 

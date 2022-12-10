@@ -74,19 +74,13 @@ end
 /* ----- 監視対象信号 ----- */
 // 全体制御
 wire            STALL           = core.stall;
-
-// プログラムカウンタ
-wire            PC_VALID        = core.pc_valid;
-wire [31:0]     PC              = REGPC;
+wire            INST_MEM_WAIT   = core.inst_fetch.MEM_WAIT;
 
 // 命令フェッチ
-wire            INST_VALID      = core.inst_valid;
-wire [31:0]     INST            = core.inst;
-wire            INST_MEM_WAIT   = core.inst_mem_wait;
-wire [31:0]     INST_MEM_ADDR   = core.inst_fetch.cachemem_rd.bram_addr;
-wire [3:0]      INST_MEM_WREN   = core.inst_fetch.cachemem_rd.bram_wren;
-wire [31:0]     INST_MEM_DIN    = core.inst_fetch.cachemem_rd.bram_din;
-wire [31:0]     INST_MEM_DOUT   = core.inst_fetch.cachemem_rd.DOUT;
+wire            EXEC_           = CEXEC;
+wire [31:0]     PC              = core.inst_fetch.PC;
+wire            INST_VALID      = core.inst_fetch.INST_VALID;
+wire [31:0]     INST            = core.inst_fetch.INST;
 
 /* ----- メモリ(命令)書き込み ----- */
 task write_inst;

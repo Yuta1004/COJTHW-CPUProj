@@ -67,7 +67,7 @@ module core #
         output wire [31:0]  REG29,
         output wire [31:0]  REG30,
         output wire [31:0]  REG31,
-        output reg  [31:0]  REGPC,
+        output wire [31:0]  REGPC,
 
         /* ----- AXIバス信号(命令用) ----- */
         // AWチャンネル
@@ -277,30 +277,6 @@ module core #
     /* ----- 全体制御 ----- */
     wire stall = inst_mem_wait;
 
-    /* ----- プログラムカウンタ ----- */
-    reg delayed_cexec;
-    reg pc_valid;
-
-    always @ (posedge CLK) begin
-        delayed_cexec <= CEXEC;
-    end
-
-    always @ (posedge CLK) begin
-        if (RST)
-            pc_valid <= 1'b0;
-        else if (CEXEC && !stall)
-            pc_valid <= 1'b1;
-        else if (!CEXEC)
-            pc_valid <= 1'b0;
-    end
-
-    always @ (posedge CLK) begin
-        if (RST)
-            REGPC <= 32'h2000_0000;
-        else if (CEXEC && delayed_cexec && !stall)
-            REGPC <= REGPC + 32'd4;
-    end
-
     /* ----- 命令フェッチ部 ----- */
     wire        inst_valid;
     wire [31:0] inst;
@@ -319,7 +295,7 @@ module core #
         .STALL          (stall),
         .MEM_WAIT       (inst_mem_wait),
 
-        .PC_VALID       (pc_valid),
+        .EXEC           (CEXEC),
         .PC             (REGPC),
         .INST_VALID     (inst_valid),
         .INST           (inst),
