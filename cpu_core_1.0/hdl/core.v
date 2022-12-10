@@ -240,40 +240,6 @@ module core #
     // Bチャンネル
     assign M_INST_AXI_BREADY     = 1'b0;
 
-    /* ----- デバッグ用 ----- */
-    assign REG00    = 32'b0;
-    assign REG01    = 32'b0;
-    assign REG02    = 32'b0;
-    assign REG03    = 32'b0;
-    assign REG04    = 32'b0;
-    assign REG05    = 32'b0;
-    assign REG06    = 32'b0;
-    assign REG07    = 32'b0;
-    assign REG08    = 32'b0;
-    assign REG09    = 32'b0;
-    assign REG10    = 32'b0;
-    assign REG11    = 32'b0;
-    assign REG12    = 32'b0;
-    assign REG13    = 32'b0;
-    assign REG14    = 32'b0;
-    assign REG15    = 32'b0;
-    assign REG16    = 32'b0;
-    assign REG17    = 32'b0;
-    assign REG18    = 32'b0;
-    assign REG19    = 32'b0;
-    assign REG20    = 32'b0;
-    assign REG21    = 32'b0;
-    assign REG22    = 32'b0;
-    assign REG23    = 32'b0;
-    assign REG24    = 32'b0;
-    assign REG25    = 32'b0;
-    assign REG26    = 32'b0;
-    assign REG27    = 32'b0;
-    assign REG28    = 32'b0;
-    assign REG29    = 32'b0;
-    assign REG30    = 32'b0;
-    assign REG31    = 32'b0;
-
     /* ----- 全体制御 ----- */
     wire stall = inst_mem_wait;
 
@@ -352,7 +318,43 @@ module core #
         .D_REG_S1   (d_reg_s1),
         .D_REG_S1_V (d_reg_s1_v),
         .D_REG_S2   (d_reg_s2),
-        .D_REG_S2_V (d_reg_s2_v)
+        .D_REG_S2_V (d_reg_s2_v),
+
+        .REG01      (REG01),
+        .REG02      (REG02),
+        .REG03      (REG03),
+        .REG04      (REG04),
+        .REG05      (REG05),
+        .REG06      (REG06),
+        .REG07      (REG07),
+        .REG08      (REG08),
+        .REG09      (REG09),
+        .REG10      (REG10),
+        .REG11      (REG11),
+        .REG12      (REG12),
+        .REG13      (REG13),
+        .REG14      (REG14),
+        .REG15      (REG15),
+        .REG16      (REG16),
+        .REG17      (REG17),
+        .REG18      (REG18),
+        .REG19      (REG19),
+        .REG20      (REG20),
+        .REG21      (REG21),
+        .REG22      (REG22),
+        .REG23      (REG23),
+        .REG24      (REG24),
+        .REG25      (REG25),
+        .REG26      (REG26),
+        .REG27      (REG27),
+        .REG28      (REG28),
+        .REG29      (REG29),
+        .REG30      (REG30),
+        .REG31      (REG31)
     );
+
+    /* ----- デバッグ用 ----- */
+    assign REG00 = 32'b0;
+    assign REGPC = i_pc;
 
 endmodule

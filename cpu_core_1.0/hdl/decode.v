@@ -38,7 +38,40 @@ module decode
         output wire [4:0]   D_REG_S1,
         output wire [31:0]  D_REG_S1_V,
         output wire [4:0]   D_REG_S2,
-        output wire [31:0]  D_REG_S2_V
+        output wire [31:0]  D_REG_S2_V,
+
+        /* ----- デバッグ用 ----- */
+        output wire [31:0]  REG01,
+        output wire [31:0]  REG02,
+        output wire [31:0]  REG03,
+        output wire [31:0]  REG04,
+        output wire [31:0]  REG05,
+        output wire [31:0]  REG06,
+        output wire [31:0]  REG07,
+        output wire [31:0]  REG08,
+        output wire [31:0]  REG09,
+        output wire [31:0]  REG10,
+        output wire [31:0]  REG11,
+        output wire [31:0]  REG12,
+        output wire [31:0]  REG13,
+        output wire [31:0]  REG14,
+        output wire [31:0]  REG15,
+        output wire [31:0]  REG16,
+        output wire [31:0]  REG17,
+        output wire [31:0]  REG18,
+        output wire [31:0]  REG19,
+        output wire [31:0]  REG20,
+        output wire [31:0]  REG21,
+        output wire [31:0]  REG22,
+        output wire [31:0]  REG23,
+        output wire [31:0]  REG24,
+        output wire [31:0]  REG25,
+        output wire [31:0]  REG26,
+        output wire [31:0]  REG27,
+        output wire [31:0]  REG28,
+        output wire [31:0]  REG29,
+        output wire [31:0]  REG30,
+        output wire [31:0]  REG31
     );
 
     /* ----- 入力(ラッチ取り込み) ----- */
