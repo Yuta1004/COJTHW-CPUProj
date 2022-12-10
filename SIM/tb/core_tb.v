@@ -83,13 +83,17 @@ wire [31:0]     PC              = REGPC;
 wire            INST_VALID      = core.inst_valid;
 wire [31:0]     INST            = core.inst;
 wire            INST_MEM_WAIT   = core.inst_mem_wait;
+// wire [31:0]     INST_MEM_ADDR   = core.inst_fetch.bram_addr;
+// wire [3:0]      INST_MEM_WREN   = core.inst_fetch.bram_wren;
+// wire [31:0]     INST_MEM_DIN    = core.inst_fetch.bram_din;
+// wire [31:0]     INST_MEM_DOUT   = core.inst_fetch.bram_dout;
 
 /* ----- ÉÅÉÇÉä(ñΩóﬂ)èëÇ´çûÇ› ----- */
 task write_inst;
 integer i;
 begin
     for (i = 0; i < 1024*2; i = i + 1)
-        axi_slave_bfm_inst.ram_array[i] = 0;
+        axi_slave_bfm_inst.ram_array[i] = i;
 end
 endtask
 

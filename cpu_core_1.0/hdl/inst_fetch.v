@@ -35,7 +35,7 @@ module inst_fetch #
 
         input wire          PC_VALID,
         input wire  [31:0]  PC,
-        output wire         INST_VALID,
+        output reg          INST_VALID,
         output wire [31:0]  INST,
 
         /* ----- AXIバス信号 ----- */
@@ -130,6 +130,23 @@ module inst_fetch #
     // Rチャンネル
     assign M_AXI_RREADY     = 1'b1;
 
+    /* ----- BRAM ----- */
+    wire [3:0]  bram_wren;
+    wire [31:0] bram_din, bram_dout;
+
+    wire        bram_en = 1'b1;
+    wire [31:0] bram_addr = { 20'b0, loaded ? PC[11:0] : r_waddr };
+
+    bram_4kb bram_4kb (
+        .clka   (CLK),
+        .rsta   (RST),
+        .ena    (bram_en),
+        .addra  (bram_addr),
+        .dina   (bram_din),
+        .wea    (bram_wren),
+        .douta  (bram_dout)
+    );
+
     /* ----- ページ存在確認 ----- */
     reg [19:0]  loaded_page_addr;
 
@@ -143,11 +160,14 @@ module inst_fetch #
     end
 
     /* ----- 出力 ----- */
-    assign INST_VALID = PC_VALID;
-    assign INST = PC;
+    always @ (posedge CLK) begin
+        INST_VALID <= PC_VALID && loaded;
+    end
+
+    assign INST = bram_dout;
     assign MEM_WAIT = PC_VALID && !loaded;
 
-    /* ----- DRAMアクセス(AR&R)用ステートマシン ----- */
+    /* ----- DRAMアクセス(AR)用ステートマシン ----- */
     parameter S_AR_IDLE = 2'b00;
     parameter S_AR_ADDR = 2'b01;
     parameter S_AR_WAIT = 2'b11;
@@ -208,12 +228,49 @@ module inst_fetch #
             M_AXI_ARVALID <= 1'b0;
     end
 
+    /* ----- DRAMアクセス(R)用ステートマシン ----- */
+    parameter S_R_IDLE = 2'b00;
+    parameter S_R_READ = 2'b01;
+
+    reg [1:0]   r_state, r_next_state;
+    reg [11:0]  r_waddr;
+
     always @ (posedge CLK) begin
-        // RDATA
+        if (RST)
+            r_state <= S_R_IDLE;
+        else
+            r_state <= r_next_state;
+    end
+
+    always @* begin
+        case (r_state)
+            S_R_IDLE:
+                if (M_AXI_ARADDR != r_waddr)
+                    r_next_state <= S_R_READ;
+                else
+                    r_next_state <= S_R_IDLE;
+
+            S_R_READ:
+                if (M_AXI_RVALID && M_AXI_RLAST)
+                    r_next_state <= S_R_IDLE;
+                else
+                    r_next_state <= S_R_READ;
+
+            default:
+                r_next_state <= S_R_IDLE;
+        endcase
     end
 
     always @ (posedge CLK) begin
-        // RVALID
+        if (RST)
+            r_waddr <= 12'hfff;
+        else if (r_state == S_R_IDLE && M_AXI_ARADDR != r_waddr)
+            r_waddr <= M_AXI_ARADDR[11:0];
+        else if (r_state == S_R_READ && M_AXI_RVALID)
+            r_waddr <= r_waddr + 12'd4;
     end
+
+    assign bram_din = M_AXI_RDATA;
+    assign bram_wren = M_AXI_RVALID ? 4'hf : 4'h0;
 
 endmodule
