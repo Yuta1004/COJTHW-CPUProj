@@ -216,6 +216,30 @@ module core #
     // Rチャンネル
     assign M_DATA_AXI_RREADY    = 1'b0;    // *
 
+    /* ----- AXIバス設定(命令用) ----- */
+    // AWチャンネル
+    assign M_INST_AXI_AWID       = 'b0;
+    assign M_INST_AXI_AWADDR     = 32'b0;
+    assign M_INST_AXI_AWLEN      = 8'b0;
+    assign M_INST_AXI_AWSIZE     = 3'b010;
+    assign M_INST_AXI_AWBURST    = 2'b01;
+    assign M_INST_AXI_AWLOCK     = 2'b00;
+    assign M_INST_AXI_AWCACHE    = 4'b0011;
+    assign M_INST_AXI_AWPROT     = 3'h0;
+    assign M_INST_AXI_AWQOS      = 4'h0;
+    assign M_INST_AXI_AWUSER     = 'b0;
+    assign M_INST_AXI_AWVALID    = 1'b0;
+
+    // Wチャンネル
+    assign M_INST_AXI_WDATA      = 32'b0;
+    assign M_INST_AXI_WSTRB      = 4'b1111;
+    assign M_INST_AXI_WLAST      = 1'b0;
+    assign M_INST_AXI_WUSER      = 'b0;
+    assign M_INST_AXI_WVALID     = 1'b0;
+
+    // Bチャンネル
+    assign M_INST_AXI_BREADY     = 1'b0;
+
     /* ----- デバッグ用 ----- */
     assign REG00    = 32'b0;
     assign REG01    = 32'b0;
@@ -284,15 +308,10 @@ module core #
 
     inst_fetch # (
         .C_M_AXI_THREAD_ID_WIDTH(C_M_AXI_THREAD_ID_WIDTH),
-        .C_M_AXI_BURST_LEN      (C_M_AXI_BURST_LEN),
-        .C_M_AXI_ID_WIDTH       (C_M_AXI_ID_WIDTH),
         .C_M_AXI_ADDR_WIDTH     (C_M_AXI_ADDR_WIDTH),
         .C_M_AXI_DATA_WIDTH     (C_M_AXI_DATA_WIDTH),
-        .C_M_AXI_AWUSER_WIDTH   (C_M_AXI_AWUSER_WIDTH),
         .C_M_AXI_ARUSER_WIDTH   (C_M_AXI_ARUSER_WIDTH),
-        .C_M_AXI_WUSER_WIDTH    (C_M_AXI_WUSER_WIDTH),
-        .C_M_AXI_RUSER_WIDTH    (C_M_AXI_RUSER_WIDTH),
-        .C_M_AXI_BUSER_WIDTH    (C_M_AXI_BUSER_WIDTH)
+        .C_M_AXI_RUSER_WIDTH    (C_M_AXI_RUSER_WIDTH)
     ) inst_fetch (
         .CLK            (CLK),
         .RST            (RST),
@@ -305,29 +324,6 @@ module core #
         .INST_VALID     (inst_valid),
         .INST           (inst),
 
-        .M_AXI_AWID     (M_INST_AXI_AWID),
-        .M_AXI_AWADDR   (M_INST_AXI_AWADDR),
-        .M_AXI_AWLEN    (M_INST_AXI_AWLEN),
-        .M_AXI_AWSIZE   (M_INST_AXI_AWSIZE),
-        .M_AXI_AWBURST  (M_INST_AXI_AWBURST),
-        .M_AXI_AWLOCK   (M_INST_AXI_AWLOCK),
-        .M_AXI_AWCACHE  (M_INST_AXI_AWCACHE),
-        .M_AXI_AWPROT   (M_INST_AXI_AWPROT),
-        .M_AXI_AWQOS    (M_INST_AXI_AWQOS),
-        .M_AXI_AWUSER   (M_INST_AXI_AWUSER),
-        .M_AXI_AWVALID  (M_INST_AXI_AWVALID),
-        .M_AXI_AWREADY  (M_INST_AXI_AWREADY),
-        .M_AXI_WDATA    (M_INST_AXI_WDATA),
-        .M_AXI_WSTRB    (M_INST_AXI_WSTRB),
-        .M_AXI_WLAST    (M_INST_AXI_WLAST),
-        .M_AXI_WUSER    (M_INST_AXI_WUSER),
-        .M_AXI_WVALID   (M_INST_AXI_WVALID),
-        .M_AXI_WREADY   (M_INST_AXI_WREADY),
-        .M_AXI_BID      (M_INST_AXI_BID),
-        .M_AXI_BRESP    (M_INST_AXI_BRESP),
-        .M_AXI_BUSER    (M_INST_AXI_BUSER),
-        .M_AXI_BVALID   (M_INST_AXI_BVALID),
-        .M_AXI_BREADY   (M_INST_AXI_BREADY),
         .M_AXI_ARID     (M_INST_AXI_ARID),
         .M_AXI_ARADDR   (M_INST_AXI_ARADDR),
         .M_AXI_ARLEN    (M_INST_AXI_ARLEN),
