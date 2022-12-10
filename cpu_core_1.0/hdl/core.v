@@ -395,7 +395,7 @@ module core #
     wire [4:0]  m_reg_d;
     wire [31:0] m_reg_d_v;
 
-    mem_rdwb mem_rdwb (
+    mem_rd mem_rd (
         .CLK        (CLK),
         .RST        (RST),
 

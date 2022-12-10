@@ -105,11 +105,11 @@ wire            A_VALID         = core.alu.A_VALID;
 wire [4:0]      A_REG_D         = core.alu.A_REG_D;
 wire [31:0]     A_REG_D_V       = core.alu.A_REG_D_V;
 
-wire [31:0]     M_PC            = core.mem_rdwb.M_PC;
-wire [31:0]     M_INST          = core.mem_rdwb.M_INST;
-wire            M_VALID         = core.mem_rdwb.M_VALID;
-wire [4:0]      M_REG_D         = core.mem_rdwb.M_REG_D;
-wire [31:0]     M_REG_D_V       = core.mem_rdwb.M_REG_D_V;
+wire [31:0]     M_PC            = core.mem_rd.M_PC;
+wire [31:0]     M_INST          = core.mem_rd.M_INST;
+wire            M_VALID         = core.mem_rd.M_VALID;
+wire [4:0]      M_REG_D         = core.mem_rd.M_REG_D;
+wire [31:0]     M_REG_D_V       = core.mem_rd.M_REG_D_V;
 
 /* ----- ÉÅÉÇÉä(ñΩóﬂ)èëÇ´çûÇ› ----- */
 task write_inst;
