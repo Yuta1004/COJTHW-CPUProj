@@ -79,21 +79,21 @@ wire            INST_MEM_WAIT   = core.inst_fetch.MEM_WAIT;
 // 命令フェッチ
 wire            EXEC_           = EXEC;
 
-wire [31:0]     I_PC            = core.inst_fetch.PC;
-wire            INST_VALID      = core.inst_fetch.INST_VALID;
-wire [31:0]     INST            = core.inst_fetch.INST;
+wire [31:0]     I_PC            = core.inst_fetch.I_PC;
+wire            I_VALID         = core.inst_fetch.I_VALID;
+wire [31:0]     I_INST          = core.inst_fetch.I_INST;
 
 wire [31:0]     D_PC            = core.decode.D_PC;
-wire [31:0]     D_INST          = core.decode.D_INST;
-wire [6:0]      OPCODE          = core.decode.OPCODE;
-wire [2:0]      FUNCT3          = core.decode.FUNCT3;
-wire [6:0]      FUNCT7          = core.decode.FUNCT7;
-wire [31:0]     IMM             = core.decode.IMM;
-wire [4:0]      REG_D           = core.decode.REG_D;
-wire [4:0]      REG_S1          = core.decode.REG_S1;
-wire [31:0]     REG_S1_V        = core.decode.REG_S1_V;
-wire [4:0]      REG_S2          = core.decode.REG_S2;
-wire [31:0]     REG_S2_V        = core.decode.REG_S2_V;
+wire            D_VALID         = core.decode.D_VALID;
+wire [6:0]      D_OPCODE        = core.decode.D_OPCODE;
+wire [2:0]      D_FUNCT3        = core.decode.D_FUNCT3;
+wire [6:0]      D_FUNCT7        = core.decode.D_FUNCT7;
+wire [31:0]     D_IMM           = core.decode.D_IMM;
+wire [4:0]      D_REG_D         = core.decode.D_REG_D;
+wire [4:0]      D_REG_S1        = core.decode.D_REG_S1;
+wire [31:0]     D_REG_S1_V      = core.decode.D_REG_S1_V;
+wire [4:0]      D_REG_S2        = core.decode.D_REG_S2;
+wire [31:0]     D_REG_S2_V      = core.decode.D_REG_S2_V;
 
 /* ----- メモリ(命令)書き込み ----- */
 task write_inst;

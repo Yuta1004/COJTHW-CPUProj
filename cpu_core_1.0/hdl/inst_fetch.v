@@ -33,9 +33,9 @@ module inst_fetch #
         input               EXEC,
 
         // 出力
-        output wire [31:0]  PC,
-        output wire         INST_VALID,
-        output wire [31:0]  INST,
+        output wire [31:0]  I_PC,
+        output wire         I_VALID,
+        output wire [31:0]  I_INST,
 
         /* ----- AXIバス信号 ----- */
         // ARチャンネル
@@ -99,9 +99,9 @@ module inst_fetch #
 
         .ADDR           (pc),
         .RDEN           (pc_valid),
-        .OADDR          (PC),
-        .DOUT           (INST),
-        .VALID          (INST_VALID),
+        .OADDR          (I_PC),
+        .DOUT           (I_INST),
+        .VALID          (I_VALID),
 
         .LOADING        (MEM_WAIT),
 

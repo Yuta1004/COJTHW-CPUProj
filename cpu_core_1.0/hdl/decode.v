@@ -23,45 +23,45 @@ module decode
 
         // 入力
         input wire  [31:0]  I_PC,
-        input wire          INST_VALID,
-        input wire  [31:0]  INST,
+        input wire          I_VALID,
+        input wire  [31:0]  I_INST,
 
         // 出力
         output wire [31:0]  D_PC,
-        output wire [31:0]  D_INST,
-        output wire [6:0]   OPCODE,
-        output wire [2:0]   FUNCT3,
-        output wire [6:0]   FUNCT7,
-        output wire [31:0]  IMM,
-        output wire [4:0]   REG_D,
-        output wire [4:0]   REG_S1,
-        output wire [31:0]  REG_S1_V,
-        output wire [4:0]   REG_S2,
-        output wire [31:0]  REG_S2_V
+        output wire         D_VALID,
+        output wire [6:0]   D_OPCODE,
+        output wire [2:0]   D_FUNCT3,
+        output wire [6:0]   D_FUNCT7,
+        output wire [31:0]  D_IMM,
+        output wire [4:0]   D_REG_D,
+        output wire [4:0]   D_REG_S1,
+        output wire [31:0]  D_REG_S1_V,
+        output wire [4:0]   D_REG_S2,
+        output wire [31:0]  D_REG_S2_V
     );
 
     /* ----- 入力(ラッチ取り込み) ----- */
-    reg [31:0]  pc, inst;
-    reg         inst_valid;
+    reg [31:0]  i_pc, i_inst;
+    reg         i_valid;
 
     always @ (posedge CLK) begin
-        pc <= I_PC;
-        inst_valid <= INST_VALID;
-        inst <= INST;
+        i_pc <= I_PC;
+        i_valid <= I_VALID;
+        i_inst <= I_INST;
     end
 
     /* ----- 出力 ----- */
     // PC, INST
-    assign D_PC     = pc;
-    assign D_INST   = inst;
+    assign D_PC     = i_pc;
+    assign D_VALID  = i_valid;
 
     // opcode, funct3, funct7
-    assign OPCODE   = inst[6:0];
-    assign FUNCT3   = inst[14:12];
-    assign FUNCT7   = inst[31:25];
+    assign D_OPCODE = i_inst[6:0];
+    assign D_FUNCT3 = i_inst[14:12];
+    assign D_FUNCT7 = i_inst[31:25];
 
     // imm
-    assign IMM = gen_imm(inst, OPCODE);
+    assign D_IMM = gen_imm(i_inst, D_OPCODE);
 
     function gen_imm;
         input [31:0]    INST;
@@ -114,11 +114,11 @@ module decode
     endfunction
 
     // rd, rs1, rs2
-    assign REG_D    = inst[11:7];
-    assign REG_S1   = inst[19:15];
-    assign REG_S1_V = select_reg(REG_S1);
-    assign REG_S2   = inst[24:20];
-    assign REG_S2_V = select_reg(REG_S2);
+    assign D_REG_D    = i_inst[11:7];
+    assign D_REG_S1   = i_inst[19:15];
+    assign D_REG_S1_V = select_reg(D_REG_S1);
+    assign D_REG_S2   = i_inst[24:20];
+    assign D_REG_S2_V = select_reg(D_REG_S2);
 
     reg [31:0] REG01, REG02, REG03, REG04, REG05, REG06, REG07, REG08, REG09, REG10;
     reg [31:0] REG11, REG12, REG13, REG14, REG15, REG16, REG17, REG18, REG19, REG20;

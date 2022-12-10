@@ -278,8 +278,8 @@ module core #
     wire stall = inst_mem_wait;
 
     /* ----- 命令フェッチ部 ----- */
-    wire        inst_valid;
-    wire [31:0] inst;
+    wire [31:0] i_pc, i_inst;
+    wire        i_valid;
     wire        inst_mem_wait;
 
     inst_fetch # (
@@ -296,9 +296,10 @@ module core #
         .MEM_WAIT       (inst_mem_wait),
 
         .EXEC           (EXEC),
-        .PC             (REGPC),
-        .INST_VALID     (inst_valid),
-        .INST           (inst),
+
+        .I_PC           (i_pc),
+        .I_VALID        (i_valid),
+        .I_INST         (i_inst),
 
         .M_AXI_ARID     (M_INST_AXI_ARID),
         .M_AXI_ARADDR   (M_INST_AXI_ARADDR),
@@ -322,12 +323,13 @@ module core #
     );
 
     /* ----- デコード部 ----- */
-    wire [31:0] d_pc, d_inst, imm;
-    wire [6:0]  opcode;
-    wire [2:0]  funct3;
-    wire [6:0]  funct7;
-    wire [4:0]  reg_d, reg_s1, reg_s2;
-    wire [31:0] reg_s1_v, reg_s2_v;
+    wire [31:0] d_pc, imm;
+    wire        d_valid;
+    wire [6:0]  d_opcode;
+    wire [2:0]  d_funct3;
+    wire [6:0]  d_funct7;
+    wire [4:0]  d_reg_d, d_reg_s1, d_reg_s2;
+    wire [31:0] d_reg_s1_v, d_reg_s2_v;
 
     decode decode (
         .CLK        (CLK),
@@ -335,21 +337,21 @@ module core #
 
         .STALL      (stall),
 
-        .I_PC       (REGPC),
-        .INST_VALID (inst_valid),
-        .INST       (inst),
+        .I_PC       (i_pc),
+        .I_VALID    (i_valid),
+        .I_INST     (i_inst),
 
         .D_PC       (d_pc),
-        .D_INST     (d_inst),
-        .OPCODE     (opcode),
-        .FUNCT3     (funct3),
-        .FUNCT7     (funct7),
-        .IMM        (imm),
-        .REG_D      (reg_d),
-        .REG_S1     (reg_s1),
-        .REG_S1_V   (reg_s1_v),
-        .REG_S2     (reg_s2),
-        .REG_S2_V   (reg_s2_v)
+        .D_VALID    (d_valid),
+        .D_OPCODE   (d_opcode),
+        .D_FUNCT3   (d_funct3),
+        .D_FUNCT7   (d_funct7),
+        .D_IMM      (d_imm),
+        .D_REG_D    (d_reg_d),
+        .D_REG_S1   (d_reg_s1),
+        .D_REG_S1_V (d_reg_s1_v),
+        .D_REG_S2   (d_reg_s2),
+        .D_REG_S2_V (d_reg_s2_v)
     );
 
 endmodule
