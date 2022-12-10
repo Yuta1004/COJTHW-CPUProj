@@ -35,6 +35,15 @@ module alu
         input wire  [4:0]   D_REG_S2,
         input wire  [31:0]  D_REG_S2_V,
 
+        // 入力 (フォワーディング)
+        input wire          FWD_M_VALID,
+        input wire  [4:0]   FWD_M_REG_D,
+        input wire  [31:0]  FWD_M_REG_D_V,
+
+        input wire          FWD_W_VALID,
+        input wire  [4:0]   FWD_W_REG_D,
+        input wire  [31:0]  FWD_W_REG_D_V,
+
         // 出力
         output wire [31:0]  A_PC,
         output wire [31:0]  A_INST,
@@ -88,6 +97,38 @@ module alu
         end
     end
 
+    /* ----- データフォワーディング ----- */
+    wire [31:0] forwarded_reg_s1_v = forward(
+        reg_s1, reg_s1_v,
+        FWD_M_VALID, FWD_M_REG_D, FWD_M_REG_D_V,
+        FWD_W_VALID, FWD_W_REG_D, FWD_W_REG_D_V
+    );
+    wire [31:0] forwarded_reg_s2_v = forward(
+        reg_s2, reg_s2_v,
+        FWD_M_VALID, FWD_M_REG_D, FWD_M_REG_D_V,
+        FWD_W_VALID, FWD_W_REG_D, FWD_W_REG_D_V
+    );
+
+    function [31:0] forward;
+        input [4:0]     TARGET_REG;
+        input [31:0]    TARGET_REG_V;
+        input           FWD_M_VALID;
+        input [4:0]     FWD_M_REG_D;
+        input [31:0]    FWD_M_REG_D_V;
+        input           FWD_W_VALID;
+        input [4:0]     FWD_W_REG_D;
+        input [31:0]    FWD_W_REG_D_V;
+
+        if (TARGET_REG == 5'b0)
+            forward = 32'b0;
+        else if (FWD_M_VALID && FWD_M_REG_D == TARGET_REG)
+            forward = FWD_M_REG_D_V;
+        else if (FWD_W_VALID && FWD_W_REG_D == TARGET_REG)
+            forward = FWD_W_REG_D_V;
+        else
+            forward = TARGET_REG_V;
+    endfunction
+
     /* ----- 出力 ----- */
     // PC, INST, VALID
     assign A_PC = pc;
@@ -96,7 +137,7 @@ module alu
 
     // rd
     assign A_REG_D = reg_d;
-    assign A_REG_D_V = rd_calc(opcode, funct3, funct7, reg_s1_v, reg_s2_v, imm);
+    assign A_REG_D_V = rd_calc(opcode, funct3, funct7, forwarded_reg_s1_v, forwarded_reg_s2_v, imm);
 
     function [31:0] rd_calc;
         input [6:0]  OPCODE;

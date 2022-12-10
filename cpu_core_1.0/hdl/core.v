@@ -364,29 +364,36 @@ module core #
     wire [31:0] a_reg_d_v;
 
     alu alu (
-        .CLK        (CLK),
-        .RST        (RST),
+        .CLK            (CLK),
+        .RST            (RST),
 
-        .STALL      (stall),
+        .STALL          (stall),
 
-        .D_PC       (d_pc),
-        .D_INST     (d_inst),
-        .D_VALID    (d_valid),
-        .D_OPCODE   (d_opcode),
-        .D_FUNCT3   (d_funct3),
-        .D_FUNCT7   (d_funct7),
-        .D_IMM      (d_imm),
-        .D_REG_D    (d_reg_d),
-        .D_REG_S1   (d_reg_s1),
-        .D_REG_S1_V (d_reg_s1_v),
-        .D_REG_S2   (d_reg_s2),
-        .D_REG_S2_V (d_reg_s2_v),
+        .D_PC           (d_pc),
+        .D_INST         (d_inst),
+        .D_VALID        (d_valid),
+        .D_OPCODE       (d_opcode),
+        .D_FUNCT3       (d_funct3),
+        .D_FUNCT7       (d_funct7),
+        .D_IMM          (d_imm),
+        .D_REG_D        (d_reg_d),
+        .D_REG_S1       (d_reg_s1),
+        .D_REG_S1_V     (d_reg_s1_v),
+        .D_REG_S2       (d_reg_s2),
+        .D_REG_S2_V     (d_reg_s2_v),
 
-        .A_PC       (a_pc),
-        .A_INST     (a_inst),
-        .A_VALID    (a_valid),
-        .A_REG_D    (a_reg_d),
-        .A_REG_D_V  (a_reg_d_v)
+        .FWD_M_VALID    (m_valid),
+        .FWD_M_REG_D    (m_reg_d),
+        .FWD_M_REG_D_V  (m_reg_d_v),
+        .FWD_W_VALID    (w_valid),
+        .FWD_W_REG_D    (w_reg_d),
+        .FWD_W_REG_D_V  (w_reg_d_v),
+
+        .A_PC           (a_pc),
+        .A_INST         (a_inst),
+        .A_VALID        (a_valid),
+        .A_REG_D        (a_reg_d),
+        .A_REG_D_V      (a_reg_d_v)
     );
 
     /* ----- メモリアクセス(読み)部 ---- */

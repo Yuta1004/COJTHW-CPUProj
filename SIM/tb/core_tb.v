@@ -124,41 +124,25 @@ begin
     for (i = 0; i < 1024*2; i = i + 1)
         axi_slave_bfm_inst.ram_array[i] = 0;
 
-    // フォワーディング必要
-    // axi_slave_bfm_inst.ram_array[0] = 32'b00111110100000000000000010010011;  // addi x1, x0, 1000
-    // axi_slave_bfm_inst.ram_array[1] = 32'b01111101000000001000000100010011;  // addi x2, x1, 2000
-    // axi_slave_bfm_inst.ram_array[2] = 32'b11000001100000010000000110010011;  // addi x3, x2, -1000
-    // axi_slave_bfm_inst.ram_array[3] = 32'b10000011000000011000001000010011;  // addi x4, x3, -2000
-    // axi_slave_bfm_inst.ram_array[4] = 32'b00111110100000100000001010010011;  // addi x5, x4, 1000
-
-    // フォワーディング必要
-    // axi_slave_bfm_inst.ram_array[0] = 32'b00111110100000000000000010010011;
-    // axi_slave_bfm_inst.ram_array[1] = 32'b00000000000000000000000000000000;
-    // axi_slave_bfm_inst.ram_array[2] = 32'b01111101000000001000000100010011;
-    // axi_slave_bfm_inst.ram_array[3] = 32'b00000000000000000000000000000000;
-    // axi_slave_bfm_inst.ram_array[4] = 32'b11000001100000010000000110010011;
-    // axi_slave_bfm_inst.ram_array[5] = 32'b00000000000000000000000000000000;
-    // axi_slave_bfm_inst.ram_array[6] = 32'b10000011000000011000001000010011;
-    // axi_slave_bfm_inst.ram_array[7] = 32'b00000000000000000000000000000000;
-    // axi_slave_bfm_inst.ram_array[8] = 32'b00111110100000100000001010010011;
-    // axi_slave_bfm_inst.ram_array[9] = 32'b00000000000000000000000000000000;
-
-    // フォワーディング不必要
-    axi_slave_bfm_inst.ram_array[0] = 32'b00111110100000000000000010010011;
-    axi_slave_bfm_inst.ram_array[1] = 32'b00000000000000000000000000000000;
-    axi_slave_bfm_inst.ram_array[2] = 32'b00000000000000000000000000000000;
-    axi_slave_bfm_inst.ram_array[3] = 32'b01111101000000001000000100010011;
-    axi_slave_bfm_inst.ram_array[4] = 32'b00000000000000000000000000000000;
-    axi_slave_bfm_inst.ram_array[5] = 32'b00000000000000000000000000000000;
-    axi_slave_bfm_inst.ram_array[6] = 32'b11000001100000010000000110010011;
-    axi_slave_bfm_inst.ram_array[7] = 32'b00000000000000000000000000000000;
-    axi_slave_bfm_inst.ram_array[8] = 32'b00000000000000000000000000000000;
-    axi_slave_bfm_inst.ram_array[9] = 32'b10000011000000011000001000010011;
-    axi_slave_bfm_inst.ram_array[10] = 32'b00000000000000000000000000000000;
-    axi_slave_bfm_inst.ram_array[11] = 32'b00000000000000000000000000000000;
-    axi_slave_bfm_inst.ram_array[12] = 32'b00111110100000100000001010010011;
-    axi_slave_bfm_inst.ram_array[13] = 32'b00000000000000000000000000000000;
-    axi_slave_bfm_inst.ram_array[14] = 32'b00000000000000000000000000000000;
+    axi_slave_bfm_inst.ram_array[0] = 32'b00111110100000000000000010010011;     // addi x1, x0, 1000    -> 1000
+    axi_slave_bfm_inst.ram_array[1] = 32'b00000000000000000000000000010011;     // nop
+    axi_slave_bfm_inst.ram_array[2] = 32'b01111101000000001000000100010011;     // addi x2, x1, 2000    -> 3000
+    axi_slave_bfm_inst.ram_array[3] = 32'b11000001100000010000000110010011;     // addi x3, x2, -1000   -> 2000
+    axi_slave_bfm_inst.ram_array[4] = 32'b00000000000000000000000000010011;     // nop
+    axi_slave_bfm_inst.ram_array[5] = 32'b10000011000000011000001000010011;     // addi x4, x3, -2000   -> 0
+    axi_slave_bfm_inst.ram_array[6] = 32'b00111110100000100000001010010011;     // addi x5, x4, 1000    -> 1000
+    axi_slave_bfm_inst.ram_array[7] = 32'b10000011000000101000001100010011;     // addi x6, x5, -2000   -> -1000
+    axi_slave_bfm_inst.ram_array[8] = 32'b00000000000000000000000000010011;     // nop
+    axi_slave_bfm_inst.ram_array[9] = 32'b00000000000000000000000000010011;     // nop
+    axi_slave_bfm_inst.ram_array[10] = 32'b10000011000000110000001110010011;    // addi x7, x6, -2000   -> -3000
+    axi_slave_bfm_inst.ram_array[11] = 32'b01111101000000111000010000010011;    // addi x8, x7, 2000    -> -1000
+    axi_slave_bfm_inst.ram_array[12] = 32'b01111101000001000000010010010011;    // addi x9, x8, 3000    -> 1000
+    axi_slave_bfm_inst.ram_array[13] = 32'b00000000000000000000000000010011;    // nop
+    axi_slave_bfm_inst.ram_array[14] = 32'b11110011100001001000010010010011;    // addi x9, x9, -200    -> 800
+    axi_slave_bfm_inst.ram_array[15] = 32'b11101101010001001000010010010011;    // addi x9, x9, -300    -> 500
+    axi_slave_bfm_inst.ram_array[16] = 32'b11100111000001001000010010010011;    // addi x9, x9, -400    -> 100
+    axi_slave_bfm_inst.ram_array[17] = 32'b11111100111001001000010010010011;    // addi x9, x9, -50     -> 50
+    axi_slave_bfm_inst.ram_array[18] = 32'b00000110010001001000010010010011;    // addi x9, x9, 100     -> 150
 end
 endtask
 
