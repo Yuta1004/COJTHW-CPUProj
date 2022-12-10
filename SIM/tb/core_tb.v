@@ -22,7 +22,7 @@ localparam integer C_OFFSET_WIDTH = 28;
 localparam integer STEP  = 1000 / 50;   // 50Mhz
 
 /* ----- Coreとの接続用 ----- */
-reg             CEXEC;
+reg             EXEC;
 wire [7:0]      STAT;
 
 wire [31:0]     REG00;
@@ -77,17 +77,37 @@ wire            STALL           = core.stall;
 wire            INST_MEM_WAIT   = core.inst_fetch.MEM_WAIT;
 
 // 命令フェッチ
-wire            EXEC_           = CEXEC;
-wire [31:0]     PC              = core.inst_fetch.PC;
+wire            EXEC_           = EXEC;
+
+wire [31:0]     I_PC            = core.inst_fetch.PC;
 wire            INST_VALID      = core.inst_fetch.INST_VALID;
 wire [31:0]     INST            = core.inst_fetch.INST;
+
+wire [31:0]     D_PC            = core.decode.D_PC;
+wire [31:0]     D_INST          = core.decode.D_INST;
+wire [6:0]      OPCODE          = core.decode.OPCODE;
+wire [2:0]      FUNCT3          = core.decode.FUNCT3;
+wire [6:0]      FUNCT7          = core.decode.FUNCT7;
+wire [31:0]     IMM             = core.decode.IMM;
+wire [4:0]      REG_D           = core.decode.REG_D;
+wire [4:0]      REG_S1          = core.decode.REG_S1;
+wire [31:0]     REG_S1_V        = core.decode.REG_S1_V;
+wire [4:0]      REG_S2          = core.decode.REG_S2;
+wire [31:0]     REG_S2_V        = core.decode.REG_S2_V;
 
 /* ----- メモリ(命令)書き込み ----- */
 task write_inst;
 integer i;
 begin
-    for (i = 0; i < 1024*2; i = i + 1)
-        axi_slave_bfm_inst.ram_array[i] = i;
+    axi_slave_bfm_inst.ram_array[0] = 32'b00111110100000000000000010010011;  // addi x1, x0, 1000
+    axi_slave_bfm_inst.ram_array[1] = 32'b01111101000000001000000100010011;  // addi x2, x1, 2000
+    axi_slave_bfm_inst.ram_array[2] = 32'b11000001100000010000000110010011;  // addi x3, x2, -1000
+    axi_slave_bfm_inst.ram_array[3] = 32'b10000011000000011000001000010011;  // addi x4, x3, -2000
+    axi_slave_bfm_inst.ram_array[4] = 32'b00111110100000100000001010010011;  // addi x5, x4, 1000
+
+    // 余白
+    for (i = 5; i < 1024*2; i = i + 1)
+        axi_slave_bfm_inst.ram_array[i] = 0;
 end
 endtask
 
@@ -103,7 +123,7 @@ endtask
 /* ----- テストベンチ本体 ----- */
 initial begin
     RST = 0;
-    CEXEC = 0;
+    EXEC = 0;
     #(STEP*10)
 
     // メモリ初期化
@@ -117,7 +137,7 @@ initial begin
 
     // 実行
     #(STEP*5);
-    CEXEC = 1;
+    EXEC = 1;
     #(STEP*4500);
 
     $stop;

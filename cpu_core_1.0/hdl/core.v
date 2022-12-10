@@ -321,4 +321,35 @@ module core #
         .M_AXI_RREADY   (M_INST_AXI_RREADY)
     );
 
+    /* ----- デコード部 ----- */
+    wire [31:0] d_pc, d_inst, imm;
+    wire [6:0]  opcode;
+    wire [2:0]  funct3;
+    wire [6:0]  funct7;
+    wire [4:0]  reg_d, reg_s1, reg_s2;
+    wire [31:0] reg_s1_v, reg_s2_v;
+
+    decode decode (
+        .CLK        (CLK),
+        .RST        (RST),
+
+        .STALL      (stall),
+
+        .I_PC       (REGPC),
+        .INST_VALID (inst_valid),
+        .INST       (inst),
+
+        .D_PC       (d_pc),
+        .D_INST     (d_inst),
+        .OPCODE     (opcode),
+        .FUNCT3     (funct3),
+        .FUNCT7     (funct7),
+        .IMM        (imm),
+        .REG_D      (reg_d),
+        .REG_S1     (reg_s1),
+        .REG_S1_V   (reg_s1_v),
+        .REG_S2     (reg_s2),
+        .REG_S2_V   (reg_s2_v)
+    );
+
 endmodule
