@@ -79,6 +79,9 @@ wire            INST_MEM_WAIT   = core.inst_fetch.MEM_WAIT;
 // 命令フェッチ
 wire            EXEC_           = EXEC;
 
+wire [31:0]     P_PC            = core.inst_fetch.pc;
+wire            P_VALID         = core.inst_fetch.pc_valid;
+
 wire [31:0]     I_PC            = core.inst_fetch.I_PC;
 wire [31:0]     I_INST          = core.inst_fetch.I_INST;
 wire            I_VALID         = core.inst_fetch.I_VALID;
