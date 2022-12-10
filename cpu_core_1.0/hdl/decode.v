@@ -83,9 +83,16 @@ module decode
     reg         i_valid;
 
     always @ (posedge CLK) begin
-        i_pc <= I_PC;
-        i_inst <= I_INST;
-        i_valid <= I_VALID;
+        if (STALL) begin
+            i_pc <= i_pc;
+            i_inst <= i_inst;
+            i_valid <= i_valid;
+        end
+        else begin
+            i_pc <= I_PC;
+            i_inst <= I_INST;
+            i_valid <= I_VALID;
+        end
     end
 
     /* ----- o—Í ----- */
@@ -237,7 +244,7 @@ module decode
             REG30 <= 32'b0;
             REG31 <= 32'b0;
         end
-        else if (M_VALID) begin
+        else if (M_VALID && !STALL) begin
             case (M_REG_D)
                 5'd1:   REG01 <= M_REG_D_V;
                 5'd2:   REG02 <= M_REG_D_V;

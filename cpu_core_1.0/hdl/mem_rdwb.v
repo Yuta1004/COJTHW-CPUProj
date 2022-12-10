@@ -53,11 +53,20 @@ module mem_rdwb
     reg [31:0]  reg_d_v;
 
     always @ (posedge CLK) begin
-        pc <= A_PC;
-        inst <= A_INST;
-        valid <= A_VALID;
-        reg_d <= A_REG_D;
-        reg_d_v <= A_REG_D_V;
+        if (STALL) begin
+            pc <= pc;
+            inst <= inst;
+            valid <= valid;
+            reg_d <= reg_d;
+            reg_d_v <= reg_d_v;
+        end
+        else begin
+            pc <= A_PC;
+            inst <= A_INST;
+            valid <= A_VALID;
+            reg_d <= A_REG_D;
+            reg_d_v <= A_REG_D_V;
+        end
     end
 
     /* ----- o—Í ----- */

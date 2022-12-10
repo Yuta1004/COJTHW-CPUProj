@@ -90,9 +90,9 @@ module inst_fetch #
     wire [31:0] i_pc, i_inst;
     wire        i_valid;
 
-    assign I_PC     = (i_inst == 32'b0 || !EXEC || STALL) ? 32'b0 : i_pc;
-    assign I_INST   = (i_inst == 32'b0 || !EXEC || STALL) ? 32'b0 : i_inst;
-    assign I_VALID  = (i_inst == 32'b0 || !EXEC || STALL) ? 32'b0 : i_valid;
+    assign I_PC     = (i_inst == 32'b0 || MEM_WAIT) ? 32'b0 : i_pc;
+    assign I_INST   = (i_inst == 32'b0 || MEM_WAIT) ? 32'b0 : i_inst;
+    assign I_VALID  = (i_inst == 32'b0 || MEM_WAIT) ? 32'b0 : i_valid;
 
     /* ----- ÉLÉÉÉbÉVÉÖÉÅÉÇÉä ----- */
     cachemem_rd # (

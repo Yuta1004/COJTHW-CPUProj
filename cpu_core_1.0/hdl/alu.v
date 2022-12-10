@@ -58,18 +58,34 @@ module alu
     reg [31:0] reg_s1_v, reg_s2_v;
 
     always @ (posedge CLK) begin
-        pc <= D_PC;
-        inst <= D_INST;
-        valid <= D_VALID;
-        opcode <= D_OPCODE;
-        funct3 <= D_FUNCT3;
-        funct7 <= D_FUNCT7;
-        imm <= D_IMM;
-        reg_d <= D_REG_D;
-        reg_s1 <= D_REG_S1;
-        reg_s1_v <= D_REG_S1_V;
-        reg_s2 <= D_REG_S2;
-        reg_s2_v <= D_REG_S2_V;
+        if (STALL) begin
+            pc <= pc;
+            inst <= inst;
+            valid <= valid;
+            opcode <= opcode;
+            funct3 <= funct3;
+            funct7 <= funct7;
+            imm <= imm;
+            reg_d <= reg_d;
+            reg_s1 <= reg_s1;
+            reg_s1_v <= reg_s1_v;
+            reg_s2 <= reg_s2;
+            reg_s2_v <= reg_s2_v;
+        end
+        else begin
+            pc <= D_PC;
+            inst <= D_INST;
+            valid <= D_VALID;
+            opcode <= D_OPCODE;
+            funct3 <= D_FUNCT3;
+            funct7 <= D_FUNCT7;
+            imm <= D_IMM;
+            reg_d <= D_REG_D;
+            reg_s1 <= D_REG_S1;
+            reg_s1_v <= D_REG_S1_V;
+            reg_s2 <= D_REG_S2;
+            reg_s2_v <= D_REG_S2_V;
+        end
     end
 
     /* ----- o—Í ----- */
