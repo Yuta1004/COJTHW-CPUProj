@@ -132,7 +132,7 @@ core # (
     .RST    (RST),
 
     // CPU状態
-    .CEXEC  (CEXEC),
+    .EXEC   (EXEC),
     .STAT   (STAT),
 
     // デバッグ用
