@@ -389,7 +389,7 @@ module core #
         .A_REG_D_V  (a_reg_d_v)
     );
 
-    /* ----- メモリ・レジスタアクセス部 ---- */
+    /* ----- メモリアクセス(読み)部 ---- */
     wire [31:0] m_pc, m_inst;
     wire        m_valid;
     wire [4:0]  m_reg_d;
@@ -412,6 +412,31 @@ module core #
         .M_VALID    (m_valid),
         .M_REG_D    (m_reg_d),
         .M_REG_D_V  (m_reg_d_v)
+    );
+
+    /* ----- メモリ・レジスタアクセス(書き)部 ----- */
+    wire [31:0] w_pc, w_inst;
+    wire        w_valid;
+    wire [4:0]  w_reg_d;
+    wire [31:0] w_reg_d_v;
+
+    wb wb (
+        .CLK        (CLK),
+        .RST        (RST),
+
+        .STALL      (stall),
+
+        .M_PC       (m_pc),
+        .M_INST     (m_inst),
+        .M_VALID    (m_valid),
+        .M_REG_D    (m_reg_d),
+        .M_REG_D_V  (m_reg_d_v),
+
+        .W_PC       (w_pc),
+        .W_INST     (w_inst),
+        .W_VALID    (w_valid),
+        .W_REG_D    (w_reg_d),
+        .W_REG_D_V  (w_reg_d_v)
     );
 
     /* ----- デバッグ用 ----- */
