@@ -385,13 +385,13 @@ module core #
         .A_REG_D_V  (a_reg_d_v)
     );
 
-    /* ----- メモリアクセス(読み)部 ---- */
+    /* ----- メモリ・レジスタアクセス部 ---- */
     wire [31:0] m_pc, m_inst;
     wire        m_valid;
     wire [4:0]  m_reg_d;
     wire [31:0] m_reg_d_v;
 
-    memrd memrd (
+    mem_rdwb mem_rdwb (
         .CLK        (CLK),
         .RST        (RST),
 
