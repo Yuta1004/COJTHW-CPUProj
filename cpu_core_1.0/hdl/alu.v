@@ -178,7 +178,7 @@ module alu
 
         casez ({ OPCODE, FUNCT3, FUNCT7 })
             // beq
-            17'b1100011_000_zzzzzzz: pc_calc = PC + { 11'b0, IMM[20:1], 1'b0 };
+            17'b1100011_000_zzzzzzz: pc_calc = PC + { { 11{ IMM[20] } }, IMM[20:1], 1'b0 };
 
             // –¢‘Î‰ž–½—ß
             default: pc_calc = 32'b0;
