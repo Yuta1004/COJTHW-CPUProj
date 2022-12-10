@@ -159,8 +159,23 @@ module decode
             gen_imm = 32'b0;
     endfunction
 
-    // rd, rs1, rs2
-    assign D_REG_D    = i_inst[11:7];
+    // rd
+    assign D_REG_D = check_reg_d(i_inst);
+
+    function [4:0] check_reg_d;
+        input [31:0] INST;
+
+        // SŒ`Ž® or BŒ`Ž®
+        if (
+            INST[6:0] == 7'b0100011 ||
+            INST[6:0] == 7'b1100011
+        )
+            check_reg_d = 5'b0;
+        else
+            check_reg_d = INST[11:7];
+    endfunction
+
+    // rs1, rs2
     assign D_REG_S1   = i_inst[19:15];
     assign D_REG_S1_V = select_reg(D_REG_S1);
     assign D_REG_S2   = i_inst[24:20];
