@@ -26,6 +26,10 @@ module decode
         input wire  [31:0]  I_INST,
         input wire          I_VALID,
 
+        input wire          M_VALID,
+        input wire  [4:0]   M_REG_D,
+        input wire  [31:0]  M_REG_D_V,
+
         // èoóÕ
         output wire [31:0]  D_PC,
         output wire [31:0]  D_INST,
@@ -232,6 +236,42 @@ module decode
             REG29 <= 32'b0;
             REG30 <= 32'b0;
             REG31 <= 32'b0;
+        end
+        else if (M_VALID) begin
+            case (M_REG_D)
+                5'd1:   REG01 <= M_REG_D_V;
+                5'd2:   REG02 <= M_REG_D_V;
+                5'd3:   REG03 <= M_REG_D_V;
+                5'd4:   REG04 <= M_REG_D_V;
+                5'd5:   REG05 <= M_REG_D_V;
+                5'd6:   REG06 <= M_REG_D_V;
+                5'd7:   REG07 <= M_REG_D_V;
+                5'd8:   REG08 <= M_REG_D_V;
+                5'd9:   REG09 <= M_REG_D_V;
+                5'd10:  REG10 <= M_REG_D_V;
+                5'd11:  REG11 <= M_REG_D_V;
+                5'd12:  REG12 <= M_REG_D_V;
+                5'd13:  REG13 <= M_REG_D_V;
+                5'd14:  REG14 <= M_REG_D_V;
+                5'd15:  REG15 <= M_REG_D_V;
+                5'd16:  REG16 <= M_REG_D_V;
+                5'd17:  REG17 <= M_REG_D_V;
+                5'd18:  REG18 <= M_REG_D_V;
+                5'd19:  REG19 <= M_REG_D_V;
+                5'd20:  REG20 <= M_REG_D_V;
+                5'd21:  REG21 <= M_REG_D_V;
+                5'd22:  REG22 <= M_REG_D_V;
+                5'd23:  REG23 <= M_REG_D_V;
+                5'd24:  REG24 <= M_REG_D_V;
+                5'd25:  REG25 <= M_REG_D_V;
+                5'd26:  REG26 <= M_REG_D_V;
+                5'd27:  REG27 <= M_REG_D_V;
+                5'd28:  REG28 <= M_REG_D_V;
+                5'd29:  REG29 <= M_REG_D_V;
+                5'd30:  REG30 <= M_REG_D_V;
+                5'd31:  REG31 <= M_REG_D_V;
+                default: REG01 <= REG01;
+            endcase
         end
     end
 

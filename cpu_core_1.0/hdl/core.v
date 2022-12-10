@@ -307,6 +307,10 @@ module core #
         .I_INST     (i_inst),
         .I_VALID    (i_valid),
 
+        .M_VALID    (m_valid),
+        .M_REG_D    (m_reg_d),
+        .M_REG_D_V  (m_reg_d_v),
+
         .D_PC       (d_pc),
         .D_INST     (d_inst),
         .D_VALID    (d_valid),
