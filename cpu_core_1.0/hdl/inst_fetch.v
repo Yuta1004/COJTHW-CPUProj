@@ -27,6 +27,8 @@ module inst_fetch #
         /* ----- 上位との接続用 ----- */
         // 制御
         input wire          STALL,
+        input wire          FLUSH,
+        input wire  [31:0]  NEW_PC,
         output wire         MEM_WAIT,
 
         // 入力
@@ -82,6 +84,8 @@ module inst_fetch #
     always @ (posedge CLK) begin
         if (RST)
             pc <= 32'h2000_0000;
+        else if (FLUSH)
+            pc <= NEW_PC;
         else if (delayed_exec && !STALL)
             pc <= pc + 32'd4;
     end
@@ -90,9 +94,9 @@ module inst_fetch #
     wire [31:0] i_pc, i_inst;
     wire        i_valid;
 
-    assign I_PC     = (i_inst == 32'b0 || MEM_WAIT) ? 32'b0 : i_pc;
-    assign I_INST   = (i_inst == 32'b0 || MEM_WAIT) ? 32'b0 : i_inst;
-    assign I_VALID  = (i_inst == 32'b0 || MEM_WAIT) ? 32'b0 : i_valid;
+    assign I_PC     = (i_inst == 32'b0 || MEM_WAIT || FLUSH) ? 32'b0 : i_pc;
+    assign I_INST   = (i_inst == 32'b0 || MEM_WAIT || FLUSH) ? 32'b0 : i_inst;
+    assign I_VALID  = (i_inst == 32'b0 || MEM_WAIT || FLUSH) ? 32'b0 : i_valid;
 
     /* ----- キャッシュメモリ ----- */
     cachemem_rd # (

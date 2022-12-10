@@ -20,13 +20,14 @@ module wb
         /* ----- 上位との接続用 ----- */
         // 制御
         input wire          STALL,
+        input wire          FLUSH,
 
         // 入力
-        output wire [31:0]  M_PC,
-        output wire [31:0]  M_INST,
-        output wire         M_VALID,
-        output wire [4:0]   M_REG_D,
-        output wire [31:0]  M_REG_D_V,
+        input wire  [31:0]  M_PC,
+        input wire  [31:0]  M_INST,
+        input wire          M_VALID,
+        input wire  [4:0]   M_REG_D,
+        input wire  [31:0]  M_REG_D_V,
         // output wire [31:0]  M_LOAD_ADDR,
         // output wire [31:0]  M_LOAD_STRB,
         // output wire [31:0]  M_STORE_ADDR,
@@ -53,14 +54,14 @@ module wb
     reg [31:0]  reg_d_v;
 
     always @ (posedge CLK) begin
-        if (STALL) begin
-            pc <= pc;
-            inst <= inst;
-            valid <= valid;
-            reg_d <= reg_d;
-            reg_d_v <= reg_d_v;
+        if (FLUSH) begin
+            pc <= 32'b0;
+            inst <= 32'b0;
+            valid <= 1'b0;
+            reg_d <= 5'b0;
+            reg_d_v <= 5'b0;
         end
-        else begin
+        else if (!STALL) begin
             pc <= M_PC;
             inst <= M_INST;
             valid <= M_VALID;

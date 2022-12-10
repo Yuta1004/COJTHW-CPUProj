@@ -241,12 +241,15 @@ module core #
     assign M_INST_AXI_BREADY     = 1'b0;
 
     /* ----- 全体制御 ----- */
+    wire        inst_mem_wait, do_jmp;
+    wire [31:0] new_pc;
+
     wire stall = inst_mem_wait;
+    wire flush = do_jmp;
 
     /* ----- 命令フェッチ部 ----- */
     wire [31:0] i_pc, i_inst;
     wire        i_valid;
-    wire        inst_mem_wait;
 
     inst_fetch # (
         .C_M_AXI_THREAD_ID_WIDTH(C_M_AXI_THREAD_ID_WIDTH),
@@ -259,6 +262,8 @@ module core #
         .RST            (RST),
 
         .STALL          (stall),
+        .FLUSH          (flush),
+        .NEW_PC         (new_pc),
         .MEM_WAIT       (inst_mem_wait),
 
         .EXEC           (EXEC),
@@ -302,6 +307,7 @@ module core #
         .RST        (RST),
 
         .STALL      (stall),
+        .FLUSH      (flush),
 
         .I_PC       (i_pc),
         .I_INST     (i_inst),
@@ -360,6 +366,8 @@ module core #
     /* ----- ALU ----- */
     wire [31:0] a_pc, a_inst;
     wire        a_valid;
+    wire        a_do_jmp;
+    wire [31:0] a_new_pc;
     wire [4:0]  a_reg_d;
     wire [31:0] a_reg_d_v;
 
@@ -368,6 +376,7 @@ module core #
         .RST            (RST),
 
         .STALL          (stall),
+        .FLUSH          (flush),
 
         .D_PC           (d_pc),
         .D_INST         (d_inst),
@@ -392,6 +401,8 @@ module core #
         .A_PC           (a_pc),
         .A_INST         (a_inst),
         .A_VALID        (a_valid),
+        .A_DO_JMP       (a_do_jmp),
+        .A_NEW_PC       (a_new_pc),
         .A_REG_D        (a_reg_d),
         .A_REG_D_V      (a_reg_d_v)
     );
@@ -407,10 +418,15 @@ module core #
         .RST        (RST),
 
         .STALL      (stall),
+        .FLUSH      (flush),
+        .DO_JMP     (do_jmp),
+        .NEW_PC     (new_pc),
 
         .A_PC       (a_pc),
         .A_INST     (a_inst),
         .A_VALID    (a_valid),
+        .A_DO_JMP   (a_do_jmp),
+        .A_NEW_PC   (a_new_pc),
         .A_REG_D    (a_reg_d),
         .A_REG_D_V  (a_reg_d_v),
 
@@ -432,6 +448,7 @@ module core #
         .RST        (RST),
 
         .STALL      (stall),
+        .FLUSH      (flush),
 
         .M_PC       (m_pc),
         .M_INST     (m_inst),

@@ -20,6 +20,7 @@ module decode
         /* ----- è„à Ç∆ÇÃê⁄ë±óp ----- */
         // êßå‰
         input wire          STALL,
+        input wire          FLUSH,
 
         // ì¸óÕ
         input wire  [31:0]  I_PC,
@@ -83,12 +84,12 @@ module decode
     reg         i_valid;
 
     always @ (posedge CLK) begin
-        if (STALL) begin
-            i_pc <= i_pc;
-            i_inst <= i_inst;
-            i_valid <= i_valid;
+        if (FLUSH) begin
+            i_pc <= 32'b0;
+            i_inst <= 32'b0;
+            i_valid <= 1'b0;
         end
-        else begin
+        else if (!STALL) begin
             i_pc <= I_PC;
             i_inst <= I_INST;
             i_valid <= I_VALID;

@@ -20,6 +20,7 @@ module alu
         /* ----- è„à Ç∆ÇÃê⁄ë±óp ----- */
         // êßå‰
         input wire          STALL,
+        input wire          FLUSH,
 
         // ì¸óÕ
         input wire  [31:0]  D_PC,
@@ -48,6 +49,8 @@ module alu
         output wire [31:0]  A_PC,
         output wire [31:0]  A_INST,
         output wire         A_VALID,
+        output wire         A_DO_JMP,
+        output wire [31:0]  A_NEW_PC,
         output wire [4:0]   A_REG_D,
         output wire [31:0]  A_REG_D_V
         // output wire [31:0]  A_LOAD_ADDR,
@@ -67,21 +70,21 @@ module alu
     reg [31:0] reg_s1_v, reg_s2_v;
 
     always @ (posedge CLK) begin
-        if (STALL) begin
-            pc <= pc;
-            inst <= inst;
-            valid <= valid;
-            opcode <= opcode;
-            funct3 <= funct3;
-            funct7 <= funct7;
-            imm <= imm;
-            reg_d <= reg_d;
-            reg_s1 <= reg_s1;
-            reg_s1_v <= reg_s1_v;
-            reg_s2 <= reg_s2;
-            reg_s2_v <= reg_s2_v;
+        if (FLUSH) begin
+            pc <= 32'b0;
+            inst <= 32'b0;
+            valid <= 1'b0;
+            opcode <= 7'b0;
+            funct3 <= 3'b0;
+            funct7 <= 7'b0;
+            imm <= 32'b0;
+            reg_d <= 5'b0;
+            reg_s1 <= 5'b0;
+            reg_s1_v <= 32'b0;
+            reg_s2 <= 5'b0;
+            reg_s2_v <= 32'b0;
         end
-        else begin
+        else if (!STALL) begin
             pc <= D_PC;
             inst <= D_INST;
             valid <= D_VALID;
@@ -135,9 +138,57 @@ module alu
     assign A_INST = inst;
     assign A_VALID = valid;
 
+    // DO_JMP, NEW_PC
+    assign A_DO_JMP = check_do_jmp(
+        opcode, funct3, funct7,
+        forwarded_reg_s1_v, forwarded_reg_s1_v, forwarded_reg_s2_v, forwarded_reg_s2_v
+    );
+    assign A_NEW_PC = pc_calc(
+        opcode, funct3, funct7,
+        pc, forwarded_reg_s1_v, imm
+    );
+
+    function check_do_jmp;
+        input        [6:0]  OPCODE;
+        input        [2:0]  FUNCT3;
+        input        [6:0]  FUNCT7;
+        input        [31:0] REG_S1_V;
+        input signed [31:0] REG_S1_V_S;
+        input        [31:0] REG_S2_V;
+        input signed [31:0] REG_S2_V_S;
+
+        casez ({ OPCODE, FUNCT3, FUNCT7 })
+            // beq
+            17'b1100011_000_zzzzzzz: check_do_jmp = REG_S1_V == REG_S2_V;
+
+            // ñ¢ëŒâûñΩóﬂ
+            default: check_do_jmp = 0;
+        endcase
+    endfunction
+
+    function [31:0] pc_calc;
+        input [6:0]  OPCODE;
+        input [2:0]  FUNCT3;
+        input [6:0]  FUNCT7;
+        input [31:0] PC;
+        input [31:0] REG_S1_V;
+        input [31:0] IMM;
+
+        casez ({ OPCODE, FUNCT3, FUNCT7 })
+            // beq
+            17'b1100011_000_zzzzzzz: pc_calc = PC + { 11'b0, IMM[20:1], 1'b0 };
+
+            // ñ¢ëŒâûñΩóﬂ
+            default: pc_calc = 32'b0;
+        endcase
+    endfunction
+
     // rd
     assign A_REG_D = reg_d;
-    assign A_REG_D_V = rd_calc(opcode, funct3, funct7, forwarded_reg_s1_v, forwarded_reg_s2_v, imm);
+    assign A_REG_D_V = rd_calc(
+        opcode, funct3, funct7,
+        forwarded_reg_s1_v, forwarded_reg_s2_v, imm
+    );
 
     function [31:0] rd_calc;
         input [6:0]  OPCODE;
@@ -154,7 +205,6 @@ module alu
             // ñ¢ëŒâûñΩóﬂ
             default: rd_calc = 32'b0;
         endcase
-
     endfunction
 
 endmodule
