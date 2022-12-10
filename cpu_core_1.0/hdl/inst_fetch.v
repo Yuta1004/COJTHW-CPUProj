@@ -86,6 +86,14 @@ module inst_fetch #
             pc <= pc + 32'd4;
     end
 
+    /* ----- 出力 ----- */
+    wire [31:0] i_pc, i_inst;
+    wire        i_valid;
+
+    assign I_PC     = i_inst == 32'b0 ? 32'b0 : i_pc;
+    assign I_INST   = i_inst == 32'b0 ? 32'b0 : i_inst;
+    assign I_VALID  = i_inst == 32'b0 ? 32'b0 : i_valid;
+
     /* ----- キャッシュメモリ ----- */
     cachemem_rd # (
         .C_M_AXI_THREAD_ID_WIDTH(C_M_AXI_THREAD_ID_WIDTH),
@@ -99,9 +107,9 @@ module inst_fetch #
 
         .ADDR           (pc),
         .RDEN           (pc_valid),
-        .OADDR          (I_PC),
-        .DOUT           (I_INST),
-        .VALID          (I_VALID),
+        .OADDR          (i_pc),
+        .DOUT           (i_inst),
+        .VALID          (i_valid),
 
         .LOADING        (MEM_WAIT),
 
