@@ -82,7 +82,7 @@ module inst_fetch #
     always @ (posedge CLK) begin
         if (RST)
             pc <= 32'h2000_0000;
-        else if (EXEC && delayed_exec && !STALL)
+        else if (delayed_exec && !STALL)
             pc <= pc + 32'd4;
     end
 
