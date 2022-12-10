@@ -385,6 +385,31 @@ module core #
         .A_REG_D_V  (a_reg_d_v)
     );
 
+    /* ----- メモリアクセス(読み)部 ---- */
+    wire [31:0] m_pc, m_inst;
+    wire        m_valid;
+    wire [4:0]  m_reg_d;
+    wire [31:0] m_reg_d_v;
+
+    memrd memrd (
+        .CLK        (CLK),
+        .RST        (RST),
+
+        .STALL      (stall),
+
+        .A_PC       (a_pc),
+        .A_INST     (a_inst),
+        .A_VALID    (a_valid),
+        .A_REG_D    (a_reg_d),
+        .A_REG_D_V  (a_reg_d_v),
+
+        .M_PC       (m_pc),
+        .M_INST     (m_inst),
+        .M_VALID    (m_valid),
+        .M_REG_D    (m_reg_d),
+        .M_REG_D_V  (m_reg_d_v)
+    );
+
     /* ----- デバッグ用 ----- */
     assign REG00 = 32'b0;
     assign REGPC = i_pc;
