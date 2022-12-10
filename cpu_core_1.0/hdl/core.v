@@ -31,7 +31,7 @@ module core #
 
         /*----- CPU制御信号 ----- */
         // CPU状態
-        input wire          CEXEC,
+        input wire          EXEC,
         output wire [7:0]   STAT,
 
         // デバッグ用
@@ -295,7 +295,7 @@ module core #
         .STALL          (stall),
         .MEM_WAIT       (inst_mem_wait),
 
-        .EXEC           (CEXEC),
+        .EXEC           (EXEC),
         .PC             (REGPC),
         .INST_VALID     (inst_valid),
         .INST           (inst),
