@@ -240,6 +240,9 @@ module core #
     // Bƒ`ƒƒƒ“ƒlƒ‹
     assign M_INST_AXI_BREADY     = 1'b0;
 
+    /* ----- CPUó‘Ô ----- */
+    assign STAT = { stall, inst_mem_wait, 6'b0 };
+
     /* ----- ‘S‘Ì§Œä ----- */
     wire        inst_mem_wait, do_jmp;
     wire [31:0] new_pc;

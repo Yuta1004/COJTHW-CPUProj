@@ -263,10 +263,13 @@ begin
     // axi_slave_bfm_inst.ram_array[2] = 32'b00000001010000010000000100010011; // addi x2, x2, 20 -> x2 = 20
 
     // 14. jalrを使用したジャンプ
-    axi_slave_bfm_inst.ram_array[0] = 32'b00100000000000000001000010110111; // lui x1, 0x20001   -> x1 = 0x2000_1000
-    axi_slave_bfm_inst.ram_array[1] = 32'b00000000000000001000000101100111; // jalr x2, 0(x1)    -> x2 = 0x2000_0008
-    axi_slave_bfm_inst.ram_array[2] = 32'b00000000101000000000001000010011; // addi x4, x0, 10   -> x4 = 10
-    axi_slave_bfm_inst.ram_array[1024] = 32'b00000000000000010000000111100111; // jalr x3, 0(x2) -> x3 = 0x2001_0004
+    // axi_slave_bfm_inst.ram_array[0] = 32'b00100000000000000001000010110111; // lui x1, 0x20001   -> x1 = 0x2000_1000
+    // axi_slave_bfm_inst.ram_array[1] = 32'b00000000000000001000000101100111; // jalr x2, 0(x1)    -> x2 = 0x2000_0008
+    // axi_slave_bfm_inst.ram_array[2] = 32'b00000000101000000000001000010011; // addi x4, x0, 10   -> x4 = 10
+    // axi_slave_bfm_inst.ram_array[1024] = 32'b00000000000000010000000111100111; // jalr x3, 0(x2) -> x3 = 0x2001_0004
+
+    // 15. 無限ループ
+    axi_slave_bfm_inst.ram_array[0] = 32'b00000000000000000000_00000000_1101111;
 end
 endtask
 
