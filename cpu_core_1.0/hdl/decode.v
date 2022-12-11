@@ -46,37 +46,37 @@ module decode
         output wire [31:0]  D_REG_S2_V,
 
         /* ----- デバッグ用 ----- */
-        output wire [31:0]  REG01,
-        output wire [31:0]  REG02,
-        output wire [31:0]  REG03,
-        output wire [31:0]  REG04,
-        output wire [31:0]  REG05,
-        output wire [31:0]  REG06,
-        output wire [31:0]  REG07,
-        output wire [31:0]  REG08,
-        output wire [31:0]  REG09,
-        output wire [31:0]  REG10,
-        output wire [31:0]  REG11,
-        output wire [31:0]  REG12,
-        output wire [31:0]  REG13,
-        output wire [31:0]  REG14,
-        output wire [31:0]  REG15,
-        output wire [31:0]  REG16,
-        output wire [31:0]  REG17,
-        output wire [31:0]  REG18,
-        output wire [31:0]  REG19,
-        output wire [31:0]  REG20,
-        output wire [31:0]  REG21,
-        output wire [31:0]  REG22,
-        output wire [31:0]  REG23,
-        output wire [31:0]  REG24,
-        output wire [31:0]  REG25,
-        output wire [31:0]  REG26,
-        output wire [31:0]  REG27,
-        output wire [31:0]  REG28,
-        output wire [31:0]  REG29,
-        output wire [31:0]  REG30,
-        output wire [31:0]  REG31
+        output reg  [31:0]  REG01,
+        output reg  [31:0]  REG02,
+        output reg  [31:0]  REG03,
+        output reg  [31:0]  REG04,
+        output reg  [31:0]  REG05,
+        output reg  [31:0]  REG06,
+        output reg  [31:0]  REG07,
+        output reg  [31:0]  REG08,
+        output reg  [31:0]  REG09,
+        output reg  [31:0]  REG10,
+        output reg  [31:0]  REG11,
+        output reg  [31:0]  REG12,
+        output reg  [31:0]  REG13,
+        output reg  [31:0]  REG14,
+        output reg  [31:0]  REG15,
+        output reg  [31:0]  REG16,
+        output reg  [31:0]  REG17,
+        output reg  [31:0]  REG18,
+        output reg  [31:0]  REG19,
+        output reg  [31:0]  REG20,
+        output reg  [31:0]  REG21,
+        output reg  [31:0]  REG22,
+        output reg  [31:0]  REG23,
+        output reg  [31:0]  REG24,
+        output reg  [31:0]  REG25,
+        output reg  [31:0]  REG26,
+        output reg  [31:0]  REG27,
+        output reg  [31:0]  REG28,
+        output reg  [31:0]  REG29,
+        output reg  [31:0]  REG30,
+        output reg  [31:0]  REG31
     );
 
     /* ----- 入力(ラッチ取り込み) ----- */
@@ -180,18 +180,55 @@ module decode
 
     // rs1, rs2
     assign D_REG_S1   = i_inst[19:15];
-    assign D_REG_S1_V = select_reg(D_REG_S1);
+    assign D_REG_S1_V = select_reg(
+        D_REG_S1,
+        REG01, REG02, REG03, REG04, REG05, REG06, REG07, REG08, REG09, REG10,
+        REG11, REG12, REG13, REG14, REG15, REG16, REG17, REG18, REG19, REG20,
+        REG21, REG22, REG23, REG24, REG25, REG26, REG27, REG28, REG29, REG30, REG31
+    );
     assign D_REG_S2   = i_inst[24:20];
-    assign D_REG_S2_V = select_reg(D_REG_S2);
-
-    reg [31:0] REG01, REG02, REG03, REG04, REG05, REG06, REG07, REG08, REG09, REG10;
-    reg [31:0] REG11, REG12, REG13, REG14, REG15, REG16, REG17, REG18, REG19, REG20;
-    reg [31:0] REG21, REG22, REG23, REG24, REG25, REG26, REG27, REG28, REG29, REG30, REG31;
+    assign D_REG_S2_V = select_reg(
+        D_REG_S2,
+        REG01, REG02, REG03, REG04, REG05, REG06, REG07, REG08, REG09, REG10,
+        REG11, REG12, REG13, REG14, REG15, REG16, REG17, REG18, REG19, REG20,
+        REG21, REG22, REG23, REG24, REG25, REG26, REG27, REG28, REG29, REG30, REG31
+    );
 
     function [31:0] select_reg;
-        input [4:0] REG;
+        input [4:0]  TARGET_REG;
+        input [31:0] REG01;
+        input [31:0] REG02;
+        input [31:0] REG03;
+        input [31:0] REG04;
+        input [31:0] REG05;
+        input [31:0] REG06;
+        input [31:0] REG07;
+        input [31:0] REG08;
+        input [31:0] REG09;
+        input [31:0] REG10;
+        input [31:0] REG11;
+        input [31:0] REG12;
+        input [31:0] REG13;
+        input [31:0] REG14;
+        input [31:0] REG15;
+        input [31:0] REG16;
+        input [31:0] REG17;
+        input [31:0] REG18;
+        input [31:0] REG19;
+        input [31:0] REG20;
+        input [31:0] REG21;
+        input [31:0] REG22;
+        input [31:0] REG23;
+        input [31:0] REG24;
+        input [31:0] REG25;
+        input [31:0] REG26;
+        input [31:0] REG27;
+        input [31:0] REG28;
+        input [31:0] REG29;
+        input [31:0] REG30;
+        input [31:0] REG31;
 
-        case (REG)
+        case (TARGET_REG)
             5'd0:  select_reg = 32'b0;
             5'd1:  select_reg = REG01;
             5'd2:  select_reg = REG02;
