@@ -102,6 +102,9 @@ wire [31:0]     D_REG_S1_V      = core.decode.D_REG_S1_V;
 wire [4:0]      D_REG_S2        = core.decode.D_REG_S2;
 wire [31:0]     D_REG_S2_V      = core.decode.D_REG_S2_V;
 
+wire [31:0]     TEST_1          = core.alu.forwarded_reg_s1_v;
+wire [31:0]     TEST_2          = core.alu.forwarded_reg_s2_v;
+
 wire [31:0]     A_PC            = core.alu.A_PC;
 wire [31:0]     A_INST          = core.alu.A_INST;
 wire            A_VALID         = core.alu.A_VALID;
@@ -163,19 +166,64 @@ begin
     // axi_slave_bfm_inst.ram_array[9] = 32'b00000001010000011000000110010011; // addi x3, x3, 20  -> x3 = 50
 
     // 3. 多段beq + ストール
-    axi_slave_bfm_inst.ram_array[0] = 32'b00000000000000000000000110010011; // addi x3, x0, 0
-    axi_slave_bfm_inst.ram_array[1] = 32'b00000000101000000000000010010011; // addi x1, x0, 10
-    axi_slave_bfm_inst.ram_array[2] = 32'b00000001010000000000000100010011; // addi x2, x0, 20
-    axi_slave_bfm_inst.ram_array[3] = 32'b00000000001000001000010001100011; // beq x1, x2, 8
-    axi_slave_bfm_inst.ram_array[4] = 32'b00000000101000011000000110010011; // addi x3, x3, 10
-    axi_slave_bfm_inst.ram_array[5] = 32'b00000001010000011000000110010011; // addi x3, x3, 20  -> x3 = 30
-    axi_slave_bfm_inst.ram_array[6] = 32'b00000001010000000000000010010011; // addi x1, x0, 20
-    axi_slave_bfm_inst.ram_array[7] = 32'b00111110001000001000000001100011;    // beq x1, x2, 992
-    axi_slave_bfm_inst.ram_array[255] = 32'b00000000000000000000000000010011;  // nop
-    axi_slave_bfm_inst.ram_array[256] = 32'b01000000001000001000000001100011;  // beq x1, x2, 1024
-    axi_slave_bfm_inst.ram_array[512] = 32'b01000000001000001000000001100011;  // beq x1, x2, 1024
-    axi_slave_bfm_inst.ram_array[768] = 32'b01000000001000001000000001100011;  // beq x1, x2, 1024
-    axi_slave_bfm_inst.ram_array[1024] = 32'b00000001010000011000000110010011; // addi x3, x3, 20  -> x3 = 50
+    // axi_slave_bfm_inst.ram_array[0] = 32'b00000000000000000000000110010011; // addi x3, x0, 0
+    // axi_slave_bfm_inst.ram_array[1] = 32'b00000000101000000000000010010011; // addi x1, x0, 10
+    // axi_slave_bfm_inst.ram_array[2] = 32'b00000001010000000000000100010011; // addi x2, x0, 20
+    // axi_slave_bfm_inst.ram_array[3] = 32'b00000000001000001000010001100011; // beq x1, x2, 8
+    // axi_slave_bfm_inst.ram_array[4] = 32'b00000000101000011000000110010011; // addi x3, x3, 10
+    // axi_slave_bfm_inst.ram_array[5] = 32'b00000001010000011000000110010011; // addi x3, x3, 20  -> x3 = 30
+    // axi_slave_bfm_inst.ram_array[6] = 32'b00000001010000000000000010010011; // addi x1, x0, 20
+    // axi_slave_bfm_inst.ram_array[7] = 32'b00111110001000001000000001100011;    // beq x1, x2, 992
+    // axi_slave_bfm_inst.ram_array[255] = 32'b00000000000000000000000000010011;  // nop
+    // axi_slave_bfm_inst.ram_array[256] = 32'b01000000001000001000000001100011;  // beq x1, x2, 1024
+    // axi_slave_bfm_inst.ram_array[512] = 32'b01000000001000001000000001100011;  // beq x1, x2, 1024
+    // axi_slave_bfm_inst.ram_array[768] = 32'b01000000001000001000000001100011;  // beq x1, x2, 1024
+    // axi_slave_bfm_inst.ram_array[1024] = 32'b00000001010000011000000110010011; // addi x3, x3, 20  -> x3 = 50
+
+    // 4. シンプルな演算
+    // axi_slave_bfm_inst.ram_array[0] = 32'b00000000110000000000000010010011; // addi x1, x0, 12 -> x1 = 12
+    // axi_slave_bfm_inst.ram_array[1] = 32'b00000000010000000000000100010011; // addi x2, x0, 4  -> x2 = 4
+    // axi_slave_bfm_inst.ram_array[2] = 32'b00000001000000000000000110010011; // addi x3, x0, 16 -> x3 = 16
+    // axi_slave_bfm_inst.ram_array[3] = 32'b00000000001000001000001000110011; // add x4, x1, x2  -> x4 = 16
+    // axi_slave_bfm_inst.ram_array[4] = 32'b00000000001100001000001010110011; // add x5, x1, x3  -> x5 = 28
+    // axi_slave_bfm_inst.ram_array[5] = 32'b01000000001000001000001100110011; // sub x6, x1, x2  -> x6 = 8
+    // axi_slave_bfm_inst.ram_array[6] = 32'b01000000001100001000001110110011; // sub x7, x1, x3  -> x7 = -4
+
+    // 5. 論理演算
+    // axi_slave_bfm_inst.ram_array[0] = 32'b00000000111000000000000010010011; // addi x1, x0, 14 -> x1 = b01110
+    // axi_slave_bfm_inst.ram_array[1] = 32'b00000001010000000000000100010011; // addi x2, x0, 20 -> x2 = b10100
+    // axi_slave_bfm_inst.ram_array[2] = 32'b00000000001000001111000110110011; // and x3, x1, x2  -> x3 = b00100
+    // axi_slave_bfm_inst.ram_array[3] = 32'b00000000001000001110001000110011; // or x4, x1, x2   -> x4 = b11110
+    // axi_slave_bfm_inst.ram_array[4] = 32'b00000000001000001100001010110011; // xor x5, x1, x2  -> x5 = b11010
+    // axi_slave_bfm_inst.ram_array[5] = 32'b00000001010000001111001100010011; // andi x6, x1, 20 -> x6 = b00100
+    // axi_slave_bfm_inst.ram_array[6] = 32'b00000001010000001110001110010011; // ori x7, x1, 20  -> x7 = b11110
+    // axi_slave_bfm_inst.ram_array[7] = 32'b00000001010000001100010000010011; // xori x8, x1, x2 -> x8 = b11010
+
+    // 6. シフト演算
+    // axi_slave_bfm_inst.ram_array[0] = 32'b10000000000000000000000010110111; // lui x1, 0x80000
+    // axi_slave_bfm_inst.ram_array[1] = 32'b00000000111000001000000010010011; // add x1, x1, 14
+    // axi_slave_bfm_inst.ram_array[2] = 32'b00000000001000000000000100010011; // addi x2, x0, 2
+    // axi_slave_bfm_inst.ram_array[3] = 32'b00000000001000001001000110110011; // sll x3, x1, x2
+    // axi_slave_bfm_inst.ram_array[4] = 32'b01000000001000001101001000110011; // sra x4, x1, x2
+    // axi_slave_bfm_inst.ram_array[5] = 32'b00000000001000001101001010110011; // srl x5, x1, x2
+    // axi_slave_bfm_inst.ram_array[6] = 32'b00000000001000001001001100010011; // slli x6, x1, 2
+    // axi_slave_bfm_inst.ram_array[7] = 32'b01000000001000001101001110010011; // srai s7, x1, 2
+    // axi_slave_bfm_inst.ram_array[8] = 32'b00000000001000001101010000010011; // srli s8, x1, 2
+
+    // 7. auipcを使った大ジャンプ + ストール
+    // axi_slave_bfm_inst.ram_array[0]    = 32'b00000000000000000001000010010111; // auipc x1, 1    -> x1 = 1024
+    // axi_slave_bfm_inst.ram_array[1024] = 32'b00000000101000000000000100010011; // addi x2, 10    -> x2 = 10
+    // axi_slave_bfm_inst.ram_array[1025] = 32'b00000001010000000000000110010011; // addi x3, 20    -> x3 = 20
+    // axi_slave_bfm_inst.ram_array[1026] = 32'b00000000001100010000001000110011; // add x4, x2, x3 -> x4 = 30
+
+    // 8. 論理演算2
+    axi_slave_bfm_inst.ram_array[0] = 32'b00000000101000000000000010010011; // addi x1, x0, 10 -> x1 = 10
+    axi_slave_bfm_inst.ram_array[1] = 32'b00000001010000000000000100010011; // addi x2, x0, 20 -> x2 = 20
+    axi_slave_bfm_inst.ram_array[2] = 32'b00000000010100000000000110010011; // addi x3, x0, 5  -> x3 = 5
+    axi_slave_bfm_inst.ram_array[3] = 32'b00000000001000001010001000110011; // slt x4, x1, x2  -> x4 = 1
+    axi_slave_bfm_inst.ram_array[4] = 32'b00000000001100001010001010110011; // slt x5, x1, x3  -> x5 = 0
+    axi_slave_bfm_inst.ram_array[5] = 32'b00000001010000001010001100010011; // slti x6, x1, 20 -> x6 = 1
+    axi_slave_bfm_inst.ram_array[6] = 32'b00000000010100001010001110010011; // slti x7, x1, 5  -> x7 = 0
 end
 endtask
 

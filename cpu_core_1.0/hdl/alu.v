@@ -160,8 +160,8 @@ module alu
         input signed [31:0] REG_S2_V_S;
 
         casez ({ OPCODE, FUNCT3, FUNCT7 })
-            // beq
-            17'b1100011_000_zzzzzzz: check_do_jmp = REG_S1_V == REG_S2_V;
+            17'b0010111_zzz_zzzzzzz: check_do_jmp = 1'b1;                   // auipc
+            17'b1100011_000_zzzzzzz: check_do_jmp = REG_S1_V == REG_S2_V;   // beq
 
             // –¢‘Î‰ž–½—ß
             default: check_do_jmp = 0;
@@ -177,8 +177,8 @@ module alu
         input [31:0] IMM;
 
         casez ({ OPCODE, FUNCT3, FUNCT7 })
-            // beq
-            17'b1100011_000_zzzzzzz: pc_calc = PC + { { 11{ IMM[20] } }, IMM[20:1], 1'b0 };
+            17'b0010111_zzz_zzzzzzz: pc_calc = PC + ((IMM[31:12]) << 12);                   // auipc
+            17'b1100011_000_zzzzzzz: pc_calc = PC + { { 11{ IMM[20] } }, IMM[20:1], 1'b0 }; // beq
 
             // –¢‘Î‰ž–½—ß
             default: pc_calc = 32'b0;
@@ -189,20 +189,42 @@ module alu
     assign A_REG_D = reg_d;
     assign A_REG_D_V = rd_calc(
         opcode, funct3, funct7,
-        forwarded_reg_s1_v, forwarded_reg_s2_v, imm
+        pc, forwarded_reg_s1_v, forwarded_reg_s1_v, forwarded_reg_s2_v, forwarded_reg_s2_v, imm
     );
 
     function [31:0] rd_calc;
-        input [6:0]  OPCODE;
-        input [2:0]  FUNCT3;
-        input [6:0]  FUNCT7;
-        input [31:0] REG_S1_V;
-        input [31:0] REG_S2_V;
-        input [31:0] IMM;
+        input        [6:0]  OPCODE;
+        input        [2:0]  FUNCT3;
+        input        [6:0]  FUNCT7;
+        input        [31:0] PC;
+        input        [31:0] REG_S1_V;
+        input signed [31:0] REG_S1_V_S;
+        input        [31:0] REG_S2_V;
+        input signed [31:0] REG_S2_V_S;
+        input        [31:0] IMM;
 
         casez ({ OPCODE, FUNCT3, FUNCT7 })
-            // addi
-            17'b0010011_000_zzzzzzz: rd_calc = REG_S1_V + { { 20{ IMM[11] } }, IMM[11:0] };
+            17'b0110011_000_0000000: rd_calc = REG_S1_V + REG_S2_V;                             // add
+            17'b0010011_000_zzzzzzz: rd_calc = REG_S1_V + { { 20{ IMM[11] } }, IMM[11:0] };     // addi
+            17'b0110011_000_0100000: rd_calc = REG_S1_V - REG_S2_V;                             // sub
+            17'b0110011_111_0000000: rd_calc = REG_S1_V & REG_S2_V;                             // and
+            17'b0010011_111_zzzzzzz: rd_calc = REG_S1_V & { { 20{ IMM[11] } }, IMM[11:0] };     // andi
+            17'b0110011_110_0000000: rd_calc = REG_S1_V | REG_S2_V;                             // or
+            17'b0010011_110_zzzzzzz: rd_calc = REG_S1_V | { { 20{ IMM[11] } }, IMM[11:0] };     // ori
+            17'b0110011_100_0000000: rd_calc = REG_S1_V ^ REG_S2_V;                             // xor
+            17'b0010011_100_zzzzzzz: rd_calc = REG_S1_V ^ { { 20{ IMM[11] } }, IMM[11:0] };     // xori
+            17'b0110011_001_0000000: rd_calc = REG_S1_V << (REG_S2_V[4:0]);                     // sll
+            17'b0010011_001_0000000: rd_calc = REG_S1_V << (IMM[4:0]);                          // slli
+            17'b0110011_101_0100000: rd_calc = REG_S1_V_S >>> (REG_S2_V[4:0]);                  // sra
+            17'b0010011_101_0100000: rd_calc = REG_S1_V_S >>> (IMM[4:0]);                       // srai
+            17'b0110011_101_0000000: rd_calc = REG_S1_V >> (REG_S2_V[4:0]);                     // srl
+            17'b0010011_101_0000000: rd_calc = REG_S1_V >> (IMM[4:0]);                          // srli
+            17'b0110111_zzz_zzzzzzz: rd_calc = (IMM[31:12]) << 12;                              // lui
+            17'b0110011_010_0000000: rd_calc = REG_S1_V_S < REG_S2_V_S ? 32'b1 : 32'b0;         // slt
+            17'b0110011_011_0000000: rd_calc = REG_S1_V < REG_S2_V ? 32'b1 : 32'b0;             // sltu
+            17'b0010011_010_zzzzzzz: rd_calc = REG_S1_V_S < { { 20{ IMM[11] } }, IMM[11:0] } ? 32'b1 : 32'b0;   // slti
+            17'b0010011_011_zzzzzzz: rd_calc = REG_S1_V < { { 20{ IMM[11] } }, IMM[11:0] } ? 32'b1 : 32'b0;     // sltiu
+            17'b0010111_zzz_zzzzzzz: rd_calc = PC + ((IMM[31:12]) << 12);
 
             // –¢‘Î‰ž–½—ß
             default: rd_calc = 32'b0;
