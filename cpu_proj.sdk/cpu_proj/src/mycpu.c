@@ -5,20 +5,15 @@
 #include "mycpu.h"
 
 void write_instructions(unsigned int *instructions) {
+	unsigned int *wp = INSTRAM;
 	unsigned int *inst = instructions;
 
-	int page = 0;
-	for (; *inst != 0; ++ page) {
-		for (int idx = 0; idx < 1024; ++ idx) {
-			Xil_Out32((unsigned int)(INSTRAM + page*1024 + idx), 0);
-		}
-		for (int idx = 0; *inst != 0; ++ idx) {
-			Xil_Out32((unsigned int)(INSTRAM + page*1024 + idx), *(inst++));
-			++ idx;
-		}
+	while (*inst != 0) {
+		*(wp++) = *(inst++);
 	}
+	*(wp++) = 0x0000006f;	// jal x0, 0
 
-	Xil_DCacheFlushRange((unsigned int)INSTRAM, 4 * 1024 * (page+1));
+	Xil_DCacheFlushRange((unsigned int)INSTRAM, wp - inst);
 }
 
 void view_registers() {
