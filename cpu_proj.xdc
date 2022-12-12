@@ -128,42 +128,42 @@ set_property IOSTANDARD LVCMOS25 [get_ports SND_MCLK]
 # MOUSE
 
 # Pmod1 N0.6
-set_property PACKAGE_PIN V10 [get_ports {PS2CLK}]
-set_property IOSTANDARD LVCMOS25 [get_ports {PS2CLK}]
+set_property PACKAGE_PIN V10 [get_ports PS2CLK]
+set_property IOSTANDARD LVCMOS25 [get_ports PS2CLK]
 
 # Pmod1 N0.2
-set_property PACKAGE_PIN V8 [get_ports {PS2DATA}]
-set_property IOSTANDARD LVCMOS25 [get_ports {PS2DATA}]
+set_property PACKAGE_PIN V8 [get_ports PS2DATA]
+set_property IOSTANDARD LVCMOS25 [get_ports PS2DATA]
 
 
 # LEDs
 
-set_property PACKAGE_PIN E15 [get_ports LED[0]]
-set_property IOSTANDARD LVCMOS25 [get_ports LED[0]]
+set_property PACKAGE_PIN E15 [get_ports {LED[0]}]
+set_property IOSTANDARD LVCMOS25 [get_ports {LED[0]}]
 
-set_property PACKAGE_PIN D15 [get_ports LED[1]]
-set_property IOSTANDARD LVCMOS25 [get_ports LED[1]]
+set_property PACKAGE_PIN D15 [get_ports {LED[1]}]
+set_property IOSTANDARD LVCMOS25 [get_ports {LED[1]}]
 
-set_property PACKAGE_PIN W17 [get_ports LED[2]]
-set_property IOSTANDARD LVCMOS25 [get_ports LED[2]]
+set_property PACKAGE_PIN W17 [get_ports {LED[2]}]
+set_property IOSTANDARD LVCMOS25 [get_ports {LED[2]}]
 
-set_property PACKAGE_PIN W5 [get_ports LED[3]]
-set_property IOSTANDARD LVCMOS25 [get_ports LED[3]]
+set_property PACKAGE_PIN W5 [get_ports {LED[3]}]
+set_property IOSTANDARD LVCMOS25 [get_ports {LED[3]}]
 
-set_property PACKAGE_PIN V7 [get_ports LED[4]]
-set_property IOSTANDARD LVCMOS25 [get_ports LED[4]]
+set_property PACKAGE_PIN V7 [get_ports {LED[4]}]
+set_property IOSTANDARD LVCMOS25 [get_ports {LED[4]}]
 
-set_property PACKAGE_PIN W10 [get_ports LED[5]]
-set_property IOSTANDARD LVCMOS25 [get_ports LED[5]]
+set_property PACKAGE_PIN W10 [get_ports {LED[5]}]
+set_property IOSTANDARD LVCMOS25 [get_ports {LED[5]}]
 
-set_property PACKAGE_PIN P18 [get_ports LED[6]]
-set_property IOSTANDARD LVCMOS25 [get_ports LED[6]]
+set_property PACKAGE_PIN P18 [get_ports {LED[6]}]
+set_property IOSTANDARD LVCMOS25 [get_ports {LED[6]}]
 
-set_property PACKAGE_PIN P17 [get_ports LED[7]]
-set_property IOSTANDARD LVCMOS25 [get_ports LED[7]]
+set_property PACKAGE_PIN P17 [get_ports {LED[7]}]
+set_property IOSTANDARD LVCMOS25 [get_ports {LED[7]}]
 
 
-# カメラクロックの定義　36MHz max.
+# カメラクロックの定義 36Mhz max.
 create_clock -period 27.700 -name CAM_PCLK [get_ports CAM_PCLK]
 
 # タイミング制約
@@ -174,12 +174,12 @@ set_clock_groups -asynchronous -group [get_clocks CAM_PCLK] -group [get_clocks c
 # サウンド回路のクロック定義
 
 # BCLK
-create_clock -period 354.3 -name BCLK [get_nets design_1_i/sound_0/SND_BCLK]
+create_clock -period 354.300 -name BCLK [get_nets design_1_i/sound_0/SND_BCLK]
 
 # MCLK
-create_clock -period 88.6 -name MCLK [get_nets design_1_i/sound_0/SND_MCLK]
+create_clock -period 88.600 -name MCLK [get_nets design_1_i/sound_0/SND_MCLK]
 
 # タイミング制約
 set_clock_groups -asynchronous -group [get_clocks clk_fpga_0] -group [get_clocks BCLK]
 set_clock_groups -asynchronous -group [get_clocks clk_fpga_0] -group [get_clocks MCLK]
-set_clock_groups -asynchronous -group [get_clocks BCLK]       -group [get_clocks MCLK]
+set_clock_groups -asynchronous -group [get_clocks BCLK] -group [get_clocks MCLK]

@@ -6,8 +6,8 @@ module cpu_core_controller_v1_0_S_AXI #
     (
         // COREÇ∆ÇÃê⁄ë±É|Å[Ég
         input wire          CCLK,
-        output reg          CARSTN,
-        output reg          CRST,
+        // output reg          CARSTN,
+        // output reg          CRST,
         output reg          CEXEC,
 
         input wire [31:0]   REG00,
@@ -424,6 +424,7 @@ module cpu_core_controller_v1_0_S_AXI #
         reg29[1] <= reg29[0]; reg29[0] <= REG29;
         reg30[1] <= reg30[0]; reg30[0] <= REG30;
         reg31[1] <= reg31[0]; reg31[0] <= REG31;
+        regpc[1] <= regpc[0]; regpc[0] <= REGPC;
     end
 
     // Implement memory mapped register select and read logic generation
@@ -490,46 +491,38 @@ module cpu_core_controller_v1_0_S_AXI #
     end
 
     /* ----- CRST ----- */
-    reg         cache_arst, cache_slv_reg0;
-    reg [1:0]   acrst;
+    // reg         cache_arst, cache_slv_reg0;
+    // reg [1:0]   acrst;
     reg [4:0]   rst_cnt;
 
-    always @ (posedge S_AXI_ACLK) begin
-        acrst <= { acrst[0], CRST };
-    end
+    wire slv_reg0_updated = slv_reg0 > 32'b0;
+    //     if (S_AXI_ARESETN == 1'b0)
+    //         cache_slv_reg0 <= 1'b0;
+    //     else if (slv_reg0 > 32'b0)
+    //         cache_slv_reg0 <= 1'b1;
+    //     else if (acrst[1])
+    //         cache_slv_reg0 <= 1'b0;
+    // end
 
-    always @ (posedge S_AXI_ACLK) begin
-        if (S_AXI_ARESETN == 1'b0)
-            cache_arst <= 1'b1;
-        else if (acrst[1])
-            cache_arst <= 1'b0;
-    end
-
-    always @ (posedge S_AXI_ACLK) begin
-        if (S_AXI_ARESETN == 1'b0)
-            cache_slv_reg0 <= 1'b0;
-        else if (slv_reg0 > 32'b0)
-            cache_slv_reg0 <= 1'b1;
-        else if (acrst[1])
-            cache_slv_reg0 <= 1'b0;
-    end
-
-    always @ (posedge cache_arst, posedge cache_slv_reg0, posedge CCLK) begin
-        if (cache_arst || cache_slv_reg0)
-            rst_cnt <= 5'b1;
-        else if (rst_cnt > 5'b0) begin
-            if (rst_cnt == 5'd31) begin
-                rst_cnt <= 5'b0;
-                CARSTN <= 1'b1;
-                CRST <= 1'b0;
-            end
-            else begin
-                rst_cnt <= rst_cnt + 5'b1;
-                CARSTN <= 1'b0;
-                CRST <= 1'b1;
-            end
-        end
-    end
+    // always @ (negedge S_AXI_ARESETN, posedge slv_reg0_updated, posedge CCLK) begin
+    //     if (!S_AXI_ARESETN || slv_reg0_updated) begin
+    //         rst_cnt <= 5'b1;
+    //         CARSTN <= 1'b1;
+    //         CRST <= 1'b0;
+    //     end
+    //     else if (rst_cnt > 5'b0) begin
+    //         if (rst_cnt == 5'd31) begin
+    //             rst_cnt <= 5'b0;
+    //             CARSTN <= 1'b1;
+    //             CRST <= 1'b0;
+    //         end
+    //         else begin
+    //             rst_cnt <= rst_cnt + 5'b1;
+    //             CARSTN <= 1'b0;
+    //             CRST <= 1'b1;
+    //         end
+    //     end
+    // end
 
     /* ----- CEXEC ----- */
     reg         cache_slv_reg1, cache_slv_reg2;

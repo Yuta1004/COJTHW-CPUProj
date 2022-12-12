@@ -241,7 +241,14 @@ module core #
     assign M_INST_AXI_BREADY     = 1'b0;
 
     /* ----- CPU状態 ----- */
-    assign STAT = { stall, inst_mem_wait, 6'b0 };
+    assign STAT = {
+        stall,
+        inst_mem_wait,
+        1'b0,
+        flush,
+        i_valid,
+        3'b0
+    };
 
     /* ----- 全体制御 ----- */
     wire        inst_mem_wait, do_jmp;
@@ -469,5 +476,37 @@ module core #
     /* ----- デバッグ用 ----- */
     assign REG00 = 32'b0;
     assign REGPC = i_pc;
+    // assign REG01    = 32'd1;
+    // assign REG02    = 32'd2;
+    // assign REG03    = 32'd3;
+    // assign REG04    = 32'd4;
+    // assign REG05    = 32'd5;
+    // assign REG06    = 32'd6;
+    // assign REG07    = 32'd7;
+    // assign REG08    = 32'd8;
+    // assign REG09    = 32'd9;
+    // assign REG10    = 32'd10;
+    // assign REG11    = 32'd11;
+    // assign REG12    = 32'd12;
+    // assign REG13    = 32'd13;
+    // assign REG14    = 32'd14;
+    // assign REG15    = 32'd15;
+    // assign REG16    = 32'd16;
+    // assign REG17    = 32'd17;
+    // assign REG18    = 32'd18;
+    // assign REG19    = 32'd19;
+    // assign REG20    = 32'd20;
+    // assign REG21    = 32'd21;
+    // assign REG22    = 32'd22;
+    // assign REG23    = 32'd23;
+    // assign REG24    = 32'd24;
+    // assign REG25    = 32'd25;
+    // assign REG26    = 32'd26;
+    // assign REG27    = 32'd27;
+    // assign REG28    = 32'd28;
+    // assign REG29    = 32'd29;
+    // assign REG30    = 32'd30;
+    // assign REG31    = 32'd31;
+    // assign REGPC    = 32'h2000_0000;
 
 endmodule

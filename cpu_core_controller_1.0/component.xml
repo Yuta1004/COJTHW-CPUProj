@@ -564,7 +564,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>6a69e04b</spirit:value>
+            <spirit:value>fbf68e96</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -580,7 +580,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>6a69e04b</spirit:value>
+            <spirit:value>fbf68e96</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -623,32 +623,6 @@
         <spirit:name>CCLK</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>wire</spirit:typeName>
-              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
-        <spirit:name>CARSTN</spirit:name>
-        <spirit:wire>
-          <spirit:direction>out</spirit:direction>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>wire</spirit:typeName>
-              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
-        <spirit:name>CRST</spirit:name>
-        <spirit:wire>
-          <spirit:direction>out</spirit:direction>
           <spirit:wireTypeDefs>
             <spirit:wireTypeDef>
               <spirit:typeName>wire</spirit:typeName>
@@ -1583,7 +1557,7 @@
       <spirit:file>
         <spirit:name>hdl/cpu_core_controller_v1_0.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_d32016b4</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_f94440b3</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -1705,8 +1679,8 @@
         <xilinx:taxonomy>AXI_Peripheral</xilinx:taxonomy>
       </xilinx:taxonomies>
       <xilinx:displayName>cpu_core_controller</xilinx:displayName>
-      <xilinx:coreRevision>11</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2022-12-12T05:46:03Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>12</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2022-12-12T08:17:39Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@535cd58c_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@2748223b_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
@@ -1852,14 +1826,24 @@
         <xilinx:tag xilinx:name="ui.data.coregen.dd@318e0271_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@2866e59c_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@3604d44b_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2720e869_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4a5d4853_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@43fdd7b4_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@60ec4412_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4f437a7f_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6e8de1eb_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3303eed8_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@15105045_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@41e1a1fa_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@361f5b7a_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2019.1</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="2be0ead6"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="c30980da"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="27fb37ea"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="2e335fab"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="4a1c60d1"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="336354f9"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="b6927abc"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="5b67251f"/>
     </xilinx:packagingInfo>

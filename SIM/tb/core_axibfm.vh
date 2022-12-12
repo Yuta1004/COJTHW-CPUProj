@@ -284,7 +284,7 @@ axi_slave_bfm # (
     .C_S_AXI_DATA_WIDTH     (C_AXI_DATA_WIDTH),
     .READ_DATA_IS_INCREMENT (0),
     .C_OFFSET_WIDTH         (C_OFFSET_WIDTH),
-    .ARREADY_IS_USUALLY_HIGH(1)
+    .ARREADY_IS_USUALLY_HIGH(0)
 ) axi_slave_bfm_inst (
     // ÉNÉçÉbÉN
     .ACLK           (CLK),
@@ -351,7 +351,7 @@ axi_slave_bfm # (
     .C_S_AXI_DATA_WIDTH     (C_AXI_DATA_WIDTH),
     .READ_DATA_IS_INCREMENT (0),
     .C_OFFSET_WIDTH         (C_OFFSET_WIDTH),
-    .ARREADY_IS_USUALLY_HIGH(1)
+    .ARREADY_IS_USUALLY_HIGH(0)
 ) axi_slave_bfm_data (
     .ACLK           (CLK),
     .ARESETN        (RSTN),
