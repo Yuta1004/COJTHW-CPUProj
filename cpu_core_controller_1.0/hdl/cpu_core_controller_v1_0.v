@@ -6,6 +6,7 @@ module cpu_core_controller_v1_0 #
     (
         // COREÇ∆ÇÃê⁄ë±É|Å[Ég
         input wire          CCLK,
+        output wire         CARSTN,
         output wire         CRST,
         output wire         CEXEC,
         input wire [31:0]   REG00,
@@ -70,6 +71,7 @@ module cpu_core_controller_v1_0 #
         .C_S_AXI_ADDR_WIDTH(C_S_AXI_ADDR_WIDTH)
     ) cpu_core_controller_v1_0_S_AXI_inst (
         .CCLK(CCLK),
+        .CARSTN(CARSTN),
         .CRST(CRST),
         .CEXEC(CEXEC),
         .REG00(REG00),

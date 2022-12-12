@@ -6,8 +6,10 @@ module cpu_core_controller_v1_0_S_AXI #
     (
         // CORE‚Æ‚ÌÚ‘±ƒ|[ƒg
         input wire          CCLK,
+        output reg          CARSTN,
         output reg          CRST,
         output reg          CEXEC,
+
         input wire [31:0]   REG00,
         input wire [31:0]   REG01,
         input wire [31:0]   REG02,
@@ -354,6 +356,76 @@ module cpu_core_controller_v1_0_S_AXI #
         end
     end
 
+    // REG**‚Ì“¯Šú‰»
+    reg [31:0] reg00 [0:1];
+    reg [31:0] reg01 [0:1];
+    reg [31:0] reg02 [0:1];
+    reg [31:0] reg03 [0:1];
+    reg [31:0] reg04 [0:1];
+    reg [31:0] reg05 [0:1];
+    reg [31:0] reg06 [0:1];
+    reg [31:0] reg07 [0:1];
+    reg [31:0] reg08 [0:1];
+    reg [31:0] reg09 [0:1];
+    reg [31:0] reg10 [0:1];
+    reg [31:0] reg11 [0:1];
+    reg [31:0] reg12 [0:1];
+    reg [31:0] reg13 [0:1];
+    reg [31:0] reg14 [0:1];
+    reg [31:0] reg15 [0:1];
+    reg [31:0] reg16 [0:1];
+    reg [31:0] reg17 [0:1];
+    reg [31:0] reg18 [0:1];
+    reg [31:0] reg19 [0:1];
+    reg [31:0] reg20 [0:1];
+    reg [31:0] reg21 [0:1];
+    reg [31:0] reg22 [0:1];
+    reg [31:0] reg23 [0:1];
+    reg [31:0] reg24 [0:1];
+    reg [31:0] reg25 [0:1];
+    reg [31:0] reg26 [0:1];
+    reg [31:0] reg27 [0:1];
+    reg [31:0] reg28 [0:1];
+    reg [31:0] reg29 [0:1];
+    reg [31:0] reg30 [0:1];
+    reg [31:0] reg31 [0:1];
+    reg [31:0] regpc [0:1];
+
+    always @ (posedge S_AXI_ACLK) begin
+        reg00[1] <= reg00[0]; reg00[0] <= REG00;
+        reg01[1] <= reg01[0]; reg01[0] <= REG01;
+        reg02[1] <= reg02[0]; reg02[0] <= REG02;
+        reg03[1] <= reg03[0]; reg03[0] <= REG03;
+        reg04[1] <= reg04[0]; reg04[0] <= REG04;
+        reg05[1] <= reg05[0]; reg05[0] <= REG05;
+        reg06[1] <= reg06[0]; reg06[0] <= REG06;
+        reg07[1] <= reg07[0]; reg07[0] <= REG07;
+        reg08[1] <= reg08[0]; reg08[0] <= REG08;
+        reg09[1] <= reg09[0]; reg09[0] <= REG09;
+        reg10[1] <= reg10[0]; reg10[0] <= REG10;
+        reg11[1] <= reg11[0]; reg11[0] <= REG11;
+        reg12[1] <= reg12[0]; reg12[0] <= REG12;
+        reg13[1] <= reg13[0]; reg13[0] <= REG13;
+        reg14[1] <= reg14[0]; reg14[0] <= REG14;
+        reg15[1] <= reg15[0]; reg15[0] <= REG15;
+        reg16[1] <= reg16[0]; reg16[0] <= REG16;
+        reg17[1] <= reg17[0]; reg17[0] <= REG17;
+        reg18[1] <= reg18[0]; reg18[0] <= REG18;
+        reg19[1] <= reg19[0]; reg19[0] <= REG19;
+        reg20[1] <= reg20[0]; reg20[0] <= REG20;
+        reg21[1] <= reg21[0]; reg21[0] <= REG21;
+        reg22[1] <= reg22[0]; reg22[0] <= REG22;
+        reg23[1] <= reg23[0]; reg23[0] <= REG23;
+        reg24[1] <= reg24[0]; reg24[0] <= REG24;
+        reg25[1] <= reg25[0]; reg25[0] <= REG25;
+        reg26[1] <= reg26[0]; reg26[0] <= REG26;
+        reg27[1] <= reg27[0]; reg27[0] <= REG27;
+        reg28[1] <= reg28[0]; reg28[0] <= REG28;
+        reg29[1] <= reg29[0]; reg29[0] <= REG29;
+        reg30[1] <= reg30[0]; reg30[0] <= REG30;
+        reg31[1] <= reg31[0]; reg31[0] <= REG31;
+    end
+
     // Implement memory mapped register select and read logic generation
     // Slave register read enable is asserted when valid address is available
     // and the slave is ready to accept the read address.
@@ -361,39 +433,39 @@ module cpu_core_controller_v1_0_S_AXI #
     always @* begin
         case (axi_araddr)
             16'h0004    : reg_data_out <= slv_reg1;
-            16'h1000    : reg_data_out <= REG00;
-            16'h1004    : reg_data_out <= REG01;
-            16'h1008    : reg_data_out <= REG02;
-            16'h100C    : reg_data_out <= REG03;
-            16'h1010    : reg_data_out <= REG04;
-            16'h1014    : reg_data_out <= REG05;
-            16'h1018    : reg_data_out <= REG06;
-            16'h101C    : reg_data_out <= REG07;
-            16'h1020    : reg_data_out <= REG08;
-            16'h1024    : reg_data_out <= REG09;
-            16'h1028    : reg_data_out <= REG10;
-            16'h102C    : reg_data_out <= REG11;
-            16'h1030    : reg_data_out <= REG12;
-            16'h1034    : reg_data_out <= REG13;
-            16'h1038    : reg_data_out <= REG14;
-            16'h103C    : reg_data_out <= REG15;
-            16'h1040    : reg_data_out <= REG16;
-            16'h1044    : reg_data_out <= REG17;
-            16'h1048    : reg_data_out <= REG18;
-            16'h104C    : reg_data_out <= REG19;
-            16'h1050    : reg_data_out <= REG20;
-            16'h1054    : reg_data_out <= REG21;
-            16'h1058    : reg_data_out <= REG22;
-            16'h105C    : reg_data_out <= REG23;
-            16'h1060    : reg_data_out <= REG24;
-            16'h1064    : reg_data_out <= REG25;
-            16'h1068    : reg_data_out <= REG26;
-            16'h106C    : reg_data_out <= REG27;
-            16'h1070    : reg_data_out <= REG28;
-            16'h1074    : reg_data_out <= REG29;
-            16'h1078    : reg_data_out <= REG30;
-            16'h107C    : reg_data_out <= REG31;
-            16'h1080    : reg_data_out <= REGPC;
+            16'h1000    : reg_data_out <= reg00[1];
+            16'h1004    : reg_data_out <= reg01[1];
+            16'h1008    : reg_data_out <= reg02[1];
+            16'h100C    : reg_data_out <= reg03[1];
+            16'h1010    : reg_data_out <= reg04[1];
+            16'h1014    : reg_data_out <= reg05[1];
+            16'h1018    : reg_data_out <= reg06[1];
+            16'h101C    : reg_data_out <= reg07[1];
+            16'h1020    : reg_data_out <= reg08[1];
+            16'h1024    : reg_data_out <= reg09[1];
+            16'h1028    : reg_data_out <= reg10[1];
+            16'h102C    : reg_data_out <= reg11[1];
+            16'h1030    : reg_data_out <= reg12[1];
+            16'h1034    : reg_data_out <= reg13[1];
+            16'h1038    : reg_data_out <= reg14[1];
+            16'h103C    : reg_data_out <= reg15[1];
+            16'h1040    : reg_data_out <= reg16[1];
+            16'h1044    : reg_data_out <= reg17[1];
+            16'h1048    : reg_data_out <= reg18[1];
+            16'h104C    : reg_data_out <= reg19[1];
+            16'h1050    : reg_data_out <= reg20[1];
+            16'h1054    : reg_data_out <= reg21[1];
+            16'h1058    : reg_data_out <= reg22[1];
+            16'h105C    : reg_data_out <= reg23[1];
+            16'h1060    : reg_data_out <= reg24[1];
+            16'h1064    : reg_data_out <= reg25[1];
+            16'h1068    : reg_data_out <= reg26[1];
+            16'h106C    : reg_data_out <= reg27[1];
+            16'h1070    : reg_data_out <= reg28[1];
+            16'h1074    : reg_data_out <= reg29[1];
+            16'h1078    : reg_data_out <= reg30[1];
+            16'h107C    : reg_data_out <= reg31[1];
+            16'h1080    : reg_data_out <= regpc[1];
             default : reg_data_out <= 0;
         endcase
     end
@@ -420,6 +492,7 @@ module cpu_core_controller_v1_0_S_AXI #
     /* ----- CRST ----- */
     reg         cache_arst, cache_slv_reg0;
     reg [1:0]   acrst;
+    reg [4:0]   rst_cnt;
 
     always @ (posedge S_AXI_ACLK) begin
         acrst <= { acrst[0], CRST };
@@ -443,9 +516,19 @@ module cpu_core_controller_v1_0_S_AXI #
 
     always @ (posedge cache_arst, posedge cache_slv_reg0, posedge CCLK) begin
         if (cache_arst || cache_slv_reg0)
-            CRST <= 1'b1;
-        else
-            CRST <= 1'b0;
+            rst_cnt <= 5'b1;
+        else if (rst_cnt > 5'b0) begin
+            if (rst_cnt == 5'd31) begin
+                rst_cnt <= 5'b0;
+                CARSTN <= 1'b1;
+                CRST <= 1'b0;
+            end
+            else begin
+                rst_cnt <= rst_cnt + 5'b1;
+                CARSTN <= 1'b0;
+                CRST <= 1'b1;
+            end
+        end
     end
 
     /* ----- CEXEC ----- */
