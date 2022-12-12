@@ -13,16 +13,16 @@
 
 module wb
     (
-        /* ----- ã‚¯ãƒ­ãƒƒã‚¯&ãƒªã‚»ãƒƒãƒˆä¿¡å· ----- */
+        /* ----- ƒNƒƒbƒN&ƒŠƒZƒbƒgM† ----- */
         input wire          CLK,
         input wire          RST,
 
-        /* ----- ä¸Šä½ã¨ã®æ¥ç¶šç”¨ ----- */
-        // åˆ¶å¾¡
+        /* ----- ãˆÊ‚Æ‚ÌÚ‘±—p ----- */
+        // §Œä
         input wire          STALL,
         input wire          FLUSH,
 
-        // å…¥åŠ›
+        // “ü—Í
         input wire  [31:0]  M_PC,
         input wire  [31:0]  M_INST,
         input wire          M_VALID,
@@ -34,7 +34,7 @@ module wb
         // output wire [31:0]  M_STORE_STRB,
         // output wire [31:0]  M_STORE_DATA
 
-        // å‡ºåŠ›
+        // o—Í
         output wire [31:0]  W_PC,
         output wire [31:0]  W_INST,
         output wire         W_VALID,
@@ -47,7 +47,7 @@ module wb
         // output wire [31:0]  W_STORE_DATA
     );
 
-    /* ----- å…¥åŠ›(ãƒ©ãƒƒãƒå–ã‚Šè¾¼ã¿) ----- */
+    /* ----- “ü—Í(ƒ‰ƒbƒ`æ‚è‚İ) ----- */
     reg [31:0]  pc, inst;
     reg         valid;
     reg [4:0]   reg_d;
@@ -72,7 +72,7 @@ module wb
         end
     end
 
-    /* ----- å‡ºåŠ› ----- */
+    /* ----- o—Í ----- */
     assign W_PC         = pc;
     assign W_INST       = inst;
     assign W_VALID      = valid;
