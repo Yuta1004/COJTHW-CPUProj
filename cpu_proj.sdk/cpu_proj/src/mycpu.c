@@ -1,6 +1,9 @@
+#include <unistd.h>
+
 #include "xil_printf.h"
 #include "xil_cache.h"
 #include "xparameters.h"
+
 #include "cojt.h"
 #include "mycpu.h"
 
@@ -23,4 +26,13 @@ void view_registers() {
 		xil_printf(i % 4 == 3 ? "\n" : "\t\t\t");
 	}
 	xil_printf("\n");
+}
+
+
+void exec_on_origcpu(unsigned int *instructions) {
+	write_instructions(instructions);
+	CEXEC = 1;
+	sleep(1);
+	CEXEC = 0;
+	view_registers();
 }

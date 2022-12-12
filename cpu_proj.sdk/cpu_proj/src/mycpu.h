@@ -10,5 +10,6 @@
 
 void write_instructions(unsigned int *instructions);
 void view_registers();
+void exec_on_origcpu(unsigned int *instructions);
 
 #endif
