@@ -15,6 +15,15 @@ int main() {
 	init_ov9655(OV9655_SXGA);
 
 	exec_on_origcpu(ADDI_REQUIRE_FORWARD);
+//	exec_on_origcpu(BEQ);
+//	exec_on_origcpu(SIMPLE_CALC);
+//	exec_on_origcpu(LOGIC_CALC_1);
+//	exec_on_origcpu(SHIFT_CALC);
+//	exec_on_origcpu(LOGIC_CALC_2);
+//	exec_on_origcpu(BRANCH_BLT_1);
+//	exec_on_origcpu(BRANCH_BLT_2);
+//	exec_on_origcpu(BRANCH_BLTU_1);
+//	exec_on_origcpu(BRANCH_BLTU_2);
 
 	return 0;
 }
