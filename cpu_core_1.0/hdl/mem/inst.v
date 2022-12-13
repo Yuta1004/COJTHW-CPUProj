@@ -11,7 +11,7 @@
 // 2022/12/10  1.00     Y.Nakagami    Created
 //-----------------------------------------------------------------------------
 
-module cachemem_rd #
+module instmem #
     (
         parameter integer C_M_AXI_THREAD_ID_WIDTH = 1,
         parameter integer C_M_AXI_ADDR_WIDTH      = 32,

@@ -100,13 +100,13 @@ module inst_fetch #
     assign I_VALID  = delayed_flush ? 32'b0 : i_valid;
 
     /* ----- ÉLÉÉÉbÉVÉÖÉÅÉÇÉä ----- */
-    cachemem_rd # (
+    instmem # (
         .C_M_AXI_THREAD_ID_WIDTH(C_M_AXI_THREAD_ID_WIDTH),
         .C_M_AXI_ADDR_WIDTH     (C_M_AXI_ADDR_WIDTH),
         .C_M_AXI_DATA_WIDTH     (C_M_AXI_DATA_WIDTH),
         .C_M_AXI_ARUSER_WIDTH   (C_M_AXI_ARUSER_WIDTH),
         .C_M_AXI_RUSER_WIDTH    (C_M_AXI_RUSER_WIDTH)
-    ) cachemem_rd (
+    ) instmem (
         .CLK            (CLK),
         .RST            (RST),
 
