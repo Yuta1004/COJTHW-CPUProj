@@ -176,46 +176,6 @@ module core #
         output wire                                 M_DATA_AXI_RREADY
     );
 
-    /* ----- AXIバス設定(データ用) ----- */
-    // AWチャンネル
-    assign M_DATA_AXI_AWID      = 'b0;
-    assign M_DATA_AXI_AWADDR    = 32'b0;   // *
-    assign M_DATA_AXI_AWLEN     = 8'b0;    // *
-    assign M_DATA_AXI_AWSIZE    = 3'b010;
-    assign M_DATA_AXI_AWBURST   = 2'b01;
-    assign M_DATA_AXI_AWLOCK    = 2'b00;
-    assign M_DATA_AXI_AWCACHE   = 4'b0011;
-    assign M_DATA_AXI_AWPROT    = 3'h0;
-    assign M_DATA_AXI_AWQOS     = 4'h0;
-    assign M_DATA_AXI_AWUSER    = 'b0;
-    assign M_DATA_AXI_AWVALID   = 1'b0;    // *
-
-    // Wチャンネル
-    assign M_DATA_AXI_WDATA     = 32'b0;   // *
-    assign M_DATA_AXI_WSTRB     = 4'b1111;
-    assign M_DATA_AXI_WLAST     = 1'b0;    // *
-    assign M_DATA_AXI_WUSER     = 'b0;
-    assign M_DATA_AXI_WVALID    = 1'b0;     // *
-
-    // Bチャンネル
-    assign M_DATA_AXI_BREADY    = 1'b0;     // *
-
-    // ARチャンネル
-    assign M_DATA_AXI_ARID      = 'b0;
-    assign M_DATA_AXI_ARADDR    = 32'b0;   // *
-    assign M_DATA_AXI_ARLEN     = 8'b0;    // *
-    assign M_DATA_AXI_ARSIZE    = 3'b010;
-    assign M_DATA_AXI_ARBURST   = 2'b01;
-    assign M_DATA_AXI_ARLOCK    = 1'b0;
-    assign M_DATA_AXI_ARCACHE   = 4'b0011;
-    assign M_DATA_AXI_ARPROT    = 3'h0;
-    assign M_DATA_AXI_ARQOS     = 4'h0;
-    assign M_DATA_AXI_ARUSER    = 'b0;
-    assign M_DATA_AXI_ARVALID   = 1'b0;    // *
-
-    // Rチャンネル
-    assign M_DATA_AXI_RREADY    = 1'b0;    // *
-
     /* ----- AXIバス設定(命令用) ----- */
     // AWチャンネル
     assign M_INST_AXI_AWID       = 'b0;
@@ -471,6 +431,82 @@ module core #
         .W_VALID    (w_valid),
         .W_REG_D    (w_reg_d),
         .W_REG_D_V  (w_reg_d_v)
+    );
+
+    /* ----- データ用キャッシュメモリ ----- */
+    wire [31:0] data_wraddr, data_wrdata, data_rdaddr;
+    wire        data_wren, data_rden;
+    wire [31:0] data_ordaddr, data_rdout;
+    wire        data_rdvalid;
+    wire        data_loading;
+
+    datamem # (
+        .C_M_AXI_THREAD_ID_WIDTH(C_M_AXI_THREAD_ID_WIDTH),
+        .C_M_AXI_ADDR_WIDTH     (C_M_AXI_ADDR_WIDTH),
+        .C_M_AXI_DATA_WIDTH     (C_M_AXI_DATA_WIDTH),
+        .C_M_AXI_AWUSER_WIDTH   (C_M_AXI_AWUSER_WIDTH),
+        .C_M_AXI_ARUSER_WIDTH   (C_M_AXI_ARUSER_WIDTH),
+        .C_M_AXI_WUSER_WIDTH    (C_M_AXI_WUSER_WIDTH),
+        .C_M_AXI_BUSER_WIDTH    (C_M_AXI_BUSER_WIDTH),
+        .C_M_AXI_RUSER_WIDTH    (C_M_AXI_RUSER_WIDTH)
+    ) datamem (
+        .CLK            (CLK),
+        .RST            (RST),
+
+        .WRADDR         (data_wraddr),
+        .WREN           (data_wren),
+        .WRDATA         (data_wrdata),
+        .RDADDR         (data_rdaddr),
+        .RDEN           (data_rden),
+
+        .ORDADDR        (data_ordaddr),
+        .RDOUT          (data_rdout),
+        .RDVALID        (data_rdvalid),
+
+        .LOADING        (data_loading),
+
+        .M_AXI_AWID     (M_DATA_AXI_AWID),
+        .M_AXI_AWADDR   (M_DATA_AXI_AWADDR),
+        .M_AXI_AWLEN    (M_DATA_AXI_AWLEN),
+        .M_AXI_AWSIZE   (M_DATA_AXI_AWSIZE),
+        .M_AXI_AWBURST  (M_DATA_AXI_AWBURST),
+        .M_AXI_AWLOCK   (M_DATA_AXI_AWLOCK),
+        .M_AXI_AWCACHE  (M_DATA_AXI_AWCACHE),
+        .M_AXI_AWPROT   (M_DATA_AXI_AWPROT),
+        .M_AXI_AWQOS    (M_DATA_AXI_AWQOS),
+        .M_AXI_AWUSER   (M_DATA_AXI_AWUSER),
+        .M_AXI_AWVALID  (M_DATA_AXI_AWVALID),
+        .M_AXI_AWREADY  (M_DATA_AXI_AWREADY),
+        .M_AXI_WDATA    (M_DATA_AXI_WDATA),
+        .M_AXI_WSTRB    (M_DATA_AXI_WSTRB),
+        .M_AXI_WLAST    (M_DATA_AXI_WLAST),
+        .M_AXI_WUSER    (M_DATA_AXI_WUSER),
+        .M_AXI_WVALID   (M_DATA_AXI_WVALID),
+        .M_AXI_WREADY   (M_DATA_AXI_WREADY),
+        .M_AXI_BID      (M_DATA_AXI_BID),
+        .M_AXI_BRESP    (M_DATA_AXI_BRESP),
+        .M_AXI_BUSER    (M_DATA_AXI_BUSER),
+        .M_AXI_BVALID   (M_DATA_AXI_BVALID),
+        .M_AXI_BREADY   (M_DATA_AXI_BREADY),
+        .M_AXI_ARID     (M_DATA_AXI_ARID),
+        .M_AXI_ARADDR   (M_DATA_AXI_ARADDR),
+        .M_AXI_ARLEN    (M_DATA_AXI_ARLEN),
+        .M_AXI_ARSIZE   (M_DATA_AXI_ARSIZE),
+        .M_AXI_ARBURST  (M_DATA_AXI_ARBURST),
+        .M_AXI_ARLOCK   (M_DATA_AXI_ARLOCK),
+        .M_AXI_ARCACHE  (M_DATA_AXI_ARCACHE),
+        .M_AXI_ARPROT   (M_DATA_AXI_ARPROT),
+        .M_AXI_ARQOS    (M_DATA_AXI_ARQOS),
+        .M_AXI_ARUSER   (M_DATA_AXI_ARUSER),
+        .M_AXI_ARVALID  (M_DATA_AXI_ARVALID),
+        .M_AXI_ARREADY  (M_DATA_AXI_ARREADY),
+        .M_AXI_RID      (M_DATA_AXI_RID),
+        .M_AXI_RDATA    (M_DATA_AXI_RDATA),
+        .M_AXI_RRESP    (M_DATA_AXI_RRESP),
+        .M_AXI_RLAST    (M_DATA_AXI_RLAST),
+        .M_AXI_RUSER    (M_DATA_AXI_RUSER),
+        .M_AXI_RVALID   (M_DATA_AXI_RVALID),
+        .M_AXI_RREADY   (M_DATA_AXI_RREADY)
     );
 
     /* ----- デバッグ用 ----- */
