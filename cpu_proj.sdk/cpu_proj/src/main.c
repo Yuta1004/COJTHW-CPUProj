@@ -25,7 +25,8 @@ int main() {
 //	exec_on_origcpu(BRANCH_BLT_1);
 //	exec_on_origcpu(BRANCH_BLT_2);
 //	exec_on_origcpu(BRANCH_BLTU_1);
-	exec_on_origcpu(BRANCH_BLTU_2);
+//	exec_on_origcpu(BRANCH_BLTU_2);
+	exec_on_origcpu(WRITE_MEM);
 
 	return 0;
 }
