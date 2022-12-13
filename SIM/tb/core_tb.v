@@ -75,19 +75,26 @@ end
 // 全体制御
 wire            STALL           = core.stall;
 wire            FLUSH           = core.flush;
-wire            INST_MEM_WAIT   = core.inst_fetch.MEM_WAIT;
+wire            INST_MEM_WAIT   = core.inst_fetch_2.MEM_WAIT;
 wire            DO_JMP          = core.mem_rd.DO_JMP;
 wire [31:0]     NEW_PC          = core.mem_rd.NEW_PC;
 
 // 命令フェッチ
 wire            EXEC_           = EXEC;
 
-wire [31:0]     P_PC            = core.inst_fetch.pc;
-wire            P_VALID         = core.inst_fetch.pc_valid;
+// wire [31:0]     P_PC            = core.inst_fetch.pc;
+// wire            P_VALID         = core.inst_fetch.pc_valid;
 
-wire [31:0]     I_PC            = core.inst_fetch.I_PC;
-wire [31:0]     I_INST          = core.inst_fetch.I_INST;
-wire            I_VALID         = core.inst_fetch.I_VALID;
+// wire [31:0]     I_PC            = core.inst_fetch.I_PC;
+// wire [31:0]     I_INST          = core.inst_fetch.I_INST;
+// wire            I_VALID         = core.inst_fetch.I_VALID;
+
+wire [31:0]     P_PC            = core.pc.P_PC;
+wire            P_VALID         = core.pc.P_VALID;
+
+wire [31:0]     I_PC            = core.inst_fetch_2.I_PC;
+wire [31:0]     I_INST          = core.inst_fetch_2.I_INST;
+wire            I_VALID         = core.inst_fetch_2.I_VALID;
 
 wire [31:0]     D_PC            = core.decode.D_PC;
 wire [31:0]     D_INST          = core.decode.D_INST;
