@@ -15,6 +15,8 @@ int main() {
 	init_tpf410();
 	init_xclk(XCLK24MHz);
 	init_ov9655(OV9655_SXGA);
+	RESOL_CTRL = 0;
+	RESOL_SET = SXGA;
 
 //	exec_on_origcpu(ADDI_REQUIRE_FORWARD);
 //	exec_on_origcpu(BEQ);
@@ -26,7 +28,8 @@ int main() {
 //	exec_on_origcpu(BRANCH_BLT_2);
 //	exec_on_origcpu(BRANCH_BLTU_1);
 //	exec_on_origcpu(BRANCH_BLTU_2);
-	exec_on_origcpu(WRITE_MEM);
+//	exec_on_origcpu(WRITE_MEM);
+	exec_on_origcpu(CAP_DISP_CONTROL);
 
 	return 0;
 }
