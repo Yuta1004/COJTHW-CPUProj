@@ -310,8 +310,20 @@ endtask
 task write_data;
 integer i;
 begin
-    for (i = 0; i < 1024*2; i = i + 1)
+    for (i = 0; i < 1024*4; i = i + 1)
         axi_slave_bfm_data.ram_array[i] = 0;
+end
+endtask
+
+/* ----- ƒƒ‚ƒŠƒ_ƒ“ƒv ----- */
+task memdump;
+integer fd, i;
+begin
+    fd = $fopen("dump.txt");
+    for (i = 0; i < 4*1024; i = i + 1) begin
+        $fdisplay(fd, "%08x: %08x", 32'h20000000 + i*4, axi_slave_bfm_data.ram_array[i]);
+    end
+    $fclose(fd);
 end
 endtask
 
@@ -334,6 +346,9 @@ initial begin
     #(STEP*5);
     EXEC = 1;
     #(STEP*4500);
+
+    // Œ‹‰Êo—Í
+    memdump;
 
     $stop;
 end

@@ -214,7 +214,7 @@ module core #
     wire        inst_mem_wait, do_jmp;
     wire [31:0] new_pc;
 
-    wire stall = inst_mem_wait;
+    wire stall = inst_mem_wait | data_mem_wait;
     wire flush = do_jmp;
 
     /* ----- 命令フェッチ部 ----- */
@@ -463,12 +463,11 @@ module core #
     );
 
     /* ----- データ用キャッシュメモリ ----- */
-    wire [31:0] data_wraddr, data_wrdata, data_rdaddr;
-    wire [3:0]  data_wrstrb;
-    wire        data_wren, data_rden;
+    wire [31:0] data_rdaddr;
+    wire        data_rden;
     wire [31:0] data_ordaddr, data_rdout;
     wire        data_rdvalid;
-    wire        data_loading;
+    wire        data_mem_wait;
 
     datamem # (
         .C_M_AXI_THREAD_ID_WIDTH(C_M_AXI_THREAD_ID_WIDTH),
@@ -483,10 +482,10 @@ module core #
         .CLK            (CLK),
         .RST            (RST),
 
-        .WRADDR         (data_wraddr),
-        .WREN           (data_wren),
-        .WRSTRB         (data_wrstrb),
-        .WRDATA         (data_wrdata),
+        .WRADDR         (m_store_addr),
+        .WREN           (m_store_wren),
+        .WRSTRB         (m_store_strb),
+        .WRDATA         (m_store_data),
         .RDADDR         (data_rdaddr),
         .RDEN           (data_rden),
 
@@ -494,7 +493,7 @@ module core #
         .RDOUT          (data_rdout),
         .RDVALID        (data_rdvalid),
 
-        .LOADING        (data_loading),
+        .LOADING        (data_mem_wait),
 
         .M_AXI_AWID     (M_DATA_AXI_AWID),
         .M_AXI_AWADDR   (M_DATA_AXI_AWADDR),

@@ -107,3 +107,5 @@
 ResultViewer/settings.xml
 !*.xlsx
 !*.pptx
+
+dump.txt

@@ -187,7 +187,7 @@ module datamem #
         else if (s_state == S_S_ADDR && s_next_state == S_S_WRITE) begin
             M_AXI_AWADDR <= 32'b0;
             M_AXI_AWLEN <= 8'b0;
-            M_AXI_AWVALID <= 1'b1;
+            M_AXI_AWVALID <= 1'b0;
         end
     end
 
