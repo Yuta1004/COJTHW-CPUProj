@@ -25,6 +25,10 @@ module instmem #
         input               RST,
 
         /* ----- メモリアクセス用信号 ----- */
+        // 制御
+        input wire          STALL,
+        input wire          FLUSH,
+
         // アドレス指定
         input wire  [31:0]  ADDR,
         input wire          RDEN,
@@ -77,9 +81,33 @@ module instmem #
     // Rチャンネル
     assign M_AXI_RREADY     = 1'b1;
 
+    /* ----- 入力保持 ----- */
+    reg [31:0]  h_addr;
+    reg         h_rden;
+
+    wire [31:0] addr = STALL ? h_addr : ADDR;
+    wire        rden = STALL ? h_rden : RDEN;
+
+    always @ (posedge CLK) begin
+        if (RST) begin
+            h_addr <= 32'b0;
+            h_rden <= 1'b0;
+        end
+        else if (STALL)
+            ;
+        else if (FLUSH) begin
+            h_addr <= 32'b0;
+            h_rden <= 1'b0;
+        end
+        else begin
+            h_addr <= ADDR;
+            h_rden <= RDEN;
+        end
+    end
+
     /* ----- BRAM ----- */
     wire        bram_en     = 1'b1;
-    wire [31:0] bram_addr   = { 20'b0, { loaded ? ADDR[11:0] : r_waddr } };
+    wire [31:0] bram_addr   = { 20'b0, { loaded ? addr[11:0] : r_waddr } };
     wire [31:0] bram_din    = M_AXI_RDATA;
     wire [3:0]  bram_wren   = M_AXI_RVALID ? 4'hf : 4'h0;
 
@@ -96,19 +124,19 @@ module instmem #
     /* ----- ページ存在確認 ----- */
     reg [19:0]  loaded_page_addr;
 
-    assign loaded = loaded_page_addr == ADDR[31:12];
+    assign loaded = loaded_page_addr == addr[31:12];
 
     always @ (posedge CLK) begin
         if (RST)
             loaded_page_addr <= 20'b1111_1111_1111_1111_1111;
         else if (M_AXI_RVALID && M_AXI_RLAST && M_AXI_ARADDR[11:0] == 12'b0)
-            loaded_page_addr <= ADDR[31:12];
+            loaded_page_addr <= addr[31:12];
     end
 
     /* ----- 出力 ------ */
     always @ (posedge CLK) begin
-        OADDR <= ADDR;
-        VALID <= RDEN && loaded;
+        OADDR <= addr;
+        VALID <= rden && loaded;
     end
 
     assign LOADING = RDEN && !loaded;
@@ -160,7 +188,7 @@ module instmem #
         if (RST)
             M_AXI_ARADDR <= 32'h0;
         else if (ar_state == S_AR_IDLE && ar_next_state == S_AR_ADDR)
-            M_AXI_ARADDR <= { ADDR[31:12], 12'b0 };
+            M_AXI_ARADDR <= { addr[31:12], 12'b0 };
         else if (ar_state == S_AR_ADDR && M_AXI_ARREADY)
             M_AXI_ARADDR <= M_AXI_ARADDR + 32'd128;
     end

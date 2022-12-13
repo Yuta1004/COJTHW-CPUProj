@@ -110,6 +110,9 @@ module inst_fetch #
         .CLK            (CLK),
         .RST            (RST),
 
+        .STALL          (STALL),
+        .FLUSH          (FLUSH),
+
         .ADDR           (pc),
         .RDEN           (pc_valid),
         .OADDR          (i_pc),
