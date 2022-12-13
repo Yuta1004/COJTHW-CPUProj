@@ -30,21 +30,23 @@ module wb
         input wire  [31:0]  M_REG_D_V,
         // output wire [31:0]  M_LOAD_ADDR,
         // output wire [31:0]  M_LOAD_STRB,
-        // output wire [31:0]  M_STORE_ADDR,
-        // output wire [31:0]  M_STORE_STRB,
-        // output wire [31:0]  M_STORE_DATA
+        input wire          M_STORE_WREN,
+        input wire  [31:0]  M_STORE_ADDR,
+        input wire  [3:0]   M_STORE_STRB,
+        input wire  [31:0]  M_STORE_DATA,
 
         // èoóÕ
         output wire [31:0]  W_PC,
         output wire [31:0]  W_INST,
         output wire         W_VALID,
         output wire [4:0]   W_REG_D,
-        output wire [31:0]  W_REG_D_V
+        output wire [31:0]  W_REG_D_V,
         // output wire [31:0]  W_LOAD_STRB,
         // output wire [31:0]  W_LOAD_DATA,
-        // output wire [31:0]  W_STORE_ADDR,
-        // output wire [31:0]  W_STORE_STRB,
-        // output wire [31:0]  W_STORE_DATA
+        output wire         W_STORE_WREN,
+        output wire [31:0]  W_STORE_ADDR,
+        output wire [3:0]   W_STORE_STRB,
+        output wire [31:0]  W_STORE_DATA
     );
 
     /* ----- ì¸óÕ(ÉâÉbÉ`éÊÇËçûÇ›) ----- */
@@ -52,6 +54,9 @@ module wb
     reg         valid;
     reg [4:0]   reg_d;
     reg [31:0]  reg_d_v;
+    reg         store_wren;
+    reg [31:0]  store_addr, store_data;
+    reg [3:0]   store_strb;
 
     always @ (posedge CLK) begin
         if (RST) begin
@@ -60,6 +65,10 @@ module wb
             valid <= 1'b0;
             reg_d <= 5'b0;
             reg_d_v <= 5'b0;
+            store_wren <= 1'b0;
+            store_addr <= 32'b0;
+            store_strb <= 4'b0;
+            store_data <= 32'b0;
         end
         else if (STALL)
             ;
@@ -69,6 +78,10 @@ module wb
             valid <= 1'b0;
             reg_d <= 5'b0;
             reg_d_v <= 5'b0;
+            store_wren <= 1'b0;
+            store_addr <= 32'b0;
+            store_strb <= 4'b0;
+            store_data <= 32'b0;
         end
         else begin
             pc <= M_PC;
@@ -76,6 +89,10 @@ module wb
             valid <= M_VALID;
             reg_d <= M_REG_D;
             reg_d_v <= M_REG_D_V;
+            store_wren <= M_STORE_WREN;
+            store_addr <= M_STORE_ADDR;
+            store_strb <= M_STORE_STRB;
+            store_data <= M_STORE_DATA;
         end
     end
 
@@ -85,5 +102,9 @@ module wb
     assign W_VALID      = valid;
     assign W_REG_D      = reg_d;
     assign W_REG_D_V    = reg_d_v;
+    assign W_STORE_WREN = store_wren;
+    assign W_STORE_ADDR = store_addr;
+    assign W_STORE_STRB = store_strb;
+    assign W_STORE_DATA = store_data;
 
 endmodule

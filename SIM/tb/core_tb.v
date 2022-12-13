@@ -112,18 +112,30 @@ wire            A_DO_JMP        = core.alu.A_DO_JMP;
 wire [31:0]     A_NEW_PC        = core.alu.A_NEW_PC;
 wire [4:0]      A_REG_D         = core.alu.A_REG_D;
 wire [31:0]     A_REG_D_V       = core.alu.A_REG_D_V;
+wire            A_STORE_WREN    = core.alu.A_STORE_WREN;
+wire [31:0]     A_STORE_ADDR    = core.alu.A_STORE_ADDR;
+wire [3:0]      A_STORE_STRB    = core.alu.A_STORE_STRB;
+wire [31:0]     A_STORE_DATA    = core.alu.A_STORE_DATA;
 
 wire [31:0]     M_PC            = core.mem_rd.M_PC;
 wire [31:0]     M_INST          = core.mem_rd.M_INST;
 wire            M_VALID         = core.mem_rd.M_VALID;
 wire [4:0]      M_REG_D         = core.mem_rd.M_REG_D;
 wire [31:0]     M_REG_D_V       = core.mem_rd.M_REG_D_V;
+wire            M_STORE_WREN    = core.mem_rd.M_STORE_WREN;
+wire [31:0]     M_STORE_ADDR    = core.mem_rd.M_STORE_ADDR;
+wire [3:0]      M_STORE_STRB    = core.mem_rd.M_STORE_STRB;
+wire [31:0]     M_STORE_DATA    = core.mem_rd.M_STORE_DATA;
 
 wire [31:0]     W_PC            = core.wb.W_PC;
 wire [31:0]     W_INST          = core.wb.W_INST;
 wire            W_VALID         = core.wb.W_VALID;
 wire [4:0]      W_REG_D         = core.wb.W_REG_D;
 wire [31:0]     W_REG_D_V       = core.wb.W_REG_D_V;
+wire            W_STORE_WREN    = core.wb.W_STORE_WREN;
+wire [31:0]     W_STORE_ADDR    = core.wb.W_STORE_ADDR;
+wire [3:0]      W_STORE_STRB    = core.wb.W_STORE_STRB;
+wire [31:0]     W_STORE_DATA    = core.wb.W_STORE_DATA;
 
 /* ----- メモリ(命令)書き込み ----- */
 task write_inst;
@@ -277,11 +289,20 @@ begin
     // axi_slave_bfm_inst.ram_array[3] = 32'h0000_006f;
 
     // 14. jalrを使用したジャンプ
-    axi_slave_bfm_inst.ram_array[0] = 32'b00100000000000000001000010110111; // lui x1, 0x20001   -> x1 = 0x2000_1000
-    axi_slave_bfm_inst.ram_array[1] = 32'b00000000000000001000000101100111; // jalr x2, 0(x1)    -> x2 = 0x2000_0008
-    axi_slave_bfm_inst.ram_array[2] = 32'b00000000101000000000001000010011; // addi x4, x0, 10   -> x4 = 10
-    axi_slave_bfm_inst.ram_array[3] = 32'h0000_006f;
-    axi_slave_bfm_inst.ram_array[1024] = 32'b00000000000000010000000111100111; // jalr x3, 0(x2) -> x3 = 0x2001_0004
+    // axi_slave_bfm_inst.ram_array[0] = 32'b00100000000000000001000010110111; // lui x1, 0x20001   -> x1 = 0x2000_1000
+    // axi_slave_bfm_inst.ram_array[1] = 32'b00000000000000001000000101100111; // jalr x2, 0(x1)    -> x2 = 0x2000_0008
+    // axi_slave_bfm_inst.ram_array[2] = 32'b00000000101000000000001000010011; // addi x4, x0, 10   -> x4 = 10
+    // axi_slave_bfm_inst.ram_array[3] = 32'h0000_006f;
+    // axi_slave_bfm_inst.ram_array[1024] = 32'b00000000000000010000000111100111; // jalr x3, 0(x2) -> x3 = 0x2001_0004
+
+    // 15. メモリ書き込み
+    axi_slave_bfm_inst.ram_array[0] = 32'b00100000000000000001000010110111; // lui x1, 0x20001
+    axi_slave_bfm_inst.ram_array[1] = 32'b00010010001101000101000100110111; // lui x2, 0x12345
+    axi_slave_bfm_inst.ram_array[2] = 32'b01100111100000010000000100010011; // addi x2, x2, 0x678
+    axi_slave_bfm_inst.ram_array[3] = 32'b00000000001000001000000110100011; // sb x2, 3(x1)
+    axi_slave_bfm_inst.ram_array[4] = 32'b00000000001000001001001100100011; // sh x2, 6(x1)
+    axi_slave_bfm_inst.ram_array[5] = 32'b00000000001000001010010000100011; // sw x2, 8(x1)
+    axi_slave_bfm_inst.ram_array[6] = 32'h0000_006f;
 end
 endtask
 

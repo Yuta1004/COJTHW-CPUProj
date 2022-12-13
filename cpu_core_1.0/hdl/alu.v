@@ -52,12 +52,13 @@ module alu
         output wire         A_DO_JMP,
         output wire [31:0]  A_NEW_PC,
         output wire [4:0]   A_REG_D,
-        output wire [31:0]  A_REG_D_V
+        output wire [31:0]  A_REG_D_V,
         // output wire [31:0]  A_LOAD_ADDR,
         // output wire [31:0]  A_LOAD_STRB,
-        // output wire [31:0]  A_STORE_ADDR,
-        // output wire [31:0]  A_STORE_STRB,
-        // output wire [31:0]  A_STORE_DATA
+        output wire         A_STORE_WREN,
+        output wire [31:0]  A_STORE_ADDR,
+        output wire [3:0]   A_STORE_STRB,
+        output wire [31:0]  A_STORE_DATA
     );
 
     /* ----- ì¸óÕ(ÉâÉbÉ`éÊÇËçûÇ›) ----- */
@@ -258,6 +259,62 @@ module alu
 
             // ñ¢ëŒâûñΩóﬂ
             default: rd_calc = 32'b0;
+        endcase
+    endfunction
+
+    // wr
+    assign A_STORE_WREN = check_wren(opcode, funct3, funct7);
+    assign A_STORE_ADDR = check_wraddr(
+        opcode, funct3, funct7,
+        forwarded_reg_s1_v, imm
+    );
+    assign A_STORE_STRB = check_wrstrb(opcode, funct3, funct7);
+    assign A_STORE_DATA = forwarded_reg_s2_v;
+
+    function check_wren;
+        input [6:0] OPCODE;
+        input [2:0] FUNCT3;
+        input [6:0] FUNCT7;
+
+        casez ({ OPCODE, FUNCT3, FUNCT7 })
+            17'b0100011_000_zzzzzzz: check_wren = 1'b1;     // sb
+            17'b0100011_001_zzzzzzz: check_wren = 1'b1;     // sh
+            17'b0100011_010_zzzzzzz: check_wren = 1'b1;     // sw
+
+            // ñ¢ëŒâûñΩóﬂ
+            default: check_wren = 1'b0;
+        endcase
+    endfunction
+
+    function [3:0] check_wrstrb;
+        input [6:0] OPCODE;
+        input [2:0] FUNCT3;
+        input [6:0] FUNCT7;
+
+        casez ({ OPCODE, FUNCT3, FUNCT7 })
+            17'b0100011_000_zzzzzzz: check_wrstrb = 4'b0001;    // sb
+            17'b0100011_001_zzzzzzz: check_wrstrb = 4'b0011;    // sh
+            17'b0100011_010_zzzzzzz: check_wrstrb = 4'b1111;    // sw
+
+            // ñ¢ëŒâûñΩóﬂ
+            default: check_wrstrb = 4'b0;
+        endcase
+    endfunction
+
+    function [31:0] check_wraddr;
+        input [6:0]  OPCODE;
+        input [2:0]  FUNCT3;
+        input [6:0]  FUNCT7;
+        input [31:0] REG_S1_V;
+        input [31:0] IMM;
+
+        casez ({ OPCODE, FUNCT3, FUNCT7 })
+            17'b0100011_000_zzzzzzz: check_wraddr = REG_S1_V + { { 20{ IMM[11] } }, IMM[11:0] };  // sb
+            17'b0100011_001_zzzzzzz: check_wraddr = REG_S1_V + { { 20{ IMM[11] } }, IMM[11:0] };  // sh
+            17'b0100011_010_zzzzzzz: check_wraddr = REG_S1_V + { { 20{ IMM[11] } }, IMM[11:0] };  // sw
+
+            // ñ¢ëŒâûñΩóﬂ
+            default: check_wraddr = 32'b0;
         endcase
     endfunction
 

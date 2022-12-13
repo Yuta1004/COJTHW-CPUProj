@@ -32,23 +32,28 @@ module mem_rd
         input wire  [31:0]  A_NEW_PC,
         input wire  [4:0]   A_REG_D,
         input wire  [31:0]  A_REG_D_V,
+        input wire          A_STORE_WREN,
+        input wire  [31:0]  A_STORE_ADDR,
+        input wire  [3:0]   A_STORE_STRB,
+        input wire  [31:0]  A_STORE_DATA,
         // output wire [31:0]  A_LOAD_ADDR,
         // output wire [31:0]  A_LOAD_STRB,
-        // output wire [31:0]  A_STORE_ADDR,
-        // output wire [31:0]  A_STORE_STRB,
-        // output wire [31:0]  A_STORE_DATA
 
         // èoóÕ
         output wire [31:0]  M_PC,
         output wire [31:0]  M_INST,
         output wire         M_VALID,
         output wire [4:0]   M_REG_D,
-        output wire [31:0]  M_REG_D_V
+        output wire [31:0]  M_REG_D_V,
         // output wire [31:0]  M_LOAD_STRB,
         // output wire [31:0]  M_LOAD_DATA,
         // output wire [31:0]  M_STORE_ADDR,
         // output wire [31:0]  M_STORE_STRB,
         // output wire [31:0]  M_STORE_DATA
+        output wire         M_STORE_WREN,
+        output wire [31:0]  M_STORE_ADDR,
+        output wire [3:0]   M_STORE_STRB,
+        output wire [31:0]  M_STORE_DATA
     );
 
     /* ----- ì¸óÕ(ÉâÉbÉ`éÊÇËçûÇ›) ----- */
@@ -58,6 +63,9 @@ module mem_rd
     reg [31:0]  new_pc;
     reg [4:0]   reg_d;
     reg [31:0]  reg_d_v;
+    reg         store_wren;
+    reg [31:0]  store_addr, store_data;
+    reg [3:0]   store_strb;
 
     always @ (posedge CLK) begin
         if (RST) begin
@@ -68,6 +76,10 @@ module mem_rd
             new_pc <= 32'b0;
             reg_d <= 5'b0;
             reg_d_v <= 32'b0;
+            store_wren <= 1'b0;
+            store_addr <= 32'b0;
+            store_strb <= 4'b0;
+            store_data <= 32'b0;
         end
         else if (STALL)
             ;
@@ -79,6 +91,10 @@ module mem_rd
             new_pc <= 32'b0;
             reg_d <= 5'b0;
             reg_d_v <= 32'b0;
+            store_wren <= 1'b0;
+            store_addr <= 32'b0;
+            store_strb <= 4'b0;
+            store_data <= 32'b0;
         end
         else begin
             pc <= A_PC;
@@ -88,6 +104,10 @@ module mem_rd
             new_pc <= A_NEW_PC;
             reg_d <= A_REG_D;
             reg_d_v <= A_REG_D_V;
+            store_wren <= A_STORE_WREN;
+            store_addr <= A_STORE_ADDR;
+            store_strb <= A_STORE_STRB;
+            store_data <= A_STORE_DATA;
         end
     end
 
@@ -100,5 +120,9 @@ module mem_rd
     assign M_VALID      = valid;
     assign M_REG_D      = reg_d;
     assign M_REG_D_V    = reg_d_v;
+    assign M_STORE_WREN = store_wren;
+    assign M_STORE_ADDR = store_addr;
+    assign M_STORE_STRB = store_strb;
+    assign M_STORE_DATA = store_data;
 
 endmodule

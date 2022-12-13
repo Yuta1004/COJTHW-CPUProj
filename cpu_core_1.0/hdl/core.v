@@ -340,6 +340,9 @@ module core #
     wire [31:0] a_new_pc;
     wire [4:0]  a_reg_d;
     wire [31:0] a_reg_d_v;
+    wire        a_store_wren;
+    wire [31:0] a_store_addr, a_store_data;
+    wire [3:0]  a_store_strb;
 
     alu alu (
         .CLK            (CLK),
@@ -374,7 +377,11 @@ module core #
         .A_DO_JMP       (a_do_jmp),
         .A_NEW_PC       (a_new_pc),
         .A_REG_D        (a_reg_d),
-        .A_REG_D_V      (a_reg_d_v)
+        .A_REG_D_V      (a_reg_d_v),
+        .A_STORE_WREN   (a_store_wren),
+        .A_STORE_ADDR   (a_store_addr),
+        .A_STORE_STRB   (a_store_strb),
+        .A_STORE_DATA   (a_store_data)
     );
 
     /* ----- メモリアクセス(読み)部 ---- */
@@ -382,29 +389,40 @@ module core #
     wire        m_valid;
     wire [4:0]  m_reg_d;
     wire [31:0] m_reg_d_v;
+    wire        m_store_wren;
+    wire [31:0] m_store_addr, m_store_data;
+    wire [3:0]  m_store_strb;
 
     mem_rd mem_rd (
-        .CLK        (CLK),
-        .RST        (RST),
+        .CLK            (CLK),
+        .RST            (RST),
 
-        .STALL      (stall),
-        .FLUSH      (flush),
-        .DO_JMP     (do_jmp),
-        .NEW_PC     (new_pc),
+        .STALL          (stall),
+        .FLUSH          (flush),
+        .DO_JMP         (do_jmp),
+        .NEW_PC         (new_pc),
 
-        .A_PC       (a_pc),
-        .A_INST     (a_inst),
-        .A_VALID    (a_valid),
-        .A_DO_JMP   (a_do_jmp),
-        .A_NEW_PC   (a_new_pc),
-        .A_REG_D    (a_reg_d),
-        .A_REG_D_V  (a_reg_d_v),
+        .A_PC           (a_pc),
+        .A_INST         (a_inst),
+        .A_VALID        (a_valid),
+        .A_DO_JMP       (a_do_jmp),
+        .A_NEW_PC       (a_new_pc),
+        .A_REG_D        (a_reg_d),
+        .A_REG_D_V      (a_reg_d_v),
+        .A_STORE_WREN   (a_store_wren),
+        .A_STORE_ADDR   (a_store_addr),
+        .A_STORE_STRB   (a_store_strb),
+        .A_STORE_DATA   (a_store_data),
 
-        .M_PC       (m_pc),
-        .M_INST     (m_inst),
-        .M_VALID    (m_valid),
-        .M_REG_D    (m_reg_d),
-        .M_REG_D_V  (m_reg_d_v)
+        .M_PC           (m_pc),
+        .M_INST         (m_inst),
+        .M_VALID        (m_valid),
+        .M_REG_D        (m_reg_d),
+        .M_REG_D_V      (m_reg_d_v),
+        .M_STORE_WREN   (m_store_wren),
+        .M_STORE_ADDR   (m_store_addr),
+        .M_STORE_STRB   (m_store_strb),
+        .M_STORE_DATA   (m_store_data)
     );
 
     /* ----- メモリ・レジスタアクセス(書き)部 ----- */
@@ -412,25 +430,36 @@ module core #
     wire        w_valid;
     wire [4:0]  w_reg_d;
     wire [31:0] w_reg_d_v;
+    wire        w_store_wren;
+    wire [31:0] w_store_addr, w_store_data;
+    wire [3:0]  w_store_strb;
 
     wb wb (
-        .CLK        (CLK),
-        .RST        (RST),
+        .CLK            (CLK),
+        .RST            (RST),
 
-        .STALL      (stall),
-        .FLUSH      (flush),
+        .STALL          (stall),
+        .FLUSH          (flush),
 
-        .M_PC       (m_pc),
-        .M_INST     (m_inst),
-        .M_VALID    (m_valid),
-        .M_REG_D    (m_reg_d),
-        .M_REG_D_V  (m_reg_d_v),
+        .M_PC           (m_pc),
+        .M_INST         (m_inst),
+        .M_VALID        (m_valid),
+        .M_REG_D        (m_reg_d),
+        .M_REG_D_V      (m_reg_d_v),
+        .M_STORE_WREN   (m_store_wren),
+        .M_STORE_ADDR   (m_store_addr),
+        .M_STORE_STRB   (m_store_strb),
+        .M_STORE_DATA   (m_store_data),
 
-        .W_PC       (w_pc),
-        .W_INST     (w_inst),
-        .W_VALID    (w_valid),
-        .W_REG_D    (w_reg_d),
-        .W_REG_D_V  (w_reg_d_v)
+        .W_PC           (w_pc),
+        .W_INST         (w_inst),
+        .W_VALID        (w_valid),
+        .W_REG_D        (w_reg_d),
+        .W_REG_D_V      (w_reg_d_v),
+        .W_STORE_WREN   (w_store_wren),
+        .W_STORE_ADDR   (w_store_addr),
+        .W_STORE_STRB   (w_store_strb),
+        .W_STORE_DATA   (w_store_data)
     );
 
     /* ----- データ用キャッシュメモリ ----- */
