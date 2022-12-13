@@ -129,8 +129,9 @@ wire [31:0]     W_REG_D_V       = core.wb.W_REG_D_V;
 task write_inst;
 integer i;
 begin
-    for (i = 0; i < 1024*2; i = i + 1)
-        axi_slave_bfm_inst.ram_array[i] = 0;
+    // 範囲外にx1を破壊する命令を敷き詰める (addi x1, x0, 1234)
+    for (i = 0; i < 1024*4; i = i + 1)
+        axi_slave_bfm_inst.ram_array[i] = 32'h4d20_0093;
 
     // 1. addi & フォワーディング
     // axi_slave_bfm_inst.ram_array[0] = 32'b00111110100000000000000010010011;     // addi x1, x0, 1000    -> 1000
@@ -152,6 +153,7 @@ begin
     // axi_slave_bfm_inst.ram_array[16] = 32'b11100111000001001000010010010011;    // addi x9, x9, -400    -> 100
     // axi_slave_bfm_inst.ram_array[17] = 32'b11111100111001001000010010010011;    // addi x9, x9, -50     -> 50
     // axi_slave_bfm_inst.ram_array[18] = 32'b00000110010001001000010010010011;    // addi x9, x9, 100     -> 150
+    // axi_slave_bfm_inst.ram_array[19] = 32'h0000_006f;
 
     // 2. beq
     // axi_slave_bfm_inst.ram_array[0] = 32'b00000000000000000000000110010011; // addi x3, x0, 0
@@ -164,6 +166,7 @@ begin
     // axi_slave_bfm_inst.ram_array[7] = 32'b00000000001000001000010001100011; // beq x1, x2, 8
     // axi_slave_bfm_inst.ram_array[8] = 32'b00000000101000011000000110010011; // addi x3, x3, 10
     // axi_slave_bfm_inst.ram_array[9] = 32'b00000001010000011000000110010011; // addi x3, x3, 20  -> x3 = 50
+    // axi_slave_bfm_inst.ram_array[10] = 32'h0000_006f;
 
     // 3. 多段beq + ストール
     // axi_slave_bfm_inst.ram_array[0] = 32'b00000000000000000000000110010011; // addi x3, x0, 0
@@ -179,6 +182,7 @@ begin
     // axi_slave_bfm_inst.ram_array[512] = 32'b01000000001000001000000001100011;  // beq x1, x2, 1024
     // axi_slave_bfm_inst.ram_array[768] = 32'b01000000001000001000000001100011;  // beq x1, x2, 1024
     // axi_slave_bfm_inst.ram_array[1024] = 32'b00000001010000011000000110010011; // addi x3, x3, 20  -> x3 = 50
+    // axi_slave_bfm_inst.ram_array[1025] = 32'h0000_006f;
 
     // 4. シンプルな演算
     // axi_slave_bfm_inst.ram_array[0] = 32'b00000000110000000000000010010011; // addi x1, x0, 12 -> x1 = 12
@@ -188,6 +192,7 @@ begin
     // axi_slave_bfm_inst.ram_array[4] = 32'b00000000001100001000001010110011; // add x5, x1, x3  -> x5 = 28
     // axi_slave_bfm_inst.ram_array[5] = 32'b01000000001000001000001100110011; // sub x6, x1, x2  -> x6 = 8
     // axi_slave_bfm_inst.ram_array[6] = 32'b01000000001100001000001110110011; // sub x7, x1, x3  -> x7 = -4
+    // axi_slave_bfm_inst.ram_array[7] = 32'h0000_006f;
 
     // 5. 論理演算
     // axi_slave_bfm_inst.ram_array[0] = 32'b00000000111000000000000010010011; // addi x1, x0, 14 -> x1 = b01110
@@ -198,6 +203,7 @@ begin
     // axi_slave_bfm_inst.ram_array[5] = 32'b00000001010000001111001100010011; // andi x6, x1, 20 -> x6 = b00100
     // axi_slave_bfm_inst.ram_array[6] = 32'b00000001010000001110001110010011; // ori x7, x1, 20  -> x7 = b11110
     // axi_slave_bfm_inst.ram_array[7] = 32'b00000001010000001100010000010011; // xori x8, x1, x2 -> x8 = b11010
+    // axi_slave_bfm_inst.ram_array[8] = 32'h0000_006f;
 
     // 6. シフト演算
     // axi_slave_bfm_inst.ram_array[0] = 32'b10000000000000000000000010110111; // lui x1, 0x80000
@@ -209,12 +215,14 @@ begin
     // axi_slave_bfm_inst.ram_array[6] = 32'b00000000001000001001001100010011; // slli x6, x1, 2
     // axi_slave_bfm_inst.ram_array[7] = 32'b01000000001000001101001110010011; // srai s7, x1, 2
     // axi_slave_bfm_inst.ram_array[8] = 32'b00000000001000001101010000010011; // srli s8, x1, 2
+    // axi_slave_bfm_inst.ram_array[9] = 32'h0000_006f;
 
     // 7. auipcを使った大ジャンプ + ストール
-    // axi_slave_bfm_inst.ram_array[0]    = 32'b00000000000000000001000010010111; // auipc x1, 1    -> x1 = 1024
+    // axi_slave_bfm_inst.ram_array[0]    = 32'b00000000000000000001000010010111; // auipc x1, 1    -> x1 = 0x2000_1000
     // axi_slave_bfm_inst.ram_array[1024] = 32'b00000000101000000000000100010011; // addi x2, 10    -> x2 = 10
     // axi_slave_bfm_inst.ram_array[1025] = 32'b00000001010000000000000110010011; // addi x3, 20    -> x3 = 20
     // axi_slave_bfm_inst.ram_array[1026] = 32'b00000000001100010000001000110011; // add x4, x2, x3 -> x4 = 30
+    // axi_slave_bfm_inst.ram_array[1027] = 32'h0000_006f;
 
     // 8. 論理演算2
     // axi_slave_bfm_inst.ram_array[0] = 32'b00000000101000000000000010010011; // addi x1, x0, 10 -> x1 = 10
@@ -224,6 +232,7 @@ begin
     // axi_slave_bfm_inst.ram_array[4] = 32'b00000000001100001010001010110011; // slt x5, x1, x3  -> x5 = 0
     // axi_slave_bfm_inst.ram_array[5] = 32'b00000001010000001010001100010011; // slti x6, x1, 20 -> x6 = 1
     // axi_slave_bfm_inst.ram_array[6] = 32'b00000000010100001010001110010011; // slti x7, x1, 5  -> x7 = 0
+    // axi_slave_bfm_inst.ram_array[7] = 32'h0000_006f;
 
     // 9. 条件分岐 blt-1
     // axi_slave_bfm_inst.ram_array[0] = 32'b00000000101000000000000010010011; // addi x1, x0, 10 -> x1 = 10
@@ -232,6 +241,7 @@ begin
     // axi_slave_bfm_inst.ram_array[3] = 32'b00000000001000001100010001100011; // blt x1, x2, 8
     // axi_slave_bfm_inst.ram_array[4] = 32'b00000000101000000000000110010011; // addi x3, x0, 10
     // axi_slave_bfm_inst.ram_array[5] = 32'b00000001010000011000000110010011; // add x3, x3, 20  -> x3 = 20
+    // axi_slave_bfm_inst.ram_array[6] = 32'h0000_006f;
 
     // 10. 条件分岐 blt-2
     // axi_slave_bfm_inst.ram_array[0] = 32'b00000000101000000000000010010011; // addi x1, x0, 10 -> x1 = 10
@@ -240,6 +250,7 @@ begin
     // axi_slave_bfm_inst.ram_array[3] = 32'b00000000000100010100010001100011; // blt x2, x1, 8
     // axi_slave_bfm_inst.ram_array[4] = 32'b00000000101000000000000110010011; // addi x3, x0, 10 -> x3 = 10
     // axi_slave_bfm_inst.ram_array[5] = 32'b00000001010000011000000110010011; // add x3, x3, 20  -> x3 = 30
+    // axi_slave_bfm_inst.ram_array[6] = 32'h0000_006f;
 
     // 11. 条件分岐 bltu-1
     // axi_slave_bfm_inst.ram_array[0] = 32'b00000000101000000000000010010011; // addi x1, x0, 10 -> x1 = 10
@@ -248,6 +259,7 @@ begin
     // axi_slave_bfm_inst.ram_array[3] = 32'b00000000001000001110010001100011; // bltu x1, x2, 8
     // axi_slave_bfm_inst.ram_array[4] = 32'b00000000101000000000000110010011; // addi x3, x0, 10 -> x3 = 10
     // axi_slave_bfm_inst.ram_array[5] = 32'b00000001010000011000000110010011; // add x3, x3, 20  -> x3 = 30
+    // axi_slave_bfm_inst.ram_array[6] = 32'h0000_006f;
 
     // 12. 条件分岐 bltu-2
     // axi_slave_bfm_inst.ram_array[0] = 32'b00000000101000000000000010010011; // addi x1, x0, 10 -> x1 = 10
@@ -256,20 +268,20 @@ begin
     // axi_slave_bfm_inst.ram_array[3] = 32'b00000000000100010110010001100011; // bltu x2, x1, 8
     // axi_slave_bfm_inst.ram_array[4] = 32'b00000000101000000000000110010011; // addi x3, x0, 10
     // axi_slave_bfm_inst.ram_array[5] = 32'b00000001010000011000000110010011; // add x3, x3, 20  -> x3 = 20
+    // axi_slave_bfm_inst.ram_array[6] = 32'h0000_006f;
 
     // 13. jalを使用したジャンプ
     // axi_slave_bfm_inst.ram_array[0] = 32'b00000000100000000000000011101111; // jal x1, 8       -> x1 = 0x2000_0004
     // axi_slave_bfm_inst.ram_array[1] = 32'b00000000101000000000000100010011; // addi x2, x0, 10
     // axi_slave_bfm_inst.ram_array[2] = 32'b00000001010000010000000100010011; // addi x2, x2, 20 -> x2 = 20
+    // axi_slave_bfm_inst.ram_array[3] = 32'h0000_006f;
 
     // 14. jalrを使用したジャンプ
-    // axi_slave_bfm_inst.ram_array[0] = 32'b00100000000000000001000010110111; // lui x1, 0x20001   -> x1 = 0x2000_1000
-    // axi_slave_bfm_inst.ram_array[1] = 32'b00000000000000001000000101100111; // jalr x2, 0(x1)    -> x2 = 0x2000_0008
-    // axi_slave_bfm_inst.ram_array[2] = 32'b00000000101000000000001000010011; // addi x4, x0, 10   -> x4 = 10
-    // axi_slave_bfm_inst.ram_array[1024] = 32'b00000000000000010000000111100111; // jalr x3, 0(x2) -> x3 = 0x2001_0004
-
-    // 15. 無限ループ
-    axi_slave_bfm_inst.ram_array[0] = 32'b00000000000000000000_00000000_1101111;
+    axi_slave_bfm_inst.ram_array[0] = 32'b00100000000000000001000010110111; // lui x1, 0x20001   -> x1 = 0x2000_1000
+    axi_slave_bfm_inst.ram_array[1] = 32'b00000000000000001000000101100111; // jalr x2, 0(x1)    -> x2 = 0x2000_0008
+    axi_slave_bfm_inst.ram_array[2] = 32'b00000000101000000000001000010011; // addi x4, x0, 10   -> x4 = 10
+    axi_slave_bfm_inst.ram_array[3] = 32'h0000_006f;
+    axi_slave_bfm_inst.ram_array[1024] = 32'b00000000000000010000000111100111; // jalr x3, 0(x2) -> x3 = 0x2001_0004
 end
 endtask
 

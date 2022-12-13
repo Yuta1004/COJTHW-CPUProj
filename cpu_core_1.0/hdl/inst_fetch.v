@@ -65,11 +65,12 @@ module inst_fetch #
     );
 
     /* ----- プログラムカウンタ ----- */
-    reg         delayed_exec, pc_valid;
+    reg         delayed_exec, delayed_flush, pc_valid;
     reg [31:0]  pc;
 
     always @ (posedge CLK) begin
         delayed_exec <= EXEC;
+        delayed_flush <= FLUSH;
     end
 
     always @ (posedge CLK) begin
@@ -95,8 +96,8 @@ module inst_fetch #
     wire        i_valid;
 
     assign I_PC     = i_pc;
-    assign I_INST   = (i_inst == 32'b0 || MEM_WAIT || FLUSH) ? 32'b0 : i_inst;
-    assign I_VALID  = (i_inst == 32'b0 || MEM_WAIT || FLUSH) ? 32'b0 : i_valid;
+    assign I_INST   = delayed_flush ? 32'b0 : i_inst;
+    assign I_VALID  = delayed_flush ? 32'b0 : i_valid;
 
     /* ----- キャッシュメモリ ----- */
     cachemem_rd # (

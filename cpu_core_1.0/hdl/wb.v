@@ -54,7 +54,14 @@ module wb
     reg [31:0]  reg_d_v;
 
     always @ (posedge CLK) begin
-        if (STALL)
+        if (RST) begin
+            pc <= 32'b0;
+            inst <= 32'b0;
+            valid <= 1'b0;
+            reg_d <= 5'b0;
+            reg_d_v <= 5'b0;
+        end
+        else if (STALL)
             ;
         else if (FLUSH) begin
             pc <= 32'b0;
