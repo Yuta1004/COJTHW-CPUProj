@@ -128,13 +128,13 @@ module inst_fetch_2 #
     /* ----- ページ存在確認 ----- */
     reg [19:0]  loaded_page_addr;
 
-    assign loaded = loaded_page_addr == pc[31:12];
+    assign loaded = loaded_page_addr == P_PC[31:12];
 
     always @ (posedge CLK) begin
         if (RST)
             loaded_page_addr <= 20'b1111_1111_1111_1111_1111;
         else if (M_AXI_RVALID && M_AXI_RLAST && M_AXI_ARADDR[11:0] == 12'b0)
-            loaded_page_addr <= pc[31:12];
+            loaded_page_addr <= P_PC[31:12];
     end
 
     /* ----- 出力 ------ */
@@ -199,7 +199,7 @@ module inst_fetch_2 #
         if (RST)
             M_AXI_ARADDR <= 32'h0;
         else if (ar_state == S_AR_IDLE && ar_next_state == S_AR_ADDR)
-            M_AXI_ARADDR <= { pc[31:12], 12'b0 };
+            M_AXI_ARADDR <= { P_PC[31:12], 12'b0 };
         else if (ar_state == S_AR_ADDR && M_AXI_ARREADY)
             M_AXI_ARADDR <= M_AXI_ARADDR + 32'd128;
     end
