@@ -31,6 +31,7 @@ module datamem #
         // 入力
         input wire  [31:0]  WRADDR,
         input wire          WREN,
+        input wire  [3:0]   WRSTRB,
         input wire  [31:0]  WRDATA,
         input wire  [31:0]  RDADDR,
         input wire          RDEN,
@@ -46,8 +47,8 @@ module datamem #
         /* ----- AXIバス ----- */
         // AWチャンネル
         output wire [C_M_AXI_THREAD_ID_WIDTH-1:0]   M_AXI_AWID,
-        output wire [C_M_AXI_ADDR_WIDTH-1:0]        M_AXI_AWADDR,
-        output wire [8-1:0]                         M_AXI_AWLEN,
+        output reg  [C_M_AXI_ADDR_WIDTH-1:0]        M_AXI_AWADDR,
+        output reg  [8-1:0]                         M_AXI_AWLEN,
         output wire [3-1:0]                         M_AXI_AWSIZE,
         output wire [2-1:0]                         M_AXI_AWBURST,
         output wire [2-1:0]                         M_AXI_AWLOCK,
@@ -55,15 +56,15 @@ module datamem #
         output wire [3-1:0]                         M_AXI_AWPROT,
         output wire [4-1:0]                         M_AXI_AWQOS,
         output wire [C_M_AXI_AWUSER_WIDTH-1:0]      M_AXI_AWUSER,
-        output wire                                 M_AXI_AWVALID,
+        output reg                                  M_AXI_AWVALID,
         input  wire                                 M_AXI_AWREADY,
 
         // Wチャンネル
-        output wire [C_M_AXI_DATA_WIDTH-1:0]        M_AXI_WDATA,
-        output wire [C_M_AXI_DATA_WIDTH/8-1:0]      M_AXI_WSTRB,
-        output wire                                 M_AXI_WLAST,
+        output reg  [C_M_AXI_DATA_WIDTH-1:0]        M_AXI_WDATA,
+        output reg  [C_M_AXI_DATA_WIDTH/8-1:0]      M_AXI_WSTRB,
+        output reg                                  M_AXI_WLAST,
         output wire [C_M_AXI_WUSER_WIDTH-1:0]       M_AXI_WUSER,
-        output wire                                 M_AXI_WVALID,
+        output reg                                  M_AXI_WVALID,
         input  wire                                 M_AXI_WREADY,
 
         // Bチャンネル
@@ -100,8 +101,6 @@ module datamem #
     /* ----- AXIバス設定 ----- */
     // AWチャンネル
     assign M_AXI_AWID      = 'b0;
-    assign M_AXI_AWADDR    = 32'b0;   // *
-    assign M_AXI_AWLEN     = 8'b0;    // *
     assign M_AXI_AWSIZE    = 3'b010;
     assign M_AXI_AWBURST   = 2'b01;
     assign M_AXI_AWLOCK    = 2'b00;
@@ -109,17 +108,12 @@ module datamem #
     assign M_AXI_AWPROT    = 3'h0;
     assign M_AXI_AWQOS     = 4'h0;
     assign M_AXI_AWUSER    = 'b0;
-    assign M_AXI_AWVALID   = 1'b0;    // *
 
     // Wチャンネル
-    assign M_AXI_WDATA     = 32'b0;   // *
-    assign M_AXI_WSTRB     = 4'b1111;
-    assign M_AXI_WLAST     = 1'b0;    // *
     assign M_AXI_WUSER     = 'b0;
-    assign M_AXI_WVALID    = 1'b0;     // *
 
     // Bチャンネル
-    assign M_AXI_BREADY    = 1'b0;     // *
+    assign M_AXI_BREADY    = 1'b1;
 
     // ARチャンネル
     assign M_AXI_ARID      = 'b0;
@@ -136,5 +130,86 @@ module datamem #
 
     // Rチャンネル
     assign M_AXI_RREADY    = 1'b0;    // *
+
+    /* ----- 状態通知 ----- */
+    assign LOADING = s_next_state != S_S_IDLE;
+
+    /* ----- 即時メモリアクセス(AW, W)用ステートマシン ----- */
+    parameter S_S_IDLE  = 2'b00;
+    parameter S_S_ADDR  = 2'b01;
+    parameter S_S_WRITE = 2'b11;
+
+    reg [1:0] s_state, s_next_state;
+
+    always @ (posedge CLK) begin
+        if (RST)
+            s_state <= S_S_IDLE;
+        else
+            s_state <= s_next_state;
+    end
+
+    always @* begin
+        case (s_state)
+            S_S_IDLE:
+                if (WREN)
+                    s_next_state <= S_S_ADDR;
+                else
+                    s_next_state <= S_S_IDLE;
+
+            S_S_ADDR:
+                if (M_AXI_AWREADY)
+                    s_next_state <= S_S_WRITE;
+                else
+                    s_next_state <= S_S_ADDR;
+
+            S_S_WRITE:
+                if (M_AXI_WREADY)
+                    s_next_state <= S_S_IDLE;
+                else
+                    s_next_state <= S_S_WRITE;
+
+            default:
+                s_next_state <= S_S_IDLE;
+        endcase
+    end
+
+    always @ (posedge CLK) begin
+        if (RST) begin
+            M_AXI_AWADDR <= 32'b0;
+            M_AXI_AWLEN <= 8'b0;
+            M_AXI_AWVALID <= 1'b0;
+        end
+        else if (s_next_state == S_S_ADDR) begin
+            M_AXI_AWADDR <= WRADDR;
+            M_AXI_AWLEN <= 8'b0;
+            M_AXI_AWVALID <= 1'b1;
+        end
+        else if (s_state == S_S_ADDR && s_next_state == S_S_WRITE) begin
+            M_AXI_AWADDR <= 32'b0;
+            M_AXI_AWLEN <= 8'b0;
+            M_AXI_AWVALID <= 1'b1;
+        end
+    end
+
+    always @ (posedge CLK) begin
+        if (RST) begin
+            M_AXI_WDATA <= 32'b0;
+            M_AXI_WSTRB <= 4'b0000;
+            M_AXI_WLAST <= 1'b0;
+            M_AXI_WVALID <= 1'b0;
+        end
+        else if (s_next_state == S_S_WRITE) begin
+            M_AXI_WDATA <= WRDATA;
+            M_AXI_WSTRB <= WRSTRB;
+            M_AXI_WLAST <= 1'b1;
+            M_AXI_WVALID <= 1'b1;
+        end
+        else if (s_state == S_S_WRITE && s_next_state == S_S_IDLE) begin
+            M_AXI_WDATA <= 32'b0;
+            M_AXI_WSTRB <= 4'b0000;
+            M_AXI_WLAST <= 1'b0;
+            M_AXI_WVALID <= 1'b0;
+        end
+    end
 
 endmodule

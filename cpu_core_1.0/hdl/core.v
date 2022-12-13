@@ -435,6 +435,7 @@ module core #
 
     /* ----- データ用キャッシュメモリ ----- */
     wire [31:0] data_wraddr, data_wrdata, data_rdaddr;
+    wire [3:0]  data_wrstrb;
     wire        data_wren, data_rden;
     wire [31:0] data_ordaddr, data_rdout;
     wire        data_rdvalid;
@@ -455,6 +456,7 @@ module core #
 
         .WRADDR         (data_wraddr),
         .WREN           (data_wren),
+        .WRSTRB         (data_wrstrb),
         .WRDATA         (data_wrdata),
         .RDADDR         (data_rdaddr),
         .RDEN           (data_rden),
