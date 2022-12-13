@@ -6,8 +6,6 @@ module cpu_core_controller_v1_0_S_AXI #
     (
         // COREÇ∆ÇÃê⁄ë±É|Å[Ég
         input wire          CCLK,
-        // output reg          CARSTN,
-        // output reg          CRST,
         output reg          CEXEC,
 
         input wire [31:0]   REG00,
@@ -131,7 +129,6 @@ module cpu_core_controller_v1_0_S_AXI #
     //-- Number of Slave Registers 4
     reg [C_S_AXI_DATA_WIDTH-1:0]    slv_reg0;
     reg [C_S_AXI_DATA_WIDTH-1:0]    slv_reg1;
-    reg [C_S_AXI_DATA_WIDTH-1:0]    slv_reg2;
     wire    slv_reg_rden;
     wire    slv_reg_wren;
     reg [C_S_AXI_DATA_WIDTH-1:0]    reg_data_out;
@@ -244,20 +241,17 @@ module cpu_core_controller_v1_0_S_AXI #
         if (S_AXI_ARESETN == 1'b0) begin
             slv_reg0 <= 32'b0;
             slv_reg1 <= 32'b0;
-            slv_reg2 <= 32'b0;
         end
         else begin
             if (slv_reg_wren) begin
                 case (axi_awaddr)
                     16'h0000:   slv_reg0 <= S_AXI_WDATA;
                     16'h0004:   slv_reg1 <= S_AXI_WDATA;
-                    16'h0008:   slv_reg2 <= S_AXI_WDATA;
                 endcase
             end
             else begin
-                slv_reg0 <= 32'b0;
-                slv_reg1 <= slv_reg1;
-                slv_reg2 <= 32'b0;
+                slv_reg0 <= slv_reg0;
+                slv_reg1 <= 32'b0;
             end
         end
     end
@@ -433,7 +427,7 @@ module cpu_core_controller_v1_0_S_AXI #
     assign slv_reg_rden = axi_arready & S_AXI_ARVALID & ~axi_rvalid;
     always @* begin
         case (axi_araddr)
-            16'h0004    : reg_data_out <= slv_reg1;
+            16'h0000    : reg_data_out <= slv_reg0;
             16'h1000    : reg_data_out <= reg00[1];
             16'h1004    : reg_data_out <= reg01[1];
             16'h1008    : reg_data_out <= reg02[1];
@@ -490,46 +484,21 @@ module cpu_core_controller_v1_0_S_AXI #
         end
     end
 
-    /* ----- CRST ----- */
-    // reg         cache_arst, cache_slv_reg0;
-    // reg [1:0]   acrst;
-    reg [4:0]   rst_cnt;
-
-    wire slv_reg0_updated = slv_reg0 > 32'b0;
-    //     if (S_AXI_ARESETN == 1'b0)
-    //         cache_slv_reg0 <= 1'b0;
-    //     else if (slv_reg0 > 32'b0)
-    //         cache_slv_reg0 <= 1'b1;
-    //     else if (acrst[1])
-    //         cache_slv_reg0 <= 1'b0;
-    // end
-
-    // always @ (negedge S_AXI_ARESETN, posedge slv_reg0_updated, posedge CCLK) begin
-    //     if (!S_AXI_ARESETN || slv_reg0_updated) begin
-    //         rst_cnt <= 5'b1;
-    //         CARSTN <= 1'b1;
-    //         CRST <= 1'b0;
-    //     end
-    //     else if (rst_cnt > 5'b0) begin
-    //         if (rst_cnt == 5'd31) begin
-    //             rst_cnt <= 5'b0;
-    //             CARSTN <= 1'b1;
-    //             CRST <= 1'b0;
-    //         end
-    //         else begin
-    //             rst_cnt <= rst_cnt + 5'b1;
-    //             CARSTN <= 1'b0;
-    //             CRST <= 1'b1;
-    //         end
-    //     end
-    // end
-
     /* ----- CEXEC ----- */
-    reg         cache_slv_reg1, cache_slv_reg2;
+    reg         cache_slv_reg0, cache_slv_reg1;
     reg [1:0]   acexec;
 
     always @ (posedge S_AXI_ACLK) begin
         acexec <= { acexec[0], CEXEC };
+    end
+
+    always @ (posedge S_AXI_ACLK) begin
+        if (S_AXI_ARESETN == 1'b0)
+            cache_slv_reg0 <= 1'b0;
+        else if (slv_reg0 > 32'b0)
+            cache_slv_reg0 <= 1'b1;
+        else if (acexec[1])
+            cache_slv_reg0 <= 1'b0;
     end
 
     always @ (posedge S_AXI_ACLK) begin
@@ -541,17 +510,8 @@ module cpu_core_controller_v1_0_S_AXI #
             cache_slv_reg1 <= 1'b0;
     end
 
-    always @ (posedge S_AXI_ACLK) begin
-        if (S_AXI_ARESETN == 1'b0)
-            cache_slv_reg2 <= 1'b0;
-        else if (slv_reg2 > 32'b0)
-            cache_slv_reg2 <= 1'b1;
-        else if (acexec[1])
-            cache_slv_reg2 <= 1'b0;
-    end
-
-    always @ (posedge cache_slv_reg1, posedge cache_slv_reg2, posedge CCLK) begin
-        if (cache_slv_reg1 || cache_slv_reg2)
+    always @ (posedge cache_slv_reg0, posedge cache_slv_reg1, posedge CCLK) begin
+        if (cache_slv_reg0 || cache_slv_reg1)
             CEXEC <= 1'b1;
         else
             CEXEC <= 1'b0;

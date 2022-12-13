@@ -10,6 +10,8 @@
 #include "riscv_program.h"
 
 int main() {
+	Xil_DCacheDisable();
+
 	init_tpf410();
 	init_xclk(XCLK24MHz);
 	init_ov9655(OV9655_SXGA);

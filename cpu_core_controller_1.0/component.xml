@@ -564,7 +564,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>fbf68e96</spirit:value>
+            <spirit:value>eba9e2dc</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -580,7 +580,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>fbf68e96</spirit:value>
+            <spirit:value>eba9e2dc</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1557,7 +1557,7 @@
       <spirit:file>
         <spirit:name>hdl/cpu_core_controller_v1_0.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_f94440b3</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_b59cfeef</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -1679,8 +1679,8 @@
         <xilinx:taxonomy>AXI_Peripheral</xilinx:taxonomy>
       </xilinx:taxonomies>
       <xilinx:displayName>cpu_core_controller</xilinx:displayName>
-      <xilinx:coreRevision>12</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2022-12-12T08:17:39Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>14</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2022-12-13T13:23:48Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@535cd58c_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@2748223b_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
@@ -1836,13 +1836,35 @@
         <xilinx:tag xilinx:name="ui.data.coregen.dd@15105045_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@41e1a1fa_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@361f5b7a_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5f062f99_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2e82c94d_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@368fbe7d_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5d154ee3_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6f0ed9c4_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1f4c5d91_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@14be8309_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@68ceea6b_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@31d213df_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7cd91a28_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@50e9c0f_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4139de28_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@298383b8_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@396cfccd_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@55035e2_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7ae0c818_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6aa72d8c_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3ff6754f_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@73b37950_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6ce65d09_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@529f6bb4_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5ad0d3d1_ARCHIVE_LOCATION">c:/Users/COJTHW110/COJT/cpu_proj/cpu_core_controller_1.0</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2019.1</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="2be0ead6"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="c30980da"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="4a1c60d1"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="691fb452"/>
       <xilinx:checksum xilinx:scope="ports" xilinx:value="336354f9"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="b6927abc"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="5b67251f"/>

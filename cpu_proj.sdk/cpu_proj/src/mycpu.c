@@ -15,8 +15,6 @@ void write_instructions(unsigned int *instructions) {
 		*(wp++) = *(inst++);
 	}
 	*(wp++) = 0x0000006f;	// jal x0, 0
-
-	Xil_DCacheFlushRange((unsigned int)INSTRAM, wp - inst);
 }
 
 void view_registers() {
@@ -31,8 +29,7 @@ void view_registers() {
 
 void exec_on_origcpu(unsigned int *instructions) {
 	write_instructions(instructions);
-	CEXEC = 1;
-	sleep(1);
-	CEXEC = 0;
+	CEXEC = 1; sleep(1);
+	CEXEC = 0; sleep(1);
 	view_registers();
 }
