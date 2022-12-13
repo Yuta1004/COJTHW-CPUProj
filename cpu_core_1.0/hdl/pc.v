@@ -57,4 +57,4 @@ module pc
             P_VALID <= 1'b0;
     end
 
-endmodule;
+endmodule
