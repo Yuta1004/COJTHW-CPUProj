@@ -239,13 +239,13 @@ module core #
     wire [31:0] i_pc, i_inst;
     wire        i_valid;
 
-    inst_fetch_2 # (
+    inst_fetch # (
         .C_M_AXI_THREAD_ID_WIDTH(C_M_AXI_THREAD_ID_WIDTH),
         .C_M_AXI_ADDR_WIDTH     (C_M_AXI_ADDR_WIDTH),
         .C_M_AXI_DATA_WIDTH     (C_M_AXI_DATA_WIDTH),
         .C_M_AXI_ARUSER_WIDTH   (C_M_AXI_ARUSER_WIDTH),
         .C_M_AXI_RUSER_WIDTH    (C_M_AXI_RUSER_WIDTH)
-    ) inst_fetch_2 (
+    ) inst_fetch (
         .CLK            (CLK),
         .RST            (RST),
 
@@ -280,48 +280,6 @@ module core #
         .M_AXI_RVALID   (M_INST_AXI_RVALID),
         .M_AXI_RREADY   (M_INST_AXI_RREADY)
     );
-
-    // inst_fetch # (
-    //     .C_M_AXI_THREAD_ID_WIDTH(C_M_AXI_THREAD_ID_WIDTH),
-    //     .C_M_AXI_ADDR_WIDTH     (C_M_AXI_ADDR_WIDTH),
-    //     .C_M_AXI_DATA_WIDTH     (C_M_AXI_DATA_WIDTH),
-    //     .C_M_AXI_ARUSER_WIDTH   (C_M_AXI_ARUSER_WIDTH),
-    //     .C_M_AXI_RUSER_WIDTH    (C_M_AXI_RUSER_WIDTH)
-    // ) inst_fetch (
-    //     .CLK            (CLK),
-    //     .RST            (RST),
-
-    //     .STALL          (stall),
-    //     .FLUSH          (flush),
-    //     .NEW_PC         (new_pc),
-    //     .MEM_WAIT       (inst_mem_wait),
-
-    //     .EXEC           (EXEC),
-
-    //     .I_PC           (i_pc),
-    //     .I_INST         (i_inst),
-    //     .I_VALID        (i_valid),
-
-    //     .M_AXI_ARID     (M_INST_AXI_ARID),
-    //     .M_AXI_ARADDR   (M_INST_AXI_ARADDR),
-    //     .M_AXI_ARLEN    (M_INST_AXI_ARLEN),
-    //     .M_AXI_ARSIZE   (M_INST_AXI_ARSIZE),
-    //     .M_AXI_ARBURST  (M_INST_AXI_ARBURST),
-    //     .M_AXI_ARLOCK   (M_INST_AXI_ARLOCK),
-    //     .M_AXI_ARCACHE  (M_INST_AXI_ARCACHE),
-    //     .M_AXI_ARPROT   (M_INST_AXI_ARPROT),
-    //     .M_AXI_ARQOS    (M_INST_AXI_ARQOS),
-    //     .M_AXI_ARUSER   (M_INST_AXI_ARUSER),
-    //     .M_AXI_ARVALID  (M_INST_AXI_ARVALID),
-    //     .M_AXI_ARREADY  (M_INST_AXI_ARREADY),
-    //     .M_AXI_RID      (M_INST_AXI_RID),
-    //     .M_AXI_RDATA    (M_INST_AXI_RDATA),
-    //     .M_AXI_RRESP    (M_INST_AXI_RRESP),
-    //     .M_AXI_RLAST    (M_INST_AXI_RLAST),
-    //     .M_AXI_RUSER    (M_INST_AXI_RUSER),
-    //     .M_AXI_RVALID   (M_INST_AXI_RVALID),
-    //     .M_AXI_RREADY   (M_INST_AXI_RREADY)
-    // );
 
     /* ----- デコード部 ----- */
     wire [31:0] d_pc, d_inst, d_imm;
