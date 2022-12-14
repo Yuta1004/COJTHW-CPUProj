@@ -198,7 +198,7 @@ module datamem #
             M_AXI_WLAST <= 1'b0;
             M_AXI_WVALID <= 1'b0;
         end
-        else if (s_next_state == S_S_WRITE) begin
+        else if (s_next_state == S_S_ADDR) begin
             M_AXI_WDATA <= WRDATA;
             M_AXI_WSTRB <= WRSTRB;
             M_AXI_WLAST <= 1'b1;

@@ -29,7 +29,8 @@ int main() {
 //	exec_on_origcpu(BRANCH_BLTU_1);
 //	exec_on_origcpu(BRANCH_BLTU_2);
 //	exec_on_origcpu(WRITE_MEM);
-	exec_on_origcpu(CAP_DISP_CONTROL);
+//	exec_on_origcpu(CAP_DISP_CONTROL);
+	exec_on_origcpu(UART_HELLOWORLD);
 
 	return 0;
 }

@@ -145,6 +145,20 @@ set_property PACKAGE_PIN P17 [get_ports {LED[3]}]
 set_property IOSTANDARD LVCMOS25 [get_ports {LED[3]}]
 
 
+# UART
+set_property PACKAGE_PIN E15 [get_ports UART_CTS]
+set_property IOSTANDARD LVCMOS25 [get_ports UART_CTS]
+
+set_property PACKAGE_PIN D15 [get_ports UART_TXD]
+set_property IOSTANDARD LVCMOS25 [get_ports UART_TXD]
+
+set_property PACKAGE_PIN W17 [get_ports UART_RXD]
+set_property IOSTANDARD LVCMOS25 [get_ports UART_RXD]
+
+set_property PACKAGE_PIN W5 [get_ports UART_RTS]
+set_property IOSTANDARD LVCMOS25 [get_ports UART_RTS]
+
+
 # カメラクロックの定義 36Mhz max.
 create_clock -period 27.700 -name CAM_PCLK [get_ports CAM_PCLK]
 
