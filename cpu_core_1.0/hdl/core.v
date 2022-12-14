@@ -32,7 +32,7 @@ module core #
         /*----- CPU制御信号 ----- */
         // CPU状態
         input wire          EXEC,
-        output wire [7:0]   STAT,
+        output wire [3:0]   STAT,
 
         // デバッグ用
         output wire [31:0]  REG00,
@@ -204,10 +204,8 @@ module core #
     assign STAT = {
         stall,
         inst_mem_wait,
-        1'b0,
-        flush,
-        i_valid,
-        3'b0
+        data_mem_wait,
+        flush
     };
 
     /* ----- 全体制御 ----- */
