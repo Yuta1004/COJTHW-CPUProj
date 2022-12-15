@@ -122,17 +122,44 @@ module mem_rd
     end
 
     /* ----- èoóÕ ----- */
+    // êßå‰ÉtÉâÉO
     assign DO_JMP       = do_jmp;
     assign NEW_PC       = new_pc;
 
+    // PC, INST, VALID, ...
     assign M_PC         = pc;
     assign M_INST       = inst;
     assign M_VALID      = valid;
     assign M_REG_D      = reg_d;
-    assign M_REG_D_V    = load_rden ? DATA_RDDATA : reg_d_v;
     assign M_STORE_WREN = store_wren;
     assign M_STORE_ADDR = store_addr;
     assign M_STORE_STRB = store_strb;
     assign M_STORE_DATA = store_data;
+
+    // reg_d_v
+    assign M_REG_D_V    = load_rden ? load_reg_d_v(DATA_RDDATA, load_size, load_signed) : reg_d_v;
+
+    function [31:0] load_reg_d_v;
+        input [31:0] VALUE;
+        input [1:0]  SIZE;
+        input        SIGNED;
+
+        case (SIZE)
+            2'b00: // byte
+                if (SIGNED)
+                    load_reg_d_v = { { { 24{ VALUE[7] } }, VALUE[7:0] } };
+                else
+                    load_reg_d_v = { 24'b0, VALUE[7:0] };
+            2'b01: // half
+                if (SIGNED)
+                    load_reg_d_v = { { { 16{ VALUE[15] } }, VALUE[15:0] } };
+                else
+                    load_reg_d_v = { 16'b0, VALUE[15:0] };
+            2'b11: // word
+                load_reg_d_v = VALUE;
+            default:
+                load_reg_d_v = 32'b0;
+        endcase
+    endfunction
 
 endmodule
