@@ -109,6 +109,10 @@ wire            A_DO_JMP        = core.alu.A_DO_JMP;
 wire [31:0]     A_NEW_PC        = core.alu.A_NEW_PC;
 wire [4:0]      A_REG_D         = core.alu.A_REG_D;
 wire [31:0]     A_REG_D_V       = core.alu.A_REG_D_V;
+wire            A_LOAD_RDEN     = core.alu.A_LOAD_RDEN;
+wire [31:0]     A_LOAD_ADDR     = core.alu.A_LOAD_ADDR;
+wire [1:0]      A_LOAD_SIZE     = core.alu.A_LOAD_SIZE;
+wire            A_LOAD_SIGNED   = core.alu.A_LOAD_SIGNED;
 wire            A_STORE_WREN    = core.alu.A_STORE_WREN;
 wire [31:0]     A_STORE_ADDR    = core.alu.A_STORE_ADDR;
 wire [3:0]      A_STORE_STRB    = core.alu.A_STORE_STRB;
@@ -293,13 +297,27 @@ begin
     // axi_slave_bfm_inst.ram_array[1024] = 32'b00000000000000010000000111100111; // jalr x3, 0(x2) -> x3 = 0x2001_0004
 
     // 15. ƒƒ‚ƒŠ‘‚«‚İ
-    axi_slave_bfm_inst.ram_array[0] = 32'b00100000000000000001000010110111; // lui x1, 0x20001
-    axi_slave_bfm_inst.ram_array[1] = 32'b00010010001101000101000100110111; // lui x2, 0x12345
-    axi_slave_bfm_inst.ram_array[2] = 32'b01100111100000010000000100010011; // addi x2, x2, 0x678
-    axi_slave_bfm_inst.ram_array[3] = 32'b00000000001000001000000110100011; // sb x2, 3(x1)
-    axi_slave_bfm_inst.ram_array[4] = 32'b00000000001000001001001100100011; // sh x2, 6(x1)
-    axi_slave_bfm_inst.ram_array[5] = 32'b00000000001000001010010000100011; // sw x2, 8(x1)
-    axi_slave_bfm_inst.ram_array[6] = 32'h0000_006f;
+    // axi_slave_bfm_inst.ram_array[0] = 32'b00100000000000000001000010110111; // lui x1, 0x20001
+    // axi_slave_bfm_inst.ram_array[1] = 32'b00010010001101000101000100110111; // lui x2, 0x12345
+    // axi_slave_bfm_inst.ram_array[2] = 32'b01100111100000010000000100010011; // addi x2, x2, 0x678
+    // axi_slave_bfm_inst.ram_array[3] = 32'b00000000001000001000000110100011; // sb x2, 3(x1)
+    // axi_slave_bfm_inst.ram_array[4] = 32'b00000000001000001001001100100011; // sh x2, 6(x1)
+    // axi_slave_bfm_inst.ram_array[5] = 32'b00000000001000001010010000100011; // sw x2, 8(x1)
+    // axi_slave_bfm_inst.ram_array[6] = 32'h0000_006f;
+
+    // 16. ƒƒ‚ƒŠ“Ç‚İ‚İ
+    axi_slave_bfm_inst.ram_array[0] = 32'b00100000000000000001000010110111;     // lui x1, 0x20002
+    axi_slave_bfm_inst.ram_array[1] = 32'b00010010001101000101000100110111;     // lui x2, 0x12345
+    axi_slave_bfm_inst.ram_array[2] = 32'b01100111100000010000000100010011;     // addi x2, x2, 0x678
+    axi_slave_bfm_inst.ram_array[3] = 32'b00000000001000001000000110100011;     // sb x2, 3(x1)
+    axi_slave_bfm_inst.ram_array[4] = 32'b00000000001000001001001100100011;     // sh x2, 6(x1)
+    axi_slave_bfm_inst.ram_array[5] = 32'b00000000001000001010010000100011;     // sw x2, 8(x1)
+    axi_slave_bfm_inst.ram_array[6] = 32'b00000000001100001000000110000011;     // lb x3, 3(x1)
+    axi_slave_bfm_inst.ram_array[7] = 32'b00000000001100001100001000000011;     // lbu x4, 3(x1)
+    axi_slave_bfm_inst.ram_array[8] = 32'b00000000011000001001001010000011;     // lh x5, 6(x1)
+    axi_slave_bfm_inst.ram_array[9] = 32'b00000000011000001101001100000011;     // lhu x6, 6(x1)
+    axi_slave_bfm_inst.ram_array[10] = 32'b00000000100000001010001110000011;    // lw x7, 8(x1)
+    axi_slave_bfm_inst.ram_array[11] = 32'h0000_006f;
 end
 endtask
 

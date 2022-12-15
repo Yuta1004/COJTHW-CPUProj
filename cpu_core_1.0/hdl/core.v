@@ -318,6 +318,9 @@ module core #
     wire [31:0] a_new_pc;
     wire [4:0]  a_reg_d;
     wire [31:0] a_reg_d_v;
+    wire        a_load_rden, a_load_signed;
+    wire [31:0] a_load_addr;
+    wire [1:0]  a_load_size;
     wire        a_store_wren;
     wire [31:0] a_store_addr, a_store_data;
     wire [3:0]  a_store_strb;
@@ -356,6 +359,10 @@ module core #
         .A_NEW_PC       (a_new_pc),
         .A_REG_D        (a_reg_d),
         .A_REG_D_V      (a_reg_d_v),
+        .A_LOAD_RDEN    (a_load_rden),
+        .A_LOAD_ADDR    (a_load_addr),
+        .A_LOAD_SIZE    (a_load_size),
+        .A_LOAD_SIGNED  (a_load_signed),
         .A_STORE_WREN   (a_store_wren),
         .A_STORE_ADDR   (a_store_addr),
         .A_STORE_STRB   (a_store_strb),
@@ -391,6 +398,9 @@ module core #
         .A_STORE_ADDR   (a_store_addr),
         .A_STORE_STRB   (a_store_strb),
         .A_STORE_DATA   (a_store_data),
+
+        .DATA_RDVALID   (data_rdvalid),
+        .DATA_RDDATA    (data_rddata),
 
         .M_PC           (m_pc),
         .M_INST         (m_inst),
@@ -492,9 +502,7 @@ module core #
     );
 
     /* ----- データ用キャッシュメモリ ----- */
-    wire [31:0] data_rdaddr;
-    wire        data_rden;
-    wire [31:0] data_ordaddr, data_rdout;
+    wire [31:0] data_rddata;
     wire        data_rdvalid;
     wire        data_mem_wait;
 
@@ -511,16 +519,17 @@ module core #
         .CLK            (CLK),
         .RST            (RST),
 
-        .WRADDR         (m_store_addr),
+        .RDEN           (a_load_rden),
+        .RDADDR         (a_load_addr),
+        .RDSIZE         (a_load_size),
+        .RDSIGNED       (a_load_signed),
+        .RDDATA         (data_rddata),
+        .RDVALID        (data_rdvalid),
+
         .WREN           (m_store_wren),
+        .WRADDR         (m_store_addr),
         .WRSTRB         (m_store_strb),
         .WRDATA         (m_store_data),
-        .RDADDR         (data_rdaddr),
-        .RDEN           (data_rden),
-
-        .ORDADDR        (data_ordaddr),
-        .RDOUT          (data_rdout),
-        .RDVALID        (data_rdvalid),
 
         .LOADING        (data_mem_wait),
 

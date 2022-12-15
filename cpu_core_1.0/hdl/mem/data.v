@@ -28,18 +28,19 @@ module datamem #
         input               RST,
 
         /* ----- メモリアクセス用信号 ----- */
-        // 入力
-        input wire  [31:0]  WRADDR,
+        // 読み
+        input wire          RDEN,
+        input wire  [31:0]  RDADDR,
+        input wire  [1:0]   RDSIZE,
+        input wire          RDSIGNED,
+        output wire         RDVALID,
+        output wire [31:0]  RDDATA,
+
+        // 書き
         input wire          WREN,
+        input wire  [31:0]  WRADDR,
         input wire  [3:0]   WRSTRB,
         input wire  [31:0]  WRDATA,
-        input wire  [31:0]  RDADDR,
-        input wire          RDEN,
-
-        // 出力 (1クロック遅れ)
-        output wire  [31:0] ORDADDR,
-        output wire [31:0]  RDOUT,
-        output wire         RDVALID,
 
         /* ----- キャッシュ状態通知用信号 ----- */
         output wire         LOADING,
@@ -97,6 +98,9 @@ module datamem #
         input  wire                                 M_AXI_RVALID,
         output wire                                 M_AXI_RREADY
     );
+
+    assign RDVALID = 1'b0;
+    assign RDDATA = 32'b0;
 
     /* ----- AXIバス設定 ----- */
     // AWチャンネル

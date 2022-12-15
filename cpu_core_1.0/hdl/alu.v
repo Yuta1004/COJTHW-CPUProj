@@ -53,8 +53,10 @@ module alu
         output wire [31:0]  A_NEW_PC,
         output wire [4:0]   A_REG_D,
         output wire [31:0]  A_REG_D_V,
-        // output wire [31:0]  A_LOAD_ADDR,
-        // output wire [31:0]  A_LOAD_STRB,
+        output wire         A_LOAD_RDEN,
+        output wire [31:0]  A_LOAD_ADDR,
+        output wire [1:0]   A_LOAD_SIZE,
+        output wire         A_LOAD_SIGNED,
         output wire         A_STORE_WREN,
         output wire [31:0]  A_STORE_ADDR,
         output wire [3:0]   A_STORE_STRB,
@@ -315,6 +317,85 @@ module alu
 
             // –¢‘Î‰ž–½—ß
             default: check_wraddr = 32'b0;
+        endcase
+    endfunction
+
+    // rd
+    assign A_LOAD_RDEN = check_rden(opcode, funct3, funct7);
+    assign A_LOAD_ADDR = check_rdaddr(
+        opcode, funct3, funct7,
+        forwarded_reg_s1_v, imm
+    );
+    assign A_LOAD_SIZE = check_rdsize(opcode, funct3, funct7);
+    assign A_LOAD_SIGNED = check_rdsigned(opcode, funct3, funct7);
+
+    function check_rden;
+        input [6:0] OPCODE;
+        input [2:0] FUNCT3;
+        input [6:0] FUNCT7;
+
+        casez ({ OPCODE, FUNCT3, FUNCT7 })
+            17'b0000011_000_zzzzzzz: check_rden = 1'b1;     // lb
+            17'b0000011_100_zzzzzzz: check_rden = 1'b1;     // lbu
+            17'b0000011_001_zzzzzzz: check_rden = 1'b1;     // lh
+            17'b0000011_101_zzzzzzz: check_rden = 1'b1;     // lhu
+            17'b0000011_010_zzzzzzz: check_rden = 1'b1;     // lw
+
+            // –¢‘Î‰ž–½—ß
+            default: check_rden = 1'b0;
+        endcase
+    endfunction
+
+    function [1:0] check_rdsize;
+        input [6:0] OPCODE;
+        input [2:0] FUNCT3;
+        input [6:0] FUNCT7;
+
+        casez ({ OPCODE, FUNCT3, FUNCT7 })
+            17'b0000011_000_zzzzzzz: check_rdsize = 2'b00;  // lb
+            17'b0000011_100_zzzzzzz: check_rdsize = 2'b00;  // lbu
+            17'b0000011_001_zzzzzzz: check_rdsize = 2'b01;  // lh
+            17'b0000011_101_zzzzzzz: check_rdsize = 2'b01;  // lhu
+            17'b0000011_010_zzzzzzz: check_rdsize = 2'b11;  // lw
+
+            // –¢‘Î‰ž–½—ß
+            default: check_rdsize = 2'b0;
+        endcase
+    endfunction
+
+    function [31:0] check_rdaddr;
+        input [6:0]  OPCODE;
+        input [2:0]  FUNCT3;
+        input [6:0]  FUNCT7;
+        input [31:0] REG_S1_V;
+        input [31:0] IMM;
+
+        casez ({ OPCODE, FUNCT3, FUNCT7 })
+            17'b0000011_000_zzzzzzz: check_rdaddr = REG_S1_V + { { 20{ IMM[11] } }, IMM[11:0] };    // lb
+            17'b0000011_100_zzzzzzz: check_rdaddr = REG_S1_V + { { 20{ IMM[11] } }, IMM[11:0] };    // lbu
+            17'b0000011_001_zzzzzzz: check_rdaddr = REG_S1_V + { { 20{ IMM[11] } }, IMM[11:0] };    // lh
+            17'b0000011_101_zzzzzzz: check_rdaddr = REG_S1_V + { { 20{ IMM[11] } }, IMM[11:0] };    // lhu
+            17'b0000011_010_zzzzzzz: check_rdaddr = REG_S1_V + { { 20{ IMM[11] } }, IMM[11:0] };    // lw
+
+            // –¢‘Î‰ž–½—ß
+            default: check_rdaddr = 32'b0;
+        endcase
+    endfunction
+
+    function check_rdsigned;
+        input [6:0] OPCODE;
+        input [2:0] FUNCT3;
+        input [6:0] FUNCT7;
+
+        casez({ OPCODE, FUNCT3, FUNCT7})
+            17'b0000011_000_zzzzzzz: check_rdsigned = 1'b1; // lb
+            17'b0000011_100_zzzzzzz: check_rdsigned = 1'b0; // lbu
+            17'b0000011_001_zzzzzzz: check_rdsigned = 1'b1; // lh
+            17'b0000011_101_zzzzzzz: check_rdsigned = 1'b0; // lhu
+            17'b0000011_010_zzzzzzz: check_rdsigned = 1'b1; // lw
+
+            // –¢‘Î‰ž–½—ß
+            default: check_rdsigned = 1'b0;
         endcase
     endfunction
 

@@ -36,8 +36,9 @@ module mem_rd
         input wire  [31:0]  A_STORE_ADDR,
         input wire  [3:0]   A_STORE_STRB,
         input wire  [31:0]  A_STORE_DATA,
-        // output wire [31:0]  A_LOAD_ADDR,
-        // output wire [31:0]  A_LOAD_STRB,
+
+        input wire          DATA_RDVALID,
+        input wire  [31:0]  DATA_RDDATA,
 
         // èoóÕ
         output wire [31:0]  M_PC,
@@ -45,11 +46,6 @@ module mem_rd
         output wire         M_VALID,
         output wire [4:0]   M_REG_D,
         output wire [31:0]  M_REG_D_V,
-        // output wire [31:0]  M_LOAD_STRB,
-        // output wire [31:0]  M_LOAD_DATA,
-        // output wire [31:0]  M_STORE_ADDR,
-        // output wire [31:0]  M_STORE_STRB,
-        // output wire [31:0]  M_STORE_DATA
         output wire         M_STORE_WREN,
         output wire [31:0]  M_STORE_ADDR,
         output wire [3:0]   M_STORE_STRB,
@@ -119,7 +115,7 @@ module mem_rd
     assign M_INST       = inst;
     assign M_VALID      = valid;
     assign M_REG_D      = reg_d;
-    assign M_REG_D_V    = reg_d_v;
+    assign M_REG_D_V    = DATA_RDVALID ? DATA_RDDATA : reg_d_v;
     assign M_STORE_WREN = store_wren;
     assign M_STORE_ADDR = store_addr;
     assign M_STORE_STRB = store_strb;
