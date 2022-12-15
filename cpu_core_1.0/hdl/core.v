@@ -519,6 +519,9 @@ module core #
         .CLK            (CLK),
         .RST            (RST),
 
+        .STALL          (stall),
+        .FLUSH          (flush),
+
         .RDEN           (a_load_rden),
         .RDADDR         (a_load_addr),
         .RDSIZE         (a_load_size),

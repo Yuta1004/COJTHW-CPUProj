@@ -27,14 +27,18 @@ module datamem #
         input               CLK,
         input               RST,
 
+        /* ----- 制御信号 ----- */
+        input               STALL,
+        input               FLUSH,
+
         /* ----- メモリアクセス用信号 ----- */
         // 読み
         input wire          RDEN,
         input wire  [31:0]  RDADDR,
         input wire  [1:0]   RDSIZE,
         input wire          RDSIGNED,
-        output wire         RDVALID,
-        output wire [31:0]  RDDATA,
+        output reg          RDVALID,
+        output reg  [31:0]  RDDATA,
 
         // 書き
         input wire          WREN,
@@ -77,8 +81,8 @@ module datamem #
 
         // ARチャンネル
         output wire [C_M_AXI_THREAD_ID_WIDTH-1:0]   M_AXI_ARID,
-        output wire [C_M_AXI_ADDR_WIDTH-1:0]        M_AXI_ARADDR,
-        output wire [8-1:0]                         M_AXI_ARLEN,
+        output reg  [C_M_AXI_ADDR_WIDTH-1:0]        M_AXI_ARADDR,
+        output reg  [8-1:0]                         M_AXI_ARLEN,
         output wire [3-1:0]                         M_AXI_ARSIZE,
         output wire [2-1:0]                         M_AXI_ARBURST,
         output wire [2-1:0]                         M_AXI_ARLOCK,
@@ -86,7 +90,7 @@ module datamem #
         output wire [3-1:0]                         M_AXI_ARPROT,
         output wire [4-1:0]                         M_AXI_ARQOS,
         output wire [C_M_AXI_ARUSER_WIDTH-1:0]      M_AXI_ARUSER,
-        output wire                                 M_AXI_ARVALID,
+        output reg                                  M_AXI_ARVALID,
         input  wire                                 M_AXI_ARREADY,
 
         // Rチャンネル
@@ -98,9 +102,6 @@ module datamem #
         input  wire                                 M_AXI_RVALID,
         output wire                                 M_AXI_RREADY
     );
-
-    assign RDVALID = 1'b0;
-    assign RDDATA = 32'b0;
 
     /* ----- AXIバス設定 ----- */
     // AWチャンネル
@@ -121,8 +122,6 @@ module datamem #
 
     // ARチャンネル
     assign M_AXI_ARID      = 'b0;
-    assign M_AXI_ARADDR    = 32'b0;   // *
-    assign M_AXI_ARLEN     = 8'b0;    // *
     assign M_AXI_ARSIZE    = 3'b010;
     assign M_AXI_ARBURST   = 2'b01;
     assign M_AXI_ARLOCK    = 1'b0;
@@ -130,50 +129,135 @@ module datamem #
     assign M_AXI_ARPROT    = 3'h0;
     assign M_AXI_ARQOS     = 4'h0;
     assign M_AXI_ARUSER    = 'b0;
-    assign M_AXI_ARVALID   = 1'b0;    // *
 
     // Rチャンネル
-    assign M_AXI_RREADY    = 1'b0;    // *
+    assign M_AXI_RREADY    = 1'b1;
 
     /* ----- 状態通知 ----- */
-    assign LOADING = s_next_state != S_S_IDLE;
+    assign LOADING = (RDEN && sr_next_state != S_SR_IDLE) || (WREN && sw_next_state != S_SW_IDLE);
 
-    /* ----- 即時メモリアクセス(AW, W)用ステートマシン ----- */
-    parameter S_S_IDLE  = 2'b00;
-    parameter S_S_ADDR  = 2'b01;
-    parameter S_S_WRITE = 2'b11;
+    /* ----- 即時メモリアクセス(AR, R)用ステートマシン ----- */
+    parameter S_SR_IDLE   = 2'b00;
+    parameter S_SR_ADDR   = 2'b01;
+    parameter S_SR_WAIT   = 2'b11;
+    parameter S_SR_FINISH = 2'b10;
 
-    reg [1:0] s_state, s_next_state;
+    reg [1:0] sr_state, sr_next_state;
 
     always @ (posedge CLK) begin
         if (RST)
-            s_state <= S_S_IDLE;
+            sr_state <= S_SR_IDLE;
         else
-            s_state <= s_next_state;
+            sr_state <= sr_next_state;
     end
 
     always @* begin
-        case (s_state)
-            S_S_IDLE:
-                if (WREN)
-                    s_next_state <= S_S_ADDR;
+        case (sr_state)
+            S_SR_IDLE:
+                if (RDEN)
+                    sr_next_state <= S_SR_ADDR;
                 else
-                    s_next_state <= S_S_IDLE;
+                    sr_next_state <= S_SR_IDLE;
 
-            S_S_ADDR:
-                if (M_AXI_AWREADY)
-                    s_next_state <= S_S_WRITE;
+            S_SR_ADDR:
+                if (M_AXI_ARREADY)
+                    sr_next_state <= S_SR_WAIT;
                 else
-                    s_next_state <= S_S_ADDR;
+                    sr_next_state <= S_SR_ADDR;
 
-            S_S_WRITE:
-                if (M_AXI_WREADY)
-                    s_next_state <= S_S_IDLE;
+            S_SR_WAIT:
+                if (M_AXI_RVALID)
+                    sr_next_state <= S_SR_FINISH;
                 else
-                    s_next_state <= S_S_WRITE;
+                    sr_next_state <= S_SR_WAIT;
+
+            S_SR_FINISH:
+                if (!WREN || sw_state == S_SW_FINISH)
+                    sr_next_state <= S_SR_IDLE;
+                else
+                    sr_next_state <= S_SR_FINISH;
 
             default:
-                s_next_state <= S_S_IDLE;
+                sr_next_state <= S_SR_IDLE;
+        endcase
+    end
+
+    always @ (posedge CLK) begin
+        if (RST) begin
+            M_AXI_ARADDR <= 32'b0;
+            M_AXI_ARLEN <= 8'b0;
+            M_AXI_ARVALID <= 1'b0;
+        end
+        else if (sr_next_state == S_SR_ADDR) begin
+            M_AXI_ARADDR <= RDADDR;
+            M_AXI_ARLEN <= 8'b0;
+            M_AXI_ARVALID <= 1'b1;
+        end
+        else if (sr_state == S_SR_ADDR && M_AXI_ARREADY) begin
+            M_AXI_ARADDR <= 32'b0;
+            M_AXI_ARLEN <= 8'b0;
+            M_AXI_ARVALID <= 1'b0;
+        end
+    end
+
+    always @ (posedge CLK) begin
+        if (RST) begin
+            RDVALID <= 1'b0;
+            RDDATA <= 32'b0;
+        end
+        else if (M_AXI_RVALID) begin
+            RDVALID <= 1'b1;
+            RDDATA <= M_AXI_RDATA;
+        end
+        else if (sr_next_state == S_SR_IDLE) begin
+            RDVALID <= 1'b0;
+            RDDATA <= 32'b0;
+        end
+    end
+
+    /* ----- 即時メモリアクセス(AW, W)用ステートマシン ----- */
+    parameter S_SW_IDLE   = 2'b00;
+    parameter S_SW_ADDR   = 2'b01;
+    parameter S_SW_WRITE  = 2'b11;
+    parameter S_SW_FINISH = 2'b10;
+
+    reg [1:0] sw_state, sw_next_state;
+
+    always @ (posedge CLK) begin
+        if (RST)
+            sw_state <= S_SW_IDLE;
+        else
+            sw_state <= sw_next_state;
+    end
+
+    always @* begin
+        case (sw_state)
+            S_SW_IDLE:
+                if (WREN)
+                    sw_next_state <= S_SW_ADDR;
+                else
+                    sw_next_state <= S_SW_IDLE;
+
+            S_SW_ADDR:
+                if (M_AXI_AWREADY)
+                    sw_next_state <= S_SW_WRITE;
+                else
+                    sw_next_state <= S_SW_ADDR;
+
+            S_SW_WRITE:
+                if (M_AXI_WREADY)
+                    sw_next_state <= S_SW_FINISH;
+                else
+                    sw_next_state <= S_SW_WRITE;
+
+            S_SW_FINISH:
+                if (!RDEN || sr_state == S_SR_FINISH)
+                    sw_next_state <= S_SW_IDLE;
+                else
+                    sw_next_state <= S_SW_FINISH;
+
+            default:
+                sw_next_state <= S_SW_IDLE;
         endcase
     end
 
@@ -183,12 +267,12 @@ module datamem #
             M_AXI_AWLEN <= 8'b0;
             M_AXI_AWVALID <= 1'b0;
         end
-        else if (s_next_state == S_S_ADDR) begin
+        else if (sw_next_state == S_SW_ADDR) begin
             M_AXI_AWADDR <= WRADDR;
             M_AXI_AWLEN <= 8'b0;
             M_AXI_AWVALID <= 1'b1;
         end
-        else if (s_state == S_S_ADDR && s_next_state == S_S_WRITE) begin
+        else if (sw_state == S_SW_ADDR && sw_next_state == S_SW_WRITE) begin
             M_AXI_AWADDR <= 32'b0;
             M_AXI_AWLEN <= 8'b0;
             M_AXI_AWVALID <= 1'b0;
@@ -202,13 +286,13 @@ module datamem #
             M_AXI_WLAST <= 1'b0;
             M_AXI_WVALID <= 1'b0;
         end
-        else if (s_next_state == S_S_ADDR) begin
+        else if (sw_next_state == S_SW_ADDR) begin
             M_AXI_WDATA <= WRDATA;
             M_AXI_WSTRB <= WRSTRB;
             M_AXI_WLAST <= 1'b1;
             M_AXI_WVALID <= 1'b1;
         end
-        else if (s_state == S_S_WRITE && s_next_state == S_S_IDLE) begin
+        else if (sw_next_state == S_SW_FINISH) begin
             M_AXI_WDATA <= 32'b0;
             M_AXI_WSTRB <= 4'b0000;
             M_AXI_WLAST <= 1'b0;
