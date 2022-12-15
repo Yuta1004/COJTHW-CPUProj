@@ -394,12 +394,14 @@ module core #
         .A_NEW_PC       (a_new_pc),
         .A_REG_D        (a_reg_d),
         .A_REG_D_V      (a_reg_d_v),
+        .A_LOAD_RDEN    (a_load_rden),
+        .A_LOAD_SIZE    (a_load_size),
+        .A_LOAD_SIGNED  (a_load_signed),
         .A_STORE_WREN   (a_store_wren),
         .A_STORE_ADDR   (a_store_addr),
         .A_STORE_STRB   (a_store_strb),
         .A_STORE_DATA   (a_store_data),
 
-        .DATA_RDVALID   (data_rdvalid),
         .DATA_RDDATA    (data_rddata),
 
         .M_PC           (m_pc),
@@ -503,7 +505,6 @@ module core #
 
     /* ----- データ用キャッシュメモリ ----- */
     wire [31:0] data_rddata;
-    wire        data_rdvalid;
     wire        data_mem_wait;
 
     datamem # (
@@ -527,7 +528,6 @@ module core #
         .RDSIZE         (a_load_size),
         .RDSIGNED       (a_load_signed),
         .RDDATA         (data_rddata),
-        .RDVALID        (data_rdvalid),
 
         .WREN           (m_store_wren),
         .WRADDR         (m_store_addr),

@@ -37,7 +37,6 @@ module datamem #
         input wire  [31:0]  RDADDR,
         input wire  [1:0]   RDSIZE,
         input wire          RDSIGNED,
-        output reg          RDVALID,
         output reg  [31:0]  RDDATA,
 
         // 書き
@@ -142,7 +141,8 @@ module datamem #
     parameter S_SR_WAIT   = 2'b11;
     parameter S_SR_FINISH = 2'b10;
 
-    reg [1:0] sr_state, sr_next_state;
+    reg [31:0] sr_cache;
+    reg [1:0]  sr_state, sr_next_state;
 
     always @ (posedge CLK) begin
         if (RST)
@@ -201,18 +201,12 @@ module datamem #
     end
 
     always @ (posedge CLK) begin
-        if (RST) begin
-            RDVALID <= 1'b0;
+        if (RST)
             RDDATA <= 32'b0;
-        end
-        else if (M_AXI_RVALID) begin
-            RDVALID <= 1'b1;
-            RDDATA <= M_AXI_RDATA;
-        end
-        else if (sr_next_state == S_SR_IDLE) begin
-            RDVALID <= 1'b0;
-            RDDATA <= 32'b0;
-        end
+        else if (M_AXI_RVALID)
+            sr_cache <= M_AXI_RDATA;
+        else if (sr_next_state == S_SR_IDLE)
+            RDDATA <= sr_cache;
     end
 
     /* ----- 即時メモリアクセス(AW, W)用ステートマシン ----- */
