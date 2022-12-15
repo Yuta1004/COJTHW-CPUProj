@@ -299,10 +299,6 @@ module core #
         .I_INST     (i_inst),
         .I_VALID    (i_valid),
 
-        .M_VALID    (m_valid),
-        .M_REG_D    (m_reg_d),
-        .M_REG_D_V  (m_reg_d_v),
-
         .D_PC       (d_pc),
         .D_INST     (d_inst),
         .D_VALID    (d_valid),
@@ -312,41 +308,7 @@ module core #
         .D_IMM      (d_imm),
         .D_REG_D    (d_reg_d),
         .D_REG_S1   (d_reg_s1),
-        .D_REG_S1_V (d_reg_s1_v),
-        .D_REG_S2   (d_reg_s2),
-        .D_REG_S2_V (d_reg_s2_v),
-
-        .REG01      (REG01),
-        .REG02      (REG02),
-        .REG03      (REG03),
-        .REG04      (REG04),
-        .REG05      (REG05),
-        .REG06      (REG06),
-        .REG07      (REG07),
-        .REG08      (REG08),
-        .REG09      (REG09),
-        .REG10      (REG10),
-        .REG11      (REG11),
-        .REG12      (REG12),
-        .REG13      (REG13),
-        .REG14      (REG14),
-        .REG15      (REG15),
-        .REG16      (REG16),
-        .REG17      (REG17),
-        .REG18      (REG18),
-        .REG19      (REG19),
-        .REG20      (REG20),
-        .REG21      (REG21),
-        .REG22      (REG22),
-        .REG23      (REG23),
-        .REG24      (REG24),
-        .REG25      (REG25),
-        .REG26      (REG26),
-        .REG27      (REG27),
-        .REG28      (REG28),
-        .REG29      (REG29),
-        .REG30      (REG30),
-        .REG31      (REG31)
+        .D_REG_S2   (d_reg_s2)
     );
 
     /* ----- ALU ----- */
@@ -476,6 +438,57 @@ module core #
         .W_STORE_ADDR   (w_store_addr),
         .W_STORE_STRB   (w_store_strb),
         .W_STORE_DATA   (w_store_data)
+    );
+
+    /* ----- レジスタ ----- */
+    register register (
+        .CLK        (CLK),
+        .RST        (RST),
+
+        .STALL      (stall),
+        .FLUSH      (flush),
+
+        .WRVALID    (m_valid),
+        .WRADDR     (m_reg_d),
+        .WRDATA     (m_reg_d_v),
+
+        .RDADDR_1   (d_reg_s1),
+        .RDDATA_1   (d_reg_s1_v),
+
+        .RDADDR_2   (d_reg_s2),
+        .RDDATA_2   (d_reg_s2_v),
+
+        .REG01      (REG01),
+        .REG02      (REG02),
+        .REG03      (REG03),
+        .REG04      (REG04),
+        .REG05      (REG05),
+        .REG06      (REG06),
+        .REG07      (REG07),
+        .REG08      (REG08),
+        .REG09      (REG09),
+        .REG10      (REG10),
+        .REG11      (REG11),
+        .REG12      (REG12),
+        .REG13      (REG13),
+        .REG14      (REG14),
+        .REG15      (REG15),
+        .REG16      (REG16),
+        .REG17      (REG17),
+        .REG18      (REG18),
+        .REG19      (REG19),
+        .REG20      (REG20),
+        .REG21      (REG21),
+        .REG22      (REG22),
+        .REG23      (REG23),
+        .REG24      (REG24),
+        .REG25      (REG25),
+        .REG26      (REG26),
+        .REG27      (REG27),
+        .REG28      (REG28),
+        .REG29      (REG29),
+        .REG30      (REG30),
+        .REG31      (REG31)
     );
 
     /* ----- データ用キャッシュメモリ ----- */

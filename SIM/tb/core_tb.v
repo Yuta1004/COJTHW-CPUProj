@@ -98,12 +98,9 @@ wire [6:0]      D_FUNCT7        = core.decode.D_FUNCT7;
 wire [31:0]     D_IMM           = core.decode.D_IMM;
 wire [4:0]      D_REG_D         = core.decode.D_REG_D;
 wire [4:0]      D_REG_S1        = core.decode.D_REG_S1;
-wire [31:0]     D_REG_S1_V      = core.decode.D_REG_S1_V;
+wire [31:0]     D_REG_S1_V      = core.register.RDDATA_1;
 wire [4:0]      D_REG_S2        = core.decode.D_REG_S2;
-wire [31:0]     D_REG_S2_V      = core.decode.D_REG_S2_V;
-
-wire [31:0]     TEST_1          = core.alu.forwarded_reg_s1_v;
-wire [31:0]     TEST_2          = core.alu.forwarded_reg_s2_v;
+wire [31:0]     D_REG_S2_V      = core.register.RDDATA_2;
 
 wire [31:0]     A_PC            = core.alu.A_PC;
 wire [31:0]     A_INST          = core.alu.A_INST;
