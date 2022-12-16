@@ -297,25 +297,34 @@ begin
     // axi_slave_bfm_inst.ram_array[1024] = 32'b00000000000000010000000111100111; // jalr x3, 0(x2) -> x3 = 0x2001_0004
 
     // 15. ƒƒ‚ƒŠ‘‚«ž‚Ý
-    // axi_slave_bfm_inst.ram_array[0] = 32'b00100000000000000001000010110111; // lui x1, 0x20001
-    // axi_slave_bfm_inst.ram_array[1] = 32'b00010010001101000101000100110111; // lui x2, 0x12345
-    // axi_slave_bfm_inst.ram_array[2] = 32'b01100111100000010000000100010011; // addi x2, x2, 0x678
-    // axi_slave_bfm_inst.ram_array[3] = 32'b00000000001000001000000110100011; // sb x2, 3(x1)
-    // axi_slave_bfm_inst.ram_array[4] = 32'b00000000001000001001001100100011; // sh x2, 6(x1)
-    // axi_slave_bfm_inst.ram_array[5] = 32'b00000000001000001010010000100011; // sw x2, 8(x1)
-    // axi_slave_bfm_inst.ram_array[6] = 32'h0000_006f;
+    axi_slave_bfm_inst.ram_array[0] = 32'b00100000000000000001000010110111; // lui x1, 0x20001
+    axi_slave_bfm_inst.ram_array[1] = 32'b00010010001101000101000100110111; // lui x2, 0x12345
+    axi_slave_bfm_inst.ram_array[2] = 32'b01100111100000010000000100010011; // addi x2, x2, 0x678
+    axi_slave_bfm_inst.ram_array[3] = 32'b00000000001000001000000000100011; // sb x2, 0(x1)
+    axi_slave_bfm_inst.ram_array[4] = 32'b00000000001000001000000010100011; // sb x2, 1(x1)
+    axi_slave_bfm_inst.ram_array[5] = 32'b00000000001000001000000100100011; // sb x2, 2(x1)
+    axi_slave_bfm_inst.ram_array[6] = 32'b00000000001000001000000110100011; // sb x2, 3(x1)
+    axi_slave_bfm_inst.ram_array[7] = 32'b00000000001000001001001000100011; // sh x2, 4(x1)
+    axi_slave_bfm_inst.ram_array[8] = 32'b00000000001000001001001100100011; // sh x2, 6(x1)
+    axi_slave_bfm_inst.ram_array[9] = 32'b00000000001000001010010000100011; // sw x2, 8(x1)
+    axi_slave_bfm_inst.ram_array[10] = 32'h0000_006f;
 
     // 16. ƒƒ‚ƒŠ“Ç‚Ýž‚Ý
-    axi_slave_bfm_inst.ram_array[0] = 32'b00100000000000000001000010110111; // lui x1, 0x20001
-    axi_slave_bfm_inst.ram_array[1] = 32'b11111110110111001011000100110111; // lui x2, 0xFEDCB
-    axi_slave_bfm_inst.ram_array[2] = 32'b00001010100100010000000100010011; // addi x2, x2, 0xA9
-    axi_slave_bfm_inst.ram_array[3] = 32'b00000000001000001010000000100011; // sw x2, 0(x1)
-    axi_slave_bfm_inst.ram_array[4] = 32'b00000000001100001000000110000011; // lb x3, 3(x1)     -> x3 = 0xFFFF_FFA9
-    axi_slave_bfm_inst.ram_array[5] = 32'b00000000001100001100001000000011; // lbu x4, 3(x1)    -> x4 = 0x0000_00A9
-    axi_slave_bfm_inst.ram_array[6] = 32'b00000000001000001001001010000011; // lh x5, 2(x1)     -> x5 = 0xFFFF_B0A9
-    axi_slave_bfm_inst.ram_array[7] = 32'b00000000001000001101001100000011; // lhu x6, 2(x1)    -> x6 = 0x0000_B0A9
-    axi_slave_bfm_inst.ram_array[8] = 32'b00000000000000001010001110000011; // lw x7, 0(x1)     -> x7 = 0xFEDC_B0A9
-    axi_slave_bfm_inst.ram_array[9] = 32'h0000_006f;
+    // axi_slave_bfm_inst.ram_array[0] = 32'b00100000000000000001000010110111;     // lui x1, 0x20001
+    // axi_slave_bfm_inst.ram_array[1] = 32'b11111110110111001011000100110111;     // lui x2, 0xFEDCB
+    // axi_slave_bfm_inst.ram_array[2] = 32'b00001010100100010000000100010011;     // addi x2, x2, 0xA9
+    // axi_slave_bfm_inst.ram_array[3] = 32'b00000000001000001010000000100011;     // sw x2, 0(x1)
+    // axi_slave_bfm_inst.ram_array[4] = 32'b00000000000000001000000110000011;     // lb x3, 0(x1)     -> x3 = 0xFFFF_FFA9
+    // axi_slave_bfm_inst.ram_array[5] = 32'b00000000000000001100001000000011;     // lbu x4, 0(x1)    -> x4 = 0x0000_00A9
+    // axi_slave_bfm_inst.ram_array[6] = 32'b00000000000100001100001010000011;     // lbu x5, 1(x1)    -> x5 = 0x0000_00B0
+    // axi_slave_bfm_inst.ram_array[7] = 32'b00000000001000001100001100000011;     // lbu x6  2(x1)    -> x6 = 0x0000_00DC
+    // axi_slave_bfm_inst.ram_array[8] = 32'b00000000001100001100001110000011;     // lbu x7, 3(x1)    -> x7 = 0x0000_00FE
+    // axi_slave_bfm_inst.ram_array[9] = 32'b00000000000000001001010000000011;     // lh x8, 0(x1)     -> x8 = 0xFFFF_B0A9
+    // axi_slave_bfm_inst.ram_array[10] = 32'b00000000000000001101010010000011;    // lhu x9, 0(x1)    -> x9 = 0x0000_B0A9
+    // axi_slave_bfm_inst.ram_array[11] = 32'b00000000000100001101010100000011;    // lhu x10, 1(x1)   -> x10 = 0x0000_DCB0
+    // axi_slave_bfm_inst.ram_array[12] = 32'b00000000001000001101010110000011;    // lhu x11, 2(x1)   -> x11 = 0x0000_FEDC
+    // axi_slave_bfm_inst.ram_array[13] = 32'b00000000000000001010011000000011;    // lw x12, 0(x1)    -> x12 = 0xFEDC_B0A9
+    // axi_slave_bfm_inst.ram_array[14] = 32'h0000_006f;
 end
 endtask
 

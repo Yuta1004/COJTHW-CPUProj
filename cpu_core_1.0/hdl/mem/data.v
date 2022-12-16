@@ -189,7 +189,7 @@ module datamem #
             M_AXI_ARVALID <= 1'b0;
         end
         else if (sr_next_state == S_SR_ADDR) begin
-            M_AXI_ARADDR <= RDADDR;
+            M_AXI_ARADDR <= RDADDR & (~32'd3);
             M_AXI_ARLEN <= 8'b0;
             M_AXI_ARVALID <= 1'b1;
         end
@@ -262,7 +262,7 @@ module datamem #
             M_AXI_AWVALID <= 1'b0;
         end
         else if (sw_next_state == S_SW_ADDR) begin
-            M_AXI_AWADDR <= WRADDR;
+            M_AXI_AWADDR <= WRADDR & (~32'd3);
             M_AXI_AWLEN <= 8'b0;
             M_AXI_AWVALID <= 1'b1;
         end

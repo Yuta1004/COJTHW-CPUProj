@@ -394,6 +394,7 @@ module core #
         .A_NEW_PC       (a_new_pc),
         .A_REG_D        (a_reg_d),
         .A_REG_D_V      (a_reg_d_v),
+        .A_LOAD_ADDR    (a_load_addr),
         .A_LOAD_RDEN    (a_load_rden),
         .A_LOAD_SIZE    (a_load_size),
         .A_LOAD_SIGNED  (a_load_signed),

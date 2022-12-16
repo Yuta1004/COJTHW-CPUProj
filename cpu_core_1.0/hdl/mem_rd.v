@@ -32,6 +32,7 @@ module mem_rd
         input wire  [31:0]  A_NEW_PC,
         input wire  [4:0]   A_REG_D,
         input wire  [31:0]  A_REG_D_V,
+        input wire  [31:0]  A_LOAD_ADDR,
         input wire          A_LOAD_RDEN,
         input wire  [1:0]   A_LOAD_SIZE,
         input wire          A_LOAD_SIGNED,
@@ -61,6 +62,7 @@ module mem_rd
     reg [31:0]  new_pc;
     reg [4:0]   reg_d;
     reg [31:0]  reg_d_v;
+    reg [31:0]  load_addr;
     reg         load_rden;
     reg [1:0]   load_size;
     reg         load_signed;
@@ -77,6 +79,7 @@ module mem_rd
             new_pc <= 32'b0;
             reg_d <= 5'b0;
             reg_d_v <= 32'b0;
+            load_addr <= 32'b0;
             load_rden <= 1'b0;
             load_size <= 2'b0;
             load_signed <= 1'b0;
@@ -95,6 +98,7 @@ module mem_rd
             new_pc <= 32'b0;
             reg_d <= 5'b0;
             reg_d_v <= 32'b0;
+            load_addr <= 32'b0;
             load_rden <= 1'b0;
             load_size <= 2'b0;
             load_signed <= 1'b0;
@@ -111,6 +115,7 @@ module mem_rd
             new_pc <= A_NEW_PC;
             reg_d <= A_REG_D;
             reg_d_v <= A_REG_D_V;
+            load_addr <= A_LOAD_ADDR;
             load_rden <= A_LOAD_RDEN;
             load_size <= A_LOAD_SIZE;
             load_signed <= A_LOAD_SIGNED;
@@ -137,24 +142,61 @@ module mem_rd
     assign M_STORE_DATA = store_data;
 
     // reg_d_v
-    assign M_REG_D_V    = load_rden ? load_reg_d_v(DATA_RDDATA, load_size, load_signed) : reg_d_v;
+    assign M_REG_D_V    = load_rden ? load_reg_d_v(load_addr, DATA_RDDATA, load_size, load_signed) : reg_d_v;
 
     function [31:0] load_reg_d_v;
+        input [31:0] ADDR;
         input [31:0] VALUE;
         input [1:0]  SIZE;
         input        SIGNED;
 
         case (SIZE)
             2'b00: // byte
-                if (SIGNED)
-                    load_reg_d_v = { { { 24{ VALUE[7] } }, VALUE[7:0] } };
-                else
-                    load_reg_d_v = { 24'b0, VALUE[7:0] };
+                if (ADDR[1:0] == 2'b00) begin
+                    if (SIGNED)
+                        load_reg_d_v = { { { 24{ VALUE[7] } }, VALUE[7:0] } };
+                    else
+                        load_reg_d_v = { 24'b0, VALUE[7:0] };
+                end
+                else if (ADDR[1:0] == 2'b01) begin
+                    if (SIGNED)
+                        load_reg_d_v = { { { 24{ VALUE[15] } }, VALUE[15:8] } };
+                    else
+                        load_reg_d_v = { 24'b0, VALUE[15:8] };
+                end
+                else if (ADDR[1:0] == 2'b10) begin
+                    if (SIGNED)
+                        load_reg_d_v = { { { 24{ VALUE[23] } }, VALUE[23:16] } };
+                    else
+                        load_reg_d_v = { 24'b0, VALUE[23:16] };
+                end
+                else begin
+                    if (SIGNED)
+                        load_reg_d_v = { { { 24{ VALUE[31] } }, VALUE[31:24] } };
+                    else
+                        load_reg_d_v = { 24'b0, VALUE[31:24] };
+                end
             2'b01: // half
-                if (SIGNED)
-                    load_reg_d_v = { { { 16{ VALUE[15] } }, VALUE[15:0] } };
+                if (ADDR[1:0] == 2'b00) begin
+                    if (SIGNED)
+                        load_reg_d_v = { { { 16{ VALUE[15] } }, VALUE[15:0] } };
+                    else
+                        load_reg_d_v = { 16'b0, VALUE[15:0] };
+                end
+                else if (ADDR[1:0] == 2'b01) begin
+                    if (SIGNED)
+                        load_reg_d_v = { { { 16{ VALUE[23] } }, VALUE[23:8] } };
+                    else
+                        load_reg_d_v = { 16'b0, VALUE[23:8] };
+                end
+                else if (ADDR[1:0] == 2'b10) begin
+                    if (SIGNED)
+                        load_reg_d_v = { { { 16{ VALUE[31] } }, VALUE[31:16] } };
+                    else
+                        load_reg_d_v = { 16'b0, VALUE[31:16] };
+                end
                 else
-                    load_reg_d_v = { 16'b0, VALUE[15:0] };
+                    load_reg_d_v = { 24'b0, VALUE[31:24] };
             2'b11: // word
                 load_reg_d_v = VALUE;
             default:

@@ -177,7 +177,6 @@ module alu
         input signed [31:0] REG_S2_V_S;
 
         casez ({ OPCODE, FUNCT3, FUNCT7 })
-            17'b0010111_zzz_zzzzzzz: check_do_jmp = 1'b1;                       // auipc
             17'b1100011_000_zzzzzzz: check_do_jmp = REG_S1_V == REG_S2_V;       // beq
             17'b1100011_001_zzzzzzz: check_do_jmp = REG_S1_V != REG_S2_V;       // bne
             17'b1100011_101_zzzzzzz: check_do_jmp = REG_S1_V_S >= REG_S2_V_S;   // bge
@@ -201,13 +200,12 @@ module alu
         input [31:0] IMM;
 
         casez ({ OPCODE, FUNCT3, FUNCT7 })
-            17'b0010111_zzz_zzzzzzz: pc_calc = PC + ((IMM[31:12]) << 12);                   // auipc
-            17'b1100011_000_zzzzzzz: pc_calc = PC + { { 11{ IMM[20] } }, IMM[20:1], 1'b0 }; // beq
-            17'b1100011_001_zzzzzzz: pc_calc = PC + { { 11{ IMM[20] } }, IMM[20:1], 1'b0 }; // bne
-            17'b1100011_101_zzzzzzz: pc_calc = PC + { { 11{ IMM[20] } }, IMM[20:1], 1'b0 }; // bge
-            17'b1100011_111_zzzzzzz: pc_calc = PC + { { 11{ IMM[20] } }, IMM[20:1], 1'b0 }; // bgeu
-            17'b1100011_100_zzzzzzz: pc_calc = PC + { { 11{ IMM[20] } }, IMM[20:1], 1'b0 }; // blt
-            17'b1100011_110_zzzzzzz: pc_calc = PC + { { 11{ IMM[20] } }, IMM[20:1], 1'b0 }; // bltu
+            17'b1100011_000_zzzzzzz: pc_calc = PC + { { 19{ IMM[12] } }, IMM[12:1], 1'b0 }; // beq
+            17'b1100011_001_zzzzzzz: pc_calc = PC + { { 19{ IMM[12] } }, IMM[12:1], 1'b0 }; // bne
+            17'b1100011_101_zzzzzzz: pc_calc = PC + { { 19{ IMM[12] } }, IMM[12:1], 1'b0 }; // bge
+            17'b1100011_111_zzzzzzz: pc_calc = PC + { { 19{ IMM[12] } }, IMM[12:1], 1'b0 }; // bgeu
+            17'b1100011_100_zzzzzzz: pc_calc = PC + { { 19{ IMM[12] } }, IMM[12:1], 1'b0 }; // blt
+            17'b1100011_110_zzzzzzz: pc_calc = PC + { { 19{ IMM[12] } }, IMM[12:1], 1'b0 }; // bltu
             17'b1101111_zzz_zzzzzzz: pc_calc = PC + { { 11{ IMM[20] } }, IMM[20:1], 1'b0 }; // jal
             17'b1100111_000_zzzzzzz: pc_calc = (REG_S1_V + { { 20{ IMM[11] } }, IMM[11:0] }) & (~32'b1);    // jalr
 
@@ -270,8 +268,14 @@ module alu
         opcode, funct3, funct7,
         forwarded_reg_s1_v, imm
     );
-    assign A_STORE_STRB = check_wrstrb(opcode, funct3, funct7);
-    assign A_STORE_DATA = forwarded_reg_s2_v;
+    assign A_STORE_STRB = check_wrstrb(
+        opcode, funct3, funct7,
+        A_STORE_ADDR
+    );
+    assign A_STORE_DATA = check_wrdata(
+        opcode, funct3, funct7,
+        A_STORE_ADDR, forwarded_reg_s2_v
+    );
 
     function check_wren;
         input [6:0] OPCODE;
@@ -289,14 +293,15 @@ module alu
     endfunction
 
     function [3:0] check_wrstrb;
-        input [6:0] OPCODE;
-        input [2:0] FUNCT3;
-        input [6:0] FUNCT7;
+        input [6:0]  OPCODE;
+        input [2:0]  FUNCT3;
+        input [6:0]  FUNCT7;
+        input [31:0] ADDR;
 
         casez ({ OPCODE, FUNCT3, FUNCT7 })
-            17'b0100011_000_zzzzzzz: check_wrstrb = 4'b0001;    // sb
-            17'b0100011_001_zzzzzzz: check_wrstrb = 4'b0011;    // sh
-            17'b0100011_010_zzzzzzz: check_wrstrb = 4'b1111;    // sw
+            17'b0100011_000_zzzzzzz: check_wrstrb = 4'b0001 << (ADDR[1:0]);    // sb
+            17'b0100011_001_zzzzzzz: check_wrstrb = 4'b0011 << (ADDR[1:0]);    // sh
+            17'b0100011_010_zzzzzzz: check_wrstrb = 4'b1111;                   // sw
 
             // –¢‘Î‰ž–½—ß
             default: check_wrstrb = 4'b0;
@@ -317,6 +322,23 @@ module alu
 
             // –¢‘Î‰ž–½—ß
             default: check_wraddr = 32'b0;
+        endcase
+    endfunction
+
+    function [31:0] check_wrdata;
+        input [6:0]  OPCODE;
+        input [2:0]  FUNCT3;
+        input [6:0]  FUNCT7;
+        input [31:0] ADDR;
+        input [31:0] VALUE;
+
+        casez ({ OPCODE, FUNCT3, FUNCT7 })
+            17'b0100011_000_zzzzzzz: check_wrdata = VALUE << ({ ADDR[1:0], 3'b0 }); // sb
+            17'b0100011_001_zzzzzzz: check_wrdata = VALUE << ({ ADDR[1:0], 3'b0 }); // sh
+            17'b0100011_010_zzzzzzz: check_wrdata = VALUE;                          // sw
+
+            // –¢‘Î‰ž–½—ß
+            default: check_wrdata = 31'b0;
         endcase
     endfunction
 
