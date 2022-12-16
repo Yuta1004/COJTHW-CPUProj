@@ -13,7 +13,8 @@
 #define INSTRAM 	((volatile unsigned int *) 0x20000000)
 
 void write_instructions(unsigned int *instructions);
+void write_instructions_f(const char *pfile);
 void view_registers();
-void exec_on_origcpu(unsigned int *instructions);
+void exec_on_origcpu();
 
 #endif

@@ -2,6 +2,10 @@
 #include <xparameters.h>
 #include <xil_cache.h>
 
+#include <unistd.h>
+
+#include "ff.h"
+
 #include "init_dvi.h"
 #include "init_ov9655.h"
 #include "init_xclk.h"
@@ -18,20 +22,24 @@ int main() {
 	RESOL_CTRL = 0;
 	RESOL_SET = SXGA;
 
-//	exec_on_origcpu(ADDI_REQUIRE_FORWARD);
-//	exec_on_origcpu(BEQ);
-//	exec_on_origcpu(SIMPLE_CALC);
-//	exec_on_origcpu(LOGIC_CALC_1);
-//	exec_on_origcpu(SHIFT_CALC);
-//	exec_on_origcpu(LOGIC_CALC_2);
-//	exec_on_origcpu(BRANCH_BLT_1);
-//	exec_on_origcpu(BRANCH_BLT_2);
-//	exec_on_origcpu(BRANCH_BLTU_1);
-//	exec_on_origcpu(BRANCH_BLTU_2);
-//	exec_on_origcpu(WRITE_MEM);
-//	exec_on_origcpu(CAP_DISP_CONTROL);
-	exec_on_origcpu(UART_HELLOWORLD);
-//	exec_on_origcpu(MEM_RW);
+//	write_instructions(ADDI_REQUIRE_FORWARD);
+//	write_instructions(BEQ);
+//	write_instructions(SIMPLE_CALC);
+//	write_instructions(LOGIC_CALC_1);
+//	write_instructions(SHIFT_CALC);
+//	write_instructions(LOGIC_CALC_2);
+//	write_instructions(BRANCH_BLT_1);
+//	write_instructions(BRANCH_BLT_2);
+//	write_instructions(BRANCH_BLTU_1);
+//	write_instructions(BRANCH_BLTU_2);
+//	write_instructions(WRITE_MEM);
+//	write_instructions(CAP_DISP_CONTROL);
+//	write_instructions(UART_HELLOWORLD);
+//	write_instructions(MEM_W);
+//	write_instructions(MEM_RW);
+	write_instructions_f("out");
+
+	exec_on_origcpu();
 
 	return 0;
 }
