@@ -37,7 +37,7 @@ int main() {
 //	write_instructions(UART_HELLOWORLD);
 //	write_instructions(MEM_W);
 //	write_instructions(MEM_RW);
-	write_instructions_f("out");
+	write_instructions_f("out.raw");
 
 	exec_on_origcpu();
 

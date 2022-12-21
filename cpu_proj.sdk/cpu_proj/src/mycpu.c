@@ -28,7 +28,7 @@ void write_instructions_f(const char *pfile) {
 	unsigned int *inst_wp = INSTRAM;
 
 	f_mount(&FatFs, "", 0);
-	fr = f_open(&Fil, "out", FA_READ);
+	fr = f_open(&Fil, pfile, FA_READ);
 	if (!fr) {
 		while(1) {
 			f_read(&Fil, buff, 4096, &num);
@@ -39,6 +39,8 @@ void write_instructions_f(const char *pfile) {
 				break;
 		}
 		f_close(&Fil);
+	} else {
+		xil_printf("File open error!\n");
 	}
 }
 

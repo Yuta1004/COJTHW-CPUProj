@@ -154,7 +154,7 @@ module datamem #
     always @* begin
         case (sr_state)
             S_SR_IDLE:
-                if (RDEN)
+                if (RDEN && (!(WREN && RDADDR[31:2] == WRADDR[31:2]) || sw_state == S_SW_FINISH))
                     sr_next_state <= S_SR_ADDR;
                 else
                     sr_next_state <= S_SR_IDLE;

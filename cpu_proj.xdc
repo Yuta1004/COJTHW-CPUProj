@@ -175,3 +175,6 @@ create_clock -period 88.600 -name MCLK [get_nets design_1_i/sound_0/SND_MCLK]
 set_clock_groups -asynchronous -group [get_clocks clk_fpga_0] -group [get_clocks BCLK]
 set_clock_groups -asynchronous -group [get_clocks clk_fpga_0] -group [get_clocks MCLK]
 set_clock_groups -asynchronous -group [get_clocks BCLK] -group [get_clocks MCLK]
+
+
+
