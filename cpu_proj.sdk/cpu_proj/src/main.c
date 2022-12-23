@@ -1,26 +1,18 @@
-#include <stdio.h>
 #include <xparameters.h>
 #include <xil_cache.h>
+#include <ff.h>
 
-#include <unistd.h>
-
-#include "ff.h"
-
-#include "init_dvi.h"
-#include "init_ov9655.h"
-#include "init_xclk.h"
-#include "cojt.h"
 #include "mycpu.h"
 #include "riscv_program.h"
 
 int main() {
 	Xil_DCacheDisable();
 
-	init_tpf410();
-	init_xclk(XCLK24MHz);
-	init_ov9655(OV9655_SXGA);
-	RESOL_CTRL = 0;
-	RESOL_SET = SXGA;
+//	init_tpf410();
+//	init_xclk(XCLK24MHz);
+//	init_ov9655(OV9655_SXGA);
+//	RESOL_CTRL = 0;
+//	RESOL_SET = SXGA;
 
 //	write_instructions(ADDI_REQUIRE_FORWARD);
 //	write_instructions(BEQ);

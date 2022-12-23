@@ -1,11 +1,9 @@
 #include <unistd.h>
+#include <xil_printf.h>
+#include <xil_cache.h>
+#include <xparameters.h>
+#include <ff.h>
 
-#include "xil_printf.h"
-#include "xil_cache.h"
-#include "xparameters.h"
-#include "ff.h"
-
-#include "cojt.h"
 #include "mycpu.h"
 
 void write_instructions(unsigned int *instructions) {
@@ -55,7 +53,7 @@ void view_registers() {
 
 
 void exec_on_origcpu() {
-	CEXEC = 1; sleep(1);
+	CEXEC = 1; sleep(2);
 	CEXEC = 0; sleep(1);
 	view_registers();
 }
