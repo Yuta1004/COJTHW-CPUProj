@@ -8,12 +8,6 @@
 int main() {
 	Xil_DCacheDisable();
 
-//	init_tpf410();
-//	init_xclk(XCLK24MHz);
-//	init_ov9655(OV9655_SXGA);
-//	RESOL_CTRL = 0;
-//	RESOL_SET = SXGA;
-
 //	write_instructions(ADDI_REQUIRE_FORWARD);
 //	write_instructions(BEQ);
 //	write_instructions(SIMPLE_CALC);
@@ -31,7 +25,8 @@ int main() {
 //	write_instructions(MEM_RW);
 	write_instructions_f("out.raw");
 
-	exec_on_origcpu();
+//	exec_on_origcpu();
+	CEXEC = 1;
 
 	return 0;
 }
