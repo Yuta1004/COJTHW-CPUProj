@@ -1,32 +1,37 @@
-#include <xparameters.h>
 #include <xil_cache.h>
 #include <ff.h>
 
-#include "mycpu.h"
-#include "riscv_program.h"
+#define CEXEC	(*(volatile unsigned int*)(XPAR_CPU_CORE_CONTROLLER_0_S_AXI_BASEADDR + 0x0000))
+#define CEXEC1 	(*(volatile unsigned int*)(XPAR_CPU_CORE_CONTROLLER_0_S_AXI_BASEADDR + 0x0004))
+#define REG 	( (volatile unsigned int*)(XPAR_CPU_CORE_CONTROLLER_0_S_AXI_BASEADDR + 0x1000))
+
+void deploy_to_ram(unsigned int *addr, const char *fname) {
+	UINT num;
+	FATFS FatFs;
+	FRESULT fr;
+	FIL Fil;
+	char buff[4100];
+
+	f_mount(&FatFs, "", 0);
+	fr = f_open(&Fil, fname, FA_READ);
+	if (!fr) {
+		while(1) {
+			f_read(&Fil, buff, 4096, &num);
+			for (int idx = 0; idx < num; idx += 4) {
+				*(addr++) = (buff[idx+3] << 24) | (buff[idx+2] << 16) | (buff[idx+1] << 8) | buff[idx];
+			}
+			if (num < 4096)
+				break;
+		}
+		f_close(&Fil);
+	}
+}
 
 int main() {
 	Xil_DCacheDisable();
 
-//	write_instructions(ADDI_REQUIRE_FORWARD);
-//	write_instructions(BEQ);
-//	write_instructions(SIMPLE_CALC);
-//	write_instructions(LOGIC_CALC_1);
-//	write_instructions(SHIFT_CALC);
-//	write_instructions(LOGIC_CALC_2);
-//	write_instructions(BRANCH_BLT_1);
-//	write_instructions(BRANCH_BLT_2);
-//	write_instructions(BRANCH_BLTU_1);
-//	write_instructions(BRANCH_BLTU_2);
-//	write_instructions(WRITE_MEM);
-//	write_instructions(CAP_DISP_CONTROL);
-//	write_instructions(UART_HELLOWORLD);
-//	write_instructions(MEM_W);
-//	write_instructions(MEM_RW);
-	write_instructions_f("out.raw");
-
-//	exec_on_origcpu();
+	deploy_to_ram((unsigned int*)0x20000000, "kernel.raw");
 	CEXEC = 1;
 
-	return 0;
+	while (1) {}
 }
