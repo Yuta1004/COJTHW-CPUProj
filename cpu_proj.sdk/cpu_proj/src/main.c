@@ -31,6 +31,7 @@ int main() {
 	Xil_DCacheDisable();
 
 	deploy_to_ram((unsigned int*)0x20000000, "kernel.raw");
+	deploy_to_ram((unsigned int*)0x25000000, "fs.raw");
 	CEXEC = 1;
 
 	while (1) {}
