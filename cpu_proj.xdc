@@ -131,32 +131,32 @@ set_property PACKAGE_PIN V8 [get_ports PS2DATA]
 set_property IOSTANDARD LVCMOS25 [get_ports PS2DATA]
 
 
-# LEDs
-set_property PACKAGE_PIN V7 [get_ports {LED[0]}]
-set_property IOSTANDARD LVCMOS25 [get_ports {LED[0]}]
-
-set_property PACKAGE_PIN W10 [get_ports {LED[1]}]
-set_property IOSTANDARD LVCMOS25 [get_ports {LED[1]}]
-
-set_property PACKAGE_PIN P18 [get_ports {LED[2]}]
-set_property IOSTANDARD LVCMOS25 [get_ports {LED[2]}]
-
-set_property PACKAGE_PIN P17 [get_ports {LED[3]}]
-set_property IOSTANDARD LVCMOS25 [get_ports {LED[3]}]
-
-
 # UART
-set_property PACKAGE_PIN E15 [get_ports UART_CTS]
+set_property PACKAGE_PIN V7 [get_ports UART_CTS]
 set_property IOSTANDARD LVCMOS25 [get_ports UART_CTS]
 
-set_property PACKAGE_PIN D15 [get_ports UART_TXD]
+set_property PACKAGE_PIN W10 [get_ports UART_TXD]
 set_property IOSTANDARD LVCMOS25 [get_ports UART_TXD]
 
-set_property PACKAGE_PIN W17 [get_ports UART_RXD]
+set_property PACKAGE_PIN P18 [get_ports UART_RXD]
 set_property IOSTANDARD LVCMOS25 [get_ports UART_RXD]
 
-set_property PACKAGE_PIN W5 [get_ports UART_RTS]
+set_property PACKAGE_PIN P17 [get_ports UART_RTS]
 set_property IOSTANDARD LVCMOS25 [get_ports UART_RTS]
+
+
+# LEDs
+set_property PACKAGE_PIN E15 [get_ports {LED[0]}]
+set_property IOSTANDARD LVCMOS25 [get_ports {LED[0]}]
+
+set_property PACKAGE_PIN D15 [get_ports {LED[1]}]
+set_property IOSTANDARD LVCMOS25 [get_ports {LED[1]}]
+
+set_property PACKAGE_PIN W17 [get_ports {LED[2]}]
+set_property IOSTANDARD LVCMOS25 [get_ports {LED[2]}]
+
+set_property PACKAGE_PIN W5 [get_ports {LED[3]}]
+set_property IOSTANDARD LVCMOS25 [get_ports {LED[3]}]
 
 
 # カメラクロックの定義 36Mhz max.
